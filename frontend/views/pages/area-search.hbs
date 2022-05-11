@@ -1,0 +1,96 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role='main'>
+      <div class='container'>
+        <div class="row">
+          <h2 class="indented">Search By Area:</h2>
+        </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+            <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#postalCode" role="tab">
+                        Postal Code
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#coordinates" role="tab">
+                        Coordinates
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="row">
+            <div class="tab-content mt-2" style="height: 200px;">
+                <div class="tab-pane active" id="postalCode" role="tabpanel">
+                    <div class="row">
+                        <div class="col-xs-1 mt-1 ml-2">
+                            <label for="postalCodeInput">Postal Code:</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <input type="text" class="form-control m-2" id="postalCodeInput" maxLength="6" value="V8V2L8">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="btn btn-primary" id="postalCodeSearch" onclick="postalCodeCircle()">Search</button>
+                    </div>
+                </div>
+                <div class="tab-pane" id="coordinates" role="tabpanel">
+                    <div class="row">
+                        <div class="col-xs-1 mt-1 ml-2">
+                            <label for="latitudeInput">Latitude:</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <input type="number" class="form-control m-2 type_decimal3" id="latitudeInput" value="48.428" min="-90" max="90" step="0.001" maxlength="6">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 mt-1 ml-2">
+                            <label for="longitudeInput">Longitude:</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <input type="number" class="form-control m-2 type_decimal3" id="longitudeInput" value="-123.365" min="-180" max="180" step="0.001" maxlength="6">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="btn btn-primary" id="coordinateSearch" onclick="coordinateCircle()">Search</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="padding:1em">
+                        <input type="radio" id="sizeSmall" name="circle" value="small" checked>
+                        <label for="sizeSmall">Small - $51.00</label>
+                    </div>
+                    <div style="padding:1em">
+                        <input type="radio" id="sizeLarge" name="circle" value="large">
+                        <label for="sizeLarge">Large - $101.00</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                 <div id="map"></div>
+            </div>
+        </div>
+      </div>
+    </main>
+    <script>
+        var url = document.location.toString();
+            if (url.match('#')) {
+                $('.nav-pills a[href="#' + url.split('#')[1] + '-tab"]').tab('show');
+            }
+    </script>
+    <script
+        src='https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'
+        integrity='sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=='
+        crossorigin=''
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.js" integrity="sha512-czICF/Crp0B7QB13iQZG9bYUpd/P1Ona1NeZN52gYsoVFXIpakDmdOUepMCHCMBIBd9Ei5Mlg8Quy4e504IT5A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src='/js/leaflet-src.js'></script>
+  {{/inline}}
+{{/template}}

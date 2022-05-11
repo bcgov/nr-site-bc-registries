@@ -1,0 +1,47 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role='main'>
+      <div class='container'>
+        <div class="row">
+          <h2 class="indented">Search By:</h2>
+          </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+          <form class="form-inline">
+            <div class="form-group row">
+              <div class="col-sm mt-1 ml-4">
+                <label for="siteId" class="m-2">Site ID:</label>
+              </div>
+            </div>
+            <div class="col-sm mt-1">
+              <input class="form-control m-2" id="siteId">
+            </div>
+          </form>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <table class="my-table site-id-table">
+              <tr>
+                <td><button class="btn btn-primary m-2 btn-block" id="siteIdSelectionList">Site ID Selection List</button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$11.00</label></td>
+              </tr>
+              <tr>
+                <td><button class="btn btn-primary m-2 btn-block" id="displaySynopsisReport">Display Synopsis Report</button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$26.00</label></td>
+              </tr>
+              <tr>
+                <td><button class="btn btn-primary m-2 btn-block" id="displayDetailReport">Display Detail Report</button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$51.00</label></td>
+              </tr>
+            </table>
+        </div>
+        </div>
+      </div>
+    </main>
+  {{/inline}}
+{{/template}}

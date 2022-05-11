@@ -1,0 +1,45 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role='main'>
+      <div class='container'>
+        <div class="row">
+          <h2 class="indented">Search By Address:</h2>
+        </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1">
+                <label for="address" class="m-2">Address:</label>
+            </div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control m-2" id="address">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1">
+                <label for="city" class="m-2">City:</label>
+            </div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control m-2" id="city">
+            </div>
+        </div>
+        <div class="row">
+            <button type="submit" class="btn btn-primary m-2">Display and Send to Mailbox</button>
+        </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+            <h3 class="indented">Additional Disclaimers:</h3>
+        </div>
+        <div class="row">
+            <ol>
+                <li>Site Registry address data is received and stored in a variesty of formats. [<a href=''>more info</a>]</li>
+                <li>Your search criteria may require input of the specific municipality name vs the city name. [<a href=''>more info</a>]</li>
+            </ol>
+        </div>
+      </div>
+    </main>
+  {{/inline}}
+{{/template}}
