@@ -6,4 +6,5 @@ export const PAGE_TITLES = {
   SITE_ID_SEARCH: 'Site ID Search',
   ADDRESS_SEARCH: 'Address Search',
   AREA_SEARCH: 'Area Search',
+  VIEW_SEARCH_RESULTS: 'View Search Results',
 };

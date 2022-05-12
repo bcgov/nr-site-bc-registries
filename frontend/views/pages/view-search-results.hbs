@@ -1,0 +1,63 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role='main'>
+      <div class='container'>
+        <div class="row">
+          <h2 id="searchType">asdf</h2>
+        </div>
+        <div class="row">
+          <div class='col-sm-2'>
+            <p style="font-size:120%;font-weight:bold">Search Criteria: </p>
+          </div>
+          <div class='col-sm-1'>
+            <p id="searchCriteria"></p>
+          </div>
+        </div>
+        <div class='row'>
+          <div class='col-sm'>
+            <table class='table'>
+              <thead>
+                <tr>
+                  <th><strong>Report Type</strong></th>
+                  <th>Site ID</th>
+                  <th>Updated Date</th>
+                  <th>Address/City</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="reportType">
+                    <select class="form-select form-select-sm">
+                        <option selected>Choose a Report Type</option>
+                        <option value="synopsis">Synopsis Report</option>
+                        <option value="detailed">Detailed Report</option>
+                    </select>
+                </td>
+                  <td id="siteId">123</td>
+                  <td id="updatedDate">May 12, 2022</td>
+                  <td id="addressCity">Victoria</td>
+                  <td id="display"><button class="btn btn-primary">Display</button></td>
+                  <td id="email"><button class="btn btn-primary">Email</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+        var searchType = localStorage.getItem('currentSearch')
+        var searchCriteria = localStorage.getItem('searchCriteria')
+        if (searchType == 'pid') {
+            document.getElementById('searchType').innerHTML = "Parcel ID Search Results";
+        } else if (searchType == 'clf') {
+            document.getElementById('searchType').innerHTML = "Crown Lands File Search Results";
+        } else if (searchType == 'clp') {
+            document.getElementById('searchType').innerHTML = "Crown Lands PIN Search Results";
+        }
+        document.getElementById('searchCriteria').innerHTML = searchCriteria;
+    </script>
+  {{/inline}}
+{{/template}}

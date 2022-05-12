@@ -8,7 +8,7 @@
         <div class="row">
           <div id="line"><hr /></div>
         </div>
-        <form class="form-horizontal">
+        <div class="row">
           <div class="form-group row">
             <div class="col-xs-1 mt-1 ml-2">
               <label for="crownLandsPin" class="m-2">Crown Lands PIN:</p>
@@ -17,9 +17,18 @@
               <input type="text" class="form-control m-2" id="crownLandsPin">
             </div>
           </div>
-          <button type="submit" class="btn btn-primary m-2">Download Results</button>
-        </form>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary m-2" onclick="searchBy();">View Search Results</button>
+        </div>
       </div>
     </main>
+    <script>
+        function searchBy() {
+            localStorage.setItem('currentSearch','clp');
+            localStorage.setItem('searchCriteria', document.getElementById('crownLandsPin').value);
+            window.location.href = "/view-search-results";
+        }
+    </script>
   {{/inline}}
 {{/template}}

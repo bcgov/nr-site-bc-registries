@@ -9,7 +9,6 @@
           <div id="line"><hr /></div>
         </div>
         <div class="row">
-          <form class="form-horizontal">
             <div class="form-group row">
               <div class="col-xs-1 mt-1 ml-2">
                 <label for="parcelId" class="m-2">Parcel ID:</label>
@@ -18,10 +17,18 @@
                 <input type="text" class="form-control m-2" id="parcelId">
               </div>
             </div>
-            <button type="submit" class="btn btn-primary m-2">Download Results</button>
-          </form>
+          </div>
+          <div class="row">
+            <button class="btn btn-primary m-2" onclick="searchBy()">View Search Results</button>
         </div>
       </div>
     </main>
+    <script>
+      function searchBy() { 
+        localStorage.setItem('currentSearch','pid');
+        localStorage.setItem('searchCriteria', document.getElementById('parcelId').value);
+        window.location.href="/view-search-results"
+      }
+    </script>
   {{/inline}}
 {{/template}}

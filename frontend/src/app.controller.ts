@@ -92,4 +92,16 @@ export class AppController {
           title: PAGE_TITLES.AREA_SEARCH,
         };
   }
+
+  @Get('view-search-results')
+  @Render('view-search-results')
+  getViewSearchResults() {
+    return process.env.site_environment == 'DEVELOPMENT'
+      ? {
+          title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
+        }
+      : {
+          title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
+        };
+  }
 }
