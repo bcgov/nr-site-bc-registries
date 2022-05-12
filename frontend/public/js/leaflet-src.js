@@ -71,9 +71,9 @@ smallCircle.on({
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         smallCircle.setLatLng(e.latlng);
         document.getElementById('latitudeInput').value =
-          smallCircle._latlng.lat;
+          smallCircle._latlng.lat.toFixed(5);
         document.getElementById('longitudeInput').value =
-          smallCircle._latlng.lng;
+          smallCircle._latlng.lng.toFixed(5);
       }
     });
   },
@@ -179,11 +179,19 @@ function drawCircle(latitude, longitude, size) {
     if (size == 's') {
       smallCircle._latlng.lat = latitude;
       smallCircle._latlng.lng = longitude;
+      document.getElementById('latitudeInput').value =
+        smallCircle._latlng.lat.toFixed(5);
+      document.getElementById('longitudeInput').value =
+        smallCircle._latlng.lng.toFixed(5);
       smallCircle.addTo(map);
       map.setView([latitude, longitude], 16);
     } else if (size == 'l') {
       largeCircle._latlng.lat = latitude;
       largeCircle._latlng.lng = longitude;
+      document.getElementById('latitudeInput').value =
+        smallCircle._latlng.lat.toFixed(5);
+      document.getElementById('longitudeInput').value =
+        smallCircle._latlng.lng.toFixed(5);
       largeCircle.addTo(map);
       map.setView([latitude, longitude], 10);
     }

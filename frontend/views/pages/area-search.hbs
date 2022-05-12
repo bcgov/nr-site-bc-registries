@@ -25,7 +25,7 @@
                             <label style="width:150px;text-align:left;float:left;" for="colFormLabel">Postal Code:</label>
                         </div>
                         <div class="col-xs-4">
-                            <input type="text" class="form-control" id="postalCodeInput" placeholder="V8V2L6" maxlength="6">
+                            <input type="text" class="form-control" id="postalCodeInput" value="V8V2L6" maxlength="6">
                         </div>
                     </div>
                     <div class="row">
@@ -40,7 +40,7 @@
                             <label style="width:150px;text-align:left;float:left;" for="latitudeInput">Latitude:</label>
                         </div>
                         <div class="col-xs-4">
-                            <input type="number" class="form-control type_decimal3" id="latitudeInput" placeholder="48.428" min="-180" max="180" step="0.001" maxlength="6">
+                            <input type="text" pattern="\d*" class="form-control" id="latitudeInput" value="48.42800" min="-180" max="180" step="0.001" maxlength="8">
                         </div>
                     </div>
                     <div class="row mt-2 ml-4">
@@ -48,7 +48,7 @@
                             <label style="width:150px;text-align:left;float:left;" for="longitudeInput">Longitude:</label>
                         </div>
                         <div class="col-xs-4">
-                            <input type="number" class="form-control type_decimal3" id="longitudeInput" placeholder="-123.365" min="-180" max="180" step="0.001" maxlength="6">
+                            <input type="text" pattern="\d*" class="form-control" id="longitudeInput" value="-123.36500" min="-180" max="180" step="0.001" maxlength="8">
                         </div>
                     </div>
                     <div class="row">
