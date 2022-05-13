@@ -4,8 +4,20 @@ import { AxiosRequestConfig } from 'axios';
 import * as dotenv from 'dotenv';
 import { lastValueFrom, map } from 'rxjs';
 import { siteDto } from 'utils/types';
+import {
+  templateBase64,
+  testData,
+  testTemplate,
+  testTemplateData,
+} from 'utils/constants';
+import * as base64 from 'base-64';
+import * as utf8 from 'utf8';
+var axios = require('axios');
+import * as fs from 'fs';
 
 dotenv.config();
+
+const authoriationToken: string = '';
 
 @Injectable()
 export class BCRegistryService {
@@ -44,58 +56,14 @@ export class BCRegistryService {
     // console.log(postalCodeJSON);
     // fs.writeFile(jsonOutput, postalCodeJSON, {});
     const id = '8';
-    const requestUrl = `http://backend:3000/sites/`;
+    const requestUrl = `http://localhost:3001/sites/`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
 
-    const data: siteDto = {
-      docid: 2,
-      site_id: 1,
-      siteid: 1,
-      catid: 1,
-      sequenceno: 1,
-      pin: 1,
-      pidno: 1,
-      eventid: 1,
-      associatedsiteid: 1,
-      participant_id: 1,
-      participantid: 1,
-      questionid: 1,
-      parentid: 1,
-      ownerid: 1,
-      contactid: 1,
-      completorid: 1,
-      aec_id: 1,
-      lat: 1,
-      latdeg: 1,
-      latmin: 1,
-      latsec: 1,
-      lon: 1,
-      londeg: 1,
-      lonmin: 1,
-      lonsec: 1,
-      regdate: new Date(),
-      eventdate: new Date(),
-      approval_date: new Date(),
-      moddate: new Date(),
-      tombdate: new Date(),
-      effectivedate: new Date(),
-      enddate: new Date(),
-      datenoted: new Date(),
-      date_completed: new Date(),
-      expirydate: new Date(),
-      datecompleted: new Date(),
-      datereceived: new Date(),
-      datelocalauthority: new Date(),
-      dateregistrar: new Date(),
-      datedecision: new Date(),
-      dateentered: new Date(),
-      submissiondate: new Date(),
-      documentdate: new Date(),
-    };
+    const data = testData;
 
     await lastValueFrom(
       this.httpService.get(requestUrl, requestConfig).pipe(
@@ -116,6 +84,157 @@ export class BCRegistryService {
         }),
       ),
     );
+    return { xd: 'hello' };
+  }
+
+  async getDocument(): Promise<{ xd: string }> {
+    const htmlData = await this.getHtml();
+
+    let utfHtmlData = utf8.encode(htmlData);
+    let encodedHtmlData = base64.encode(utfHtmlData);
+
+    const mailData = JSON.stringify({
+      attachments: [
+        {
+          content: `${encodedHtmlData}`,
+          contentType: 'string',
+          encoding: 'base64',
+          filename: 'testfile.pdf',
+        },
+      ],
+      bodyType: 'html',
+      body: `hello`,
+      contexts: [
+        {
+          context: {
+            something: {
+              greeting: 'Hello',
+              target: 'World',
+            },
+            someone: 'user',
+          },
+          delayTS: 0,
+          tag: 'tag',
+          to: ['mike.smash21@gmail.com'],
+        },
+      ],
+      encoding: 'utf-8',
+      from: 'mike.smash21@gmail.com',
+      priority: 'normal',
+      subject: 'Hello {{ someone }}',
+    });
+
+    var emailConfig = {
+      method: 'post',
+      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authoriationToken}`,
+      },
+      data: mailData,
+    };
+
+    axios(emailConfig)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return { xd: 'hello' };
+  }
+
+  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  async getHtml(): Promise<string> {
+    let htmlData: string;
+
+    var data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'html',
+        overwrite: true,
+        reportName: 'test-report.html',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${templateBase64}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authoriationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        htmlData = response.data;
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return htmlData;
+  }
+
+  // async getPdf(): Promise<string> {
+  async getPdf(): Promise<{ xd: string }> {
+    let pdfData: string;
+
+    var data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'pdf',
+        overwrite: true,
+        reportName: 'test-report',
+      },
+      template: {
+        content: `${templateBase64}`,
+        encodingType: 'base64',
+        fileType: 'html',
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authoriationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        pdfData = response.data;
+        fs.writeFile('utils/test-report.pdf', pdfData, () => {});
+        // console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    // fs.writeFile('utils/test-report.pdf', pdfData, () => {});
+    // return pdfData;
     return { xd: 'hello' };
   }
 }

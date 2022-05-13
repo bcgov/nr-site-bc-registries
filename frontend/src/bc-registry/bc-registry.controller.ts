@@ -7,6 +7,6 @@ export class BCRegistryController {
 
   @Get('testapi')
   getTest(): Promise<{ xd: string }> {
-    return this.testService.getText();
+    return this.testService.getPdf();
   }
 }

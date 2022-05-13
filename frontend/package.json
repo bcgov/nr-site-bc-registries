@@ -47,12 +47,15 @@
     "@nestjs/platform-express": "^8.4.4",
     "@nestjs/schematics": "^8.0.10",
     "@nestjs/testing": "^8.4.4",
+    "base-64": "^1.0.0",
     "dotenv": "^16.0.1",
     "handlebars": "^4.7.7",
     "hbs": "^4.2.0",
     "node-fetch": "^2.6.7",
+    "qs": "^6.10.3",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.5.5",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@bcgov/bootstrap-theme": "https://github.com/bcgov/bootstrap-theme/releases/download/v1.1.1/bcgov-bootstrap-theme-1.1.1.tgz",
