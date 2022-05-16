@@ -1,13 +1,14 @@
 // utility functions
-function testapi() {
-  fetch('/bc-registry/testapi')
-    .then((res) => res.json())
-    .then((resJson) => console.log(resJson));
+async function testapi() {
+  fetch('/bc-registry/download-pdf', {
+    method: 'GET',
+    responseType: 'arraybuffer'
+  }).then((res) => console.log(res));
 }
 
 function getPdf() {
   var req = new XMLHttpRequest();
-  req.open('GET', '/bc-registry/testapi', true);
+  req.open('GET', '/bc-registry/download-pdf', true);
   req.responseType = 'blob';
   req.onreadystatechange = function () {
     if (req.readyState === 4 && req.status === 200) {
@@ -31,5 +32,20 @@ function getPdf() {
       }
     }
   };
+  req.send();
+}
+
+function emailPdf() {
+  var url = '/bc-registry/email-pdf';
+  var email = document.getElementById('emailInput').value;
+  console.log(email)
+  var params = `/${email}`;
+  var req = new XMLHttpRequest();
+  req.open("GET", url+params, true);
+  req.onreadystatechange = function () {
+    if (req.readyState == 4 && req.status == 200) {
+      alert(req.responseText);
+    }
+  }
   req.send();
 }

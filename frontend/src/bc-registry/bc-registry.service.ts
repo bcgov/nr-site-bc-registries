@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import * as dotenv from 'dotenv';
 import { lastValueFrom, map } from 'rxjs';
@@ -7,8 +7,7 @@ import { siteDto } from 'utils/types';
 import {
   templateBase64,
   testData,
-  testTemplate,
-  testTemplateData,
+  plainTextTemplate
 } from 'utils/constants';
 import * as base64 from 'base-64';
 import * as utf8 from 'utf8';
@@ -16,8 +15,6 @@ var axios = require('axios');
 import * as fs from 'fs';
 
 dotenv.config();
-
-const authoriationToken: string = '';
 
 @Injectable()
 export class BCRegistryService {
@@ -87,66 +84,9 @@ export class BCRegistryService {
     return { xd: 'hello' };
   }
 
-  async getDocument(): Promise<{ xd: string }> {
-    const htmlData = await this.getHtml();
-
-    let utfHtmlData = utf8.encode(htmlData);
-    let encodedHtmlData = base64.encode(utfHtmlData);
-
-    const mailData = JSON.stringify({
-      attachments: [
-        {
-          content: `${encodedHtmlData}`,
-          contentType: 'string',
-          encoding: 'base64',
-          filename: 'testfile.pdf',
-        },
-      ],
-      bodyType: 'html',
-      body: `hello`,
-      contexts: [
-        {
-          context: {
-            something: {
-              greeting: 'Hello',
-              target: 'World',
-            },
-            someone: 'user',
-          },
-          delayTS: 0,
-          tag: 'tag',
-          to: ['mike.smash21@gmail.com'],
-        },
-      ],
-      encoding: 'utf-8',
-      from: 'mike.smash21@gmail.com',
-      priority: 'normal',
-      subject: 'Hello {{ someone }}',
-    });
-
-    var emailConfig = {
-      method: 'post',
-      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authoriationToken}`,
-      },
-      data: mailData,
-    };
-
-    axios(emailConfig)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    return { xd: 'hello' };
-  }
-
   // sends preset data + base64 encoded html template and returns an html document with the data inserted
-  async getHtml(): Promise<string> {
+  async getHtml(token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
     let htmlData: string;
 
     var data = testData;
@@ -172,7 +112,7 @@ export class BCRegistryService {
       method: 'post',
       url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
       headers: {
-        Authorization: `Bearer ${authoriationToken}`,
+        Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
       },
       data: md,
@@ -181,7 +121,6 @@ export class BCRegistryService {
     await axios(config)
       .then(function (response) {
         htmlData = response.data;
-        console.log(response.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -190,11 +129,52 @@ export class BCRegistryService {
     return htmlData;
   }
 
-  // async getPdf(): Promise<string> {
-  async getPdf(): Promise<{ xd: string }> {
-    let pdfData: string;
-
+  async getPlainText(token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
+    let plainTextData: string;
     var data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'txt',
+        overwrite: true,
+        reportName: 'test-report.txt',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${plainTextTemplate}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        plainTextData = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return plainTextData;
+  }
+
+  async getPdf(): Promise<any> {
+    const authorizationToken = await this.getToken();
+    const data = testData;
 
     const md = JSON.stringify({
       data,
@@ -213,28 +193,94 @@ export class BCRegistryService {
       },
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
       headers: {
-        Authorization: `Bearer ${authoriationToken}`,
+        Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
       },
+      responseType: 'arraybuffer',
       data: md,
     };
 
-    await axios(config)
-      .then(function (response) {
-        pdfData = response.data;
-        fs.writeFile('utils/test-report.pdf', pdfData, () => {});
-        // console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    const response = await axios(config);
+    return response.data;
+  }
 
-    // fs.writeFile('utils/test-report.pdf', pdfData, () => {});
-    // return pdfData;
-    return { xd: 'hello' };
+  async emailPdf(email: string): Promise<any> {
+    const authorizationToken = await this.getToken();
+    const htmlFile = await this.getHtml(authorizationToken.toString());
+    const textFile = await this.getPlainText(authorizationToken.toString());
+    const encodedHtml = base64.encode(utf8.encode(htmlFile));
+    const encodedTextFile = base64.encode(utf8.encode(textFile));
+    var data = JSON.stringify({
+      "attachments": [
+        {
+          "content": `${encodedTextFile}`,
+          "contentType": "string",
+          "encoding": "base64",
+          "filename": "testfile.txt"
+        }
+      ],
+      "bodyType": "html",
+      "body": `${htmlFile}`,
+      "contexts": [
+        {
+          "context": {
+            "something": {
+              "greeting": "Hello",
+              "target": "World"
+            },
+            "someone": "user"
+          },
+          "delayTS": 0,
+          "tag": "tag",
+          "to": [
+            `${email}`
+          ]
+        }
+      ],
+      "encoding": "utf-8",
+      "from": "testingedmail@asdfasdf.com",
+      "priority": "normal",
+      "subject": "Hello {{ someone }}"
+    });
+    
+    var config = {
+      method: 'post',
+      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${authorizationToken}`
+      },
+      data : data
+    };
+    
+    return axios(config)
+    .then((response) => { return 'Email Sent'})
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+  
+  getToken(): Promise<Object> {
+    let url = 'https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token';
+    let service_client_id = process.env.service_client_id;
+    let service_client_secret = process.env.service_client_secret;
+    const token = `${service_client_id}:${service_client_secret}`;
+    const encodedToken = Buffer.from(token).toString('base64');
+    let config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + encodedToken
+      }
+    };
+    const grantTypeParam = new URLSearchParams();
+    grantTypeParam.append('grant_type', 'client_credentials');
+    return axios.post(url, grantTypeParam, config).then(response => { return response.data.access_token })
+      .catch(error => {
+        console.log(error.response)
+      });
   }
 }
