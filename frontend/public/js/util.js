@@ -38,7 +38,6 @@ function getPdf() {
 function emailPdf() {
   var url = '/bc-registry/email-pdf';
   var email = document.getElementById('emailInput').value;
-  console.log(email)
   var params = `/${email}`;
   var req = new XMLHttpRequest();
   req.open("GET", url+params, true);
