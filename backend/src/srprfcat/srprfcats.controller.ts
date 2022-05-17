@@ -19,11 +19,13 @@ export class SrprfcatsController {
 
   @Post()
   create(@Body() createSrprfcatDto: CreateSrprfcatDto) {
+    console.log("POST REQUEST");
     return this.srprfcatsService.create(createSrprfcatDto);
   }
 
   @Get()
   findAll() {
+    console.log("GET REQUEST");
     return this.srprfcatsService.findAll();
   }
 
@@ -33,8 +35,21 @@ export class SrprfcatsController {
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrprfcatDto: UpdateSrprfcatDto) {
+  update(
+    @Param("id") id: string,
+    @Body() updateSrprfcatDto: UpdateSrprfcatDto
+  ) {
     return this.srprfcatsService.update(+id, updateSrprfcatDto);
+  }
+
+  @Delete()
+  async removeAll() {
+    console.log("DELETE REQUEST");
+    const oldData = await this.srprfcatsService.findAll();
+    for (const entry of oldData) {
+      await this.srprfcatsService.remove(entry.id);
+    }
+    return "Old data has been removed";
   }
 
   @Delete(":id")

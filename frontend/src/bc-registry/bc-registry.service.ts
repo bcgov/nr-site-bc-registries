@@ -4,15 +4,12 @@ import { AxiosRequestConfig } from 'axios';
 import * as dotenv from 'dotenv';
 import { lastValueFrom, map } from 'rxjs';
 import { siteDto } from 'utils/types';
-import {
-  templateBase64,
-  testData,
-  plainTextTemplate
-} from 'utils/constants';
+import { templateBase64, testData, plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import * as utf8 from 'utf8';
 var axios = require('axios');
 import * as fs from 'fs';
+import { URLSearchParams } from 'node:url';
 
 dotenv.config();
 
@@ -215,57 +212,58 @@ export class BCRegistryService {
     const encodedHtml = base64.encode(utf8.encode(htmlFile));
     const encodedTextFile = base64.encode(utf8.encode(textFile));
     var data = JSON.stringify({
-      "attachments": [
+      attachments: [
         {
-          "content": `${encodedTextFile}`,
-          "contentType": "string",
-          "encoding": "base64",
-          "filename": "testfile.txt"
-        }
+          content: `${encodedTextFile}`,
+          contentType: 'string',
+          encoding: 'base64',
+          filename: 'testfile.txt',
+        },
       ],
-      "bodyType": "html",
-      "body": `${htmlFile}`,
-      "contexts": [
+      bodyType: 'html',
+      body: `${htmlFile}`,
+      contexts: [
         {
-          "context": {
-            "something": {
-              "greeting": "Hello",
-              "target": "World"
+          context: {
+            something: {
+              greeting: 'Hello',
+              target: 'World',
             },
-            "someone": "user"
+            someone: 'user',
           },
-          "delayTS": 0,
-          "tag": "tag",
-          "to": [
-            `${email}`
-          ]
-        }
+          delayTS: 0,
+          tag: 'tag',
+          to: [`${email}`],
+        },
       ],
-      "encoding": "utf-8",
-      "from": "testingedmail@asdfasdf.com",
-      "priority": "normal",
-      "subject": "Hello {{ someone }}"
+      encoding: 'utf-8',
+      from: 'testingedmail@asdfasdf.com',
+      priority: 'normal',
+      subject: 'Hello {{ someone }}',
     });
-    
+
     var config = {
       method: 'post',
       url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${authorizationToken}`
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authorizationToken}`,
       },
-      data : data
+      data: data,
     };
-    
+
     return axios(config)
-    .then((response) => { return 'Email Sent'})
-    .catch(function (error) {
-      console.log(error);
-    });
+      .then((response) => {
+        return 'Email Sent';
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
-  
+
   getToken(): Promise<Object> {
-    let url = 'https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token';
+    let url =
+      'https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token';
     let service_client_id = process.env.service_client_id;
     let service_client_secret = process.env.service_client_secret;
     const token = `${service_client_id}:${service_client_secret}`;
@@ -273,14 +271,18 @@ export class BCRegistryService {
     let config = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + encodedToken
-      }
+        Authorization: 'Basic ' + encodedToken,
+      },
     };
     const grantTypeParam = new URLSearchParams();
     grantTypeParam.append('grant_type', 'client_credentials');
-    return axios.post(url, grantTypeParam, config).then(response => { return response.data.access_token })
-      .catch(error => {
-        console.log(error.response)
+    return axios
+      .post(url, grantTypeParam, config)
+      .then((response) => {
+        return response.data.access_token;
+      })
+      .catch((error) => {
+        console.log(error.response);
       });
   }
 }

@@ -27,7 +27,10 @@ export class SrprfcatsService {
     return this.srprfcatsRepository.findOneOrFail(id);
   }
 
-  async update(id: number, updateSrprfcatDto: UpdateSrprfcatDto): Promise<Srprfcat> {
+  async update(
+    id: number,
+    updateSrprfcatDto: UpdateSrprfcatDto
+  ): Promise<Srprfcat> {
     await this.srprfcatsRepository.update({ id }, updateSrprfcatDto);
     return this.findOne(id);
   }

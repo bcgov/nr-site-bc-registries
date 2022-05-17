@@ -5,6 +5,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { SitesModule } from "./sites/sites.module";
+import { SrprfcatsModule } from "./srprfcat/srprfcats.module";
 
 console.log("Var check - POSTGRESQL_HOST", process.env.POSTGRESQL_HOST);
 console.log("Var check - POSTGRESQL_DATABASE", process.env.POSTGRESQL_DATABASE);
@@ -30,6 +31,7 @@ if (process.env.POSTGRESQL_PASSWORD != null) {
       synchronize: true, // This changes the DB schema to match changes to entities, which we might not want.
     }),
     SitesModule,
+    SrprfcatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

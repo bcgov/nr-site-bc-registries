@@ -1,8 +1,8 @@
 // utility functions
 async function testapi() {
-  fetch('/bc-registry/download-pdf', {
+  fetch('/site-registry/srprfcats', {
     method: 'GET',
-    responseType: 'arraybuffer'
+    responseType: 'application/json',
   }).then((res) => console.log(res));
 }
 
@@ -40,11 +40,11 @@ function emailPdf() {
   var email = document.getElementById('emailInput').value;
   var params = `/${email}`;
   var req = new XMLHttpRequest();
-  req.open("GET", url+params, true);
+  req.open('GET', url + params, true);
   req.onreadystatechange = function () {
     if (req.readyState == 4 && req.status == 200) {
       alert(req.responseText);
     }
-  }
+  };
   req.send();
 }
