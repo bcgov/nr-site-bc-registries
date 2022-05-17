@@ -1,3 +1,3 @@
 export class SrdateDto {
-  downloaddate: Date;
+  downloaddate: string; // a10;
 }
