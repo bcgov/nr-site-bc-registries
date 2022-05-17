@@ -1,14 +1,16 @@
 // Document Participants
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srdocpar {
-  @PrimaryColumn("varchar", { length: 10 })
-  docId // a10;
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column("varchar", { length: 10 })
+  docId: string; // a10;
   @Column("varchar", { length: 150 })
-  nameString // a150;
+  nameString: string; // a150;
   @Column("varchar", { length: 40 })
-  roleString // a40;
+  roleString: string; // a40;
 
   constructor(partial: Partial<Srdocpar>) {
     Object.assign(this, partial);

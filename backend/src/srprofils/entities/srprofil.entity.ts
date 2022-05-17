@@ -1,9 +1,11 @@
 // Site Profiles
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srprofil {
-  @PrimaryColumn("varchar", { length: 10 })
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column("varchar", { length: 10 })
   siteId: string; // a10;
   @Column("varchar", { length: 10 })
   dateCompleted: string; // a10;

@@ -1,9 +1,11 @@
 // Site Profile Questions
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srprfque {
-  @PrimaryColumn("varchar", { length: 10 })
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column("varchar", { length: 10 })
   questionId: string; // a10;
   @Column("varchar", { length: 10 })
   sequenceNumber: string; // a10;

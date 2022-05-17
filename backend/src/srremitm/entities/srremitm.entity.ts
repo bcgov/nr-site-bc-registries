@@ -1,9 +1,11 @@
 // AEC Remediation Items
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srremitm {
-  @PrimaryColumn("varchar", { length: 10 })
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column("varchar", { length: 10 })
   siteId: string; // a10;
   @Column("varchar", { length: 10 })
   planId: string; // a10;
@@ -33,8 +35,8 @@ export class Srremitm {
   hazardCalculated: string; // ??
   @Column("varchar")
   hazardRemediated: string; // ??
-  @Column("varchar", { length: 80 })
-  riskAssessmentActivity: string; // a80;
+  // @Column("varchar", { length: 80 })
+  // riskAssessmentActivity: string; // a80;
 
   constructor(partial: Partial<Srremitm>) {
     Object.assign(this, partial);

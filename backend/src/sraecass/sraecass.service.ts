@@ -27,7 +27,10 @@ export class SraecassService {
     return this.sraecassRepository.findOneOrFail(id);
   }
 
-  async update(id: number, updateSraecassDto: UpdateSraecassDto): Promise<Sraecass> {
+  async update(
+    id: number,
+    updateSraecassDto: UpdateSraecassDto
+  ): Promise<Sraecass> {
     await this.sraecassRepository.update({ id }, updateSraecassDto);
     return this.findOne(id);
   }

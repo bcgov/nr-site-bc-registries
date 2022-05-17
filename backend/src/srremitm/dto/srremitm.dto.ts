@@ -14,5 +14,5 @@ export class SrremitmDto {
   hazardObjective: string; // a40;
   hazardCalculated: string; // ??
   hazardRemediated: string; // ??
-  riskAssessmentActivity: string; // a80;
+  // riskAssessmentActivity: string; // a80;
 }

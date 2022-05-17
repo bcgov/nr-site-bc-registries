@@ -1,9 +1,11 @@
 // Site Profile Categories
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srprfcat {
-  @PrimaryColumn("varchar", { length: 10 })
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column("varchar", { length: 10 })
   categoryId: string; // a10;
   @Column("varchar", { length: 10 })
   sequenceNumber: string; // a10;
@@ -11,8 +13,8 @@ export class Srprfcat {
   effectiveDate: string; // a10;
   @Column("varchar", { length: 10 })
   expiryDate: string; // a10;
-  @Column("varchar", { length: 1 })
-  questionType: string; // a1;
+  @Column("varchar")
+  questionType: string; // a1; - not actually 1 character
   @Column("varchar", { length: 200 })
   categoryDescription: string; // a200;
 

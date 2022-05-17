@@ -1,16 +1,18 @@
 // Associations
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Srassoc {
-  @PrimaryColumn("varchar", { length: 10 })
-  siteId // a10;
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column("varchar", { length: 10 })
-  associatedSiteId // a10;
+  siteId: string; // a10;
   @Column("varchar", { length: 10 })
-  effectDate // a10;
+  associatedSiteId: string; // a10;
+  @Column("varchar", { length: 10 })
+  effectDate: string; // a10;
   @Column("varchar", { length: 255 })
-  noteString // a255;
+  noteString: string; // a255;
 
   constructor(partial: Partial<Srassoc>) {
     Object.assign(this, partial);
