@@ -48,3 +48,7 @@ function emailPdf() {
   };
   req.send();
 }
+
+function back() {
+  window.history.go(-1);
+}

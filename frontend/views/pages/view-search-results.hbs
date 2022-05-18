@@ -11,6 +11,7 @@
           </div>
           <div class='col-sm-1'>
             <p id="searchCriteria"></p>
+            <p id="searchCriteria2"></p>
           </div>
         </div>
         <div class='row'>
@@ -43,6 +44,12 @@
                 </tr>
               </tbody>
             </table>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-4">
+                <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+              </div>
+            </div>
             <label>
               Email:</label><input id="emailInput" value="">
           </div>
@@ -52,14 +59,18 @@
     <script>
         var searchType = localStorage.getItem('currentSearch')
         var searchCriteria = localStorage.getItem('searchCriteria')
+        var searchCriteria2 = localStorage.getItem('searchCriteria2')
         if (searchType == 'pid') {
             document.getElementById('searchType').innerHTML = "Parcel ID Search Results";
         } else if (searchType == 'clf') {
             document.getElementById('searchType').innerHTML = "Crown Lands File Search Results";
         } else if (searchType == 'clp') {
             document.getElementById('searchType').innerHTML = "Crown Lands PIN Search Results";
+        } else if (searchType == 'adr') {
+          document.getElementById('searchType').innerHTML = "Address Search Results"
         }
         document.getElementById('searchCriteria').innerHTML = searchCriteria;
+        document.getElementById('searchCriteria2').innerHTML = searchCriteria2;
     </script>
   {{/inline}}
 {{/template}}
