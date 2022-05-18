@@ -25,7 +25,11 @@
             </div>
         </div>
         <div class="row">
-            <button type="submit" class="btn btn-primary m-2">Display and Send to Mailbox</button>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-4">
+              <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+              <button onclick="searchBy()" id="searchButton" class="btn btn-primary m-2">View Search Results</button>
+            </div>
         </div>
         <div class="row">
           <div id="line"><hr /></div>
@@ -41,5 +45,13 @@
         </div>
       </div>
     </main>
+    <script>
+        function searchBy() {
+            localStorage.setItem('currentSearch','adr');
+            localStorage.setItem('searchCriteria', document.getElementById('address').value);
+            localStorage.setItem('searchCriteria2', document.getElementById('city').value);
+            window.location.href = "/view-search-results";
+        }
+    </script>
   {{/inline}}
 {{/template}}
