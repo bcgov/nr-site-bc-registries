@@ -37,6 +37,11 @@ export class SrassocsController {
     return this.srassocsService.update(+id, updateSrassocDto);
   }
 
+  @Delete()
+  removeAll() {
+    return this.srassocsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srassocsService.remove(+id);

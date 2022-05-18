@@ -8,5 +8,6 @@ import { Srprfuse } from "./entities/srprfuse.entity";
   imports: [TypeOrmModule.forFeature([Srprfuse])],
   controllers: [SrprfusesController],
   providers: [SrprfusesService],
+  exports: [SrprfusesService, TypeOrmModule.forFeature([Srprfuse])]
 })
 export class SrprfusesModule {}

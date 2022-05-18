@@ -37,6 +37,17 @@ export class SrmeasursController {
     return this.srmeasursService.update(+id, updateSrmeasurDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srmeasursService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srmeasursService.remove(entry.id);
+      counter++;
+    }
+    return `${SrmeasursController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srmeasursService.remove(+id);

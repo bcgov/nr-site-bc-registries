@@ -37,6 +37,17 @@ export class SraecassController {
     return this.sraecassService.update(+id, updateSraecassDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.sraecassService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.sraecassService.remove(entry.id);
+      counter++;
+    }
+    return `${SraecassController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.sraecassService.remove(+id);

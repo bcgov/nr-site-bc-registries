@@ -37,6 +37,11 @@ export class SreventsController {
     return this.sreventsService.update(+id, updateSreventDto);
   }
 
+  @Delete()
+  removeAll() {
+    return this.sreventsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.sreventsService.remove(+id);

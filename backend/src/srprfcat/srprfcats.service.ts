@@ -34,6 +34,18 @@ export class SrprfcatsService {
     await this.srprfcatsRepository.update({ id }, updateSrprfcatDto);
     return this.findOne(id);
   }
+  
+  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.srprfcatsRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
+  }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {
     try {

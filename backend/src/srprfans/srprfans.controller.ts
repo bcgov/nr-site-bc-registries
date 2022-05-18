@@ -37,6 +37,11 @@ export class SrprfansController {
     return this.srprfansService.update(+id, updateSrprfanDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srprfansService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srprfansService.remove(+id);

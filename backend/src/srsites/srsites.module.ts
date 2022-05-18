@@ -8,5 +8,6 @@ import { Srsite } from "./entities/srsite.entity";
   imports: [TypeOrmModule.forFeature([Srsite])],
   controllers: [SrsitesController],
   providers: [SrsitesService],
+  exports: [SrsitesService, TypeOrmModule.forFeature([Srsite])],
 })
 export class SrsitesModule {}

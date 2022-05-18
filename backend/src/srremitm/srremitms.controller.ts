@@ -37,6 +37,17 @@ export class SrremitmsController {
     return this.srremitmsService.update(+id, updateSrremitmDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srremitmsService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srremitmsService.remove(entry.id);
+      counter++;
+    }
+    return `${SrremitmsController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srremitmsService.remove(+id);

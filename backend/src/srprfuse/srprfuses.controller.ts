@@ -36,6 +36,11 @@ export class SrprfusesController {
   update(@Param("id") id: string, @Body() updateSrprfuseDto: UpdateSrprfuseDto) {
     return this.srprfusesService.update(+id, updateSrprfuseDto);
   }
+  
+  @Delete()
+  async removeAll() {
+    return this.srprfusesService.removeAll();
+  }
 
   @Delete(":id")
   remove(@Param("id") id: string) {

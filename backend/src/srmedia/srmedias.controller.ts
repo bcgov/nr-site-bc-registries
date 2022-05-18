@@ -37,6 +37,17 @@ export class SrmediasController {
     return this.srmediasService.update(+id, updateSrmediaDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srmediasService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srmediasService.remove(entry.id);
+      counter++;
+    }
+    return `${SrmediasController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srmediasService.remove(+id);

@@ -37,6 +37,11 @@ export class SrdatesController {
     return this.srdatesService.update(+id, updateSrdateDto);
   }
 
+  @Delete()
+  removeAll() {
+    return this.srdatesService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srdatesService.remove(+id);

@@ -37,6 +37,11 @@ export class SrparrolsController {
     return this.srparrolsService.update(+id, updateSrparrolDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srparrolsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srparrolsService.remove(+id);

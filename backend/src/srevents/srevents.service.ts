@@ -32,6 +32,18 @@ export class SreventsService {
     return this.findOne(id);
   }
 
+  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.sreventsRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
+  }
+
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {
     try {
       await this.sreventsRepository.delete(id);

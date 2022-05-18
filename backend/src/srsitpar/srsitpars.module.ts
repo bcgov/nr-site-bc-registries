@@ -8,5 +8,6 @@ import { Srsitpar } from "./entities/srsitpar.entity";
   imports: [TypeOrmModule.forFeature([Srsitpar])],
   controllers: [SrsitparsController],
   providers: [SrsitparsService],
+  exports: [SrsitparsService, TypeOrmModule.forFeature([Srsitpar])],
 })
 export class SrsitparsModule {}

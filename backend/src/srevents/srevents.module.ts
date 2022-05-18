@@ -8,5 +8,6 @@ import { Srevent } from "./entities/srevent.entity";
   imports: [TypeOrmModule.forFeature([Srevent])],
   controllers: [SreventsController],
   providers: [SreventsService],
+  exports: [SreventsService, TypeOrmModule.forFeature([Srevent])]
 })
 export class SreventsModule {}

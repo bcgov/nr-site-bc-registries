@@ -52,7 +52,7 @@ export class SiteRegistryService {
     };
 
     // remove all request
-    await lastValueFrom(
+    const deleteResponse = await lastValueFrom(
       this.httpService.delete(requestUrl, requestConfig).pipe(
         map((res) => {
           console.log(res.data);
@@ -62,12 +62,11 @@ export class SiteRegistryService {
     console.log('delete request sent');
     // post request
     for (const data of tableEntries) {
-      console.log('SENDING A POST REQUEST');
       // console.log(data);
       await lastValueFrom(
         this.httpService.post(requestUrl, data, requestConfig).pipe(
           map((res) => {
-            console.log(res.data);
+            // console.log(res.data);
           }),
         ),
       );
@@ -83,6 +82,6 @@ export class SiteRegistryService {
     //       }),
     //     ),
     //   );
-    return 'hello';
+    return {message: 'hello'};
   }
 }

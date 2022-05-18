@@ -37,6 +37,11 @@ export class SrsitesController {
     return this.srsitesService.update(+id, updateSrsiteDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srsitesService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srsitesService.remove(+id);

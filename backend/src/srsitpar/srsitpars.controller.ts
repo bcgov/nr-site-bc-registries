@@ -37,6 +37,11 @@ export class SrsitparsController {
     return this.srsitparsService.update(+id, updateSrsitparDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srsitparsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srsitparsService.remove(+id);

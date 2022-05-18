@@ -37,6 +37,11 @@ export class SrprfquesController {
     return this.srprfquesService.update(+id, updateSrprfqueDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srprfquesService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srprfquesService.remove(+id);

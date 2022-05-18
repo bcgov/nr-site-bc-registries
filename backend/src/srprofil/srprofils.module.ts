@@ -8,5 +8,6 @@ import { Srprofil } from "./entities/srprofil.entity";
   imports: [TypeOrmModule.forFeature([Srprofil])],
   controllers: [SrprofilsController],
   providers: [SrprofilsService],
+  exports: [SrprofilsService, TypeOrmModule.forFeature([Srprofil])],
 })
 export class SrprofilsModule {}

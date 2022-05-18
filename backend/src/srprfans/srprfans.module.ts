@@ -8,5 +8,6 @@ import { Srprfan } from "./entities/srprfan.entity";
   imports: [TypeOrmModule.forFeature([Srprfan])],
   controllers: [SrprfansController],
   providers: [SrprfansService],
+  exports: [SrprfansService, TypeOrmModule.forFeature([Srprfan])],
 })
 export class SrprfansModule {}

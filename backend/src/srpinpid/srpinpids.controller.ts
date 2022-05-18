@@ -37,6 +37,11 @@ export class SrpinpidsController {
     return this.srpinpidsService.update(+id, updateSrpinpidDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srpinpidsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srpinpidsService.remove(+id);

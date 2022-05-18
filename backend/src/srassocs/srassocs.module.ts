@@ -8,5 +8,6 @@ import { Srassoc } from "./entities/srassoc.entity";
   imports: [TypeOrmModule.forFeature([Srassoc])],
   controllers: [SrassocsController],
   providers: [SrassocsService],
+  exports: [SrassocsService, TypeOrmModule.forFeature([Srassoc])]
 })
 export class SrassocsModule {}

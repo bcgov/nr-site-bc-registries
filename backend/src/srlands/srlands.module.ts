@@ -8,5 +8,6 @@ import { Srland } from "./entities/srland.entity";
   imports: [TypeOrmModule.forFeature([Srland])],
   controllers: [SrlandsController],
   providers: [SrlandsService],
+  exports: [SrlandsService, TypeOrmModule.forFeature([Srland])],
 })
 export class SrlandsModule {}

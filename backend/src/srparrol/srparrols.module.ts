@@ -8,5 +8,6 @@ import { Srparrol } from "./entities/srparrol.entity";
   imports: [TypeOrmModule.forFeature([Srparrol])],
   controllers: [SrparrolsController],
   providers: [SrparrolsService],
+  exports: [SrparrolsService, TypeOrmModule.forFeature([Srparrol])],
 })
 export class SrparrolsModule {}

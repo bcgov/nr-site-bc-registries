@@ -37,6 +37,17 @@ export class SrmeapopsController {
     return this.srmeapopsService.update(+id, updateSrmeapopDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srmeapopsService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srmeapopsService.remove(entry.id);
+      counter++;
+    }
+    return `${SrmeapopsController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srmeapopsService.remove(+id);

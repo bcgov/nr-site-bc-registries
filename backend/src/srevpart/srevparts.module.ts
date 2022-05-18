@@ -8,5 +8,6 @@ import { Srevpart } from "./entities/srevpart.entity";
   imports: [TypeOrmModule.forFeature([Srevpart])],
   controllers: [SrevpartsController],
   providers: [SrevpartsService],
+  exports: [SrevpartsService, TypeOrmModule.forFeature([Srevpart])],
 })
 export class SrevpartsModule {}

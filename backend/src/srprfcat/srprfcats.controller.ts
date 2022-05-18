@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from "@nestjs/common";
+import { ModuleRef } from '@nestjs/core'
 import { ApiTags } from "@nestjs/swagger";
 import { SrprfcatsService } from "./srprfcats.service";
 import { CreateSrprfcatDto } from "./dto/create-srprfcat.dto";
@@ -15,17 +16,15 @@ import { UpdateSrprfcatDto } from "./dto/update-srprfcat.dto";
 @ApiTags("srprfcats")
 @Controller("srprfcats")
 export class SrprfcatsController {
-  constructor(private readonly srprfcatsService: SrprfcatsService) {}
+  constructor(private readonly srprfcatsService: SrprfcatsService, private moduleRef: ModuleRef) {}
 
   @Post()
   create(@Body() createSrprfcatDto: CreateSrprfcatDto) {
-    console.log("POST REQUEST");
     return this.srprfcatsService.create(createSrprfcatDto);
   }
 
   @Get()
   findAll() {
-    console.log("GET REQUEST");
     return this.srprfcatsService.findAll();
   }
 
@@ -43,13 +42,8 @@ export class SrprfcatsController {
   }
 
   @Delete()
-  async removeAll() {
-    console.log("DELETE REQUEST");
-    const oldData = await this.srprfcatsService.findAll();
-    for (const entry of oldData) {
-      await this.srprfcatsService.remove(entry.id);
-    }
-    return "Old data has been removed";
+  removeAll() {
+    return this.srprfcatsService.removeAll();
   }
 
   @Delete(":id")

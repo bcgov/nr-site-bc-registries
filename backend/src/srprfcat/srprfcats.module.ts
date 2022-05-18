@@ -8,5 +8,6 @@ import { Srprfcat } from "./entities/srprfcat.entity";
   imports: [TypeOrmModule.forFeature([Srprfcat])],
   controllers: [SrprfcatsController],
   providers: [SrprfcatsService],
+  exports: [SrprfcatsService, TypeOrmModule.forFeature([Srprfcat])]
 })
 export class SrprfcatsModule {}

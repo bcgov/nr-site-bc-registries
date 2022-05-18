@@ -37,6 +37,11 @@ export class SrlandsController {
     return this.srlandsService.update(+id, updateSrlandDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srlandsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srlandsService.remove(+id);

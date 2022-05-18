@@ -8,5 +8,6 @@ import { Srsitdoc } from "./entities/srsitdoc.entity";
   imports: [TypeOrmModule.forFeature([Srsitdoc])],
   controllers: [SrsitdocsController],
   providers: [SrsitdocsService],
+  exports: [SrsitdocsService, TypeOrmModule.forFeature([Srsitdoc])],
 })
 export class SrsitdocsModule {}

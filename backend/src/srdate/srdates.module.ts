@@ -8,5 +8,6 @@ import { Srdate } from "./entities/srdate.entity";
   imports: [TypeOrmModule.forFeature([Srdate])],
   controllers: [SrdatesController],
   providers: [SrdatesService],
+  exports: [SrdatesService, TypeOrmModule.forFeature([Srdate])]
 })
 export class SrdatesModule {}

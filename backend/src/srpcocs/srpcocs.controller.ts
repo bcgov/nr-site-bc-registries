@@ -37,6 +37,17 @@ export class SrpcocsController {
     return this.srpcocsService.update(+id, updateSrpcocDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srpcocsService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srpcocsService.remove(entry.id);
+      counter++;
+    }
+    return `${SrpcocsController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srpcocsService.remove(+id);

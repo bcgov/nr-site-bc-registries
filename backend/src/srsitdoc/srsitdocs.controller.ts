@@ -37,6 +37,11 @@ export class SrsitdocsController {
     return this.srsitdocsService.update(+id, updateSrsitdocDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srsitdocsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srsitdocsService.remove(+id);

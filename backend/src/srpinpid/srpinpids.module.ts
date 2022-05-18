@@ -8,5 +8,6 @@ import { Srpinpid } from "./entities/srpinpid.entity";
   imports: [TypeOrmModule.forFeature([Srpinpid])],
   controllers: [SrpinpidsController],
   providers: [SrpinpidsService],
+  exports: [SrpinpidsService, TypeOrmModule.forFeature([Srpinpid])],
 })
 export class SrpinpidsModule {}

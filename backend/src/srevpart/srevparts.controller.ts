@@ -37,6 +37,11 @@ export class SrevpartsController {
     return this.srevpartsService.update(+id, updateSrevpartDto);
   }
 
+  @Delete()
+  removeAll() {
+    return this.srevpartsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srevpartsService.remove(+id);

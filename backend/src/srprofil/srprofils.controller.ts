@@ -37,6 +37,11 @@ export class SrprofilsController {
     return this.srprofilsService.update(+id, updateSrprofilDto);
   }
 
+  @Delete()
+  async removeAll() {
+    return this.srprofilsService.removeAll();
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srprofilsService.remove(+id);

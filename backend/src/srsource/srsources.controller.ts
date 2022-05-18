@@ -37,6 +37,17 @@ export class SrsourcesController {
     return this.srsourcesService.update(+id, updateSrsourceDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srsourcesService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srsourcesService.remove(entry.id);
+      counter++;
+    }
+    return `${SrsourcesController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srsourcesService.remove(+id);

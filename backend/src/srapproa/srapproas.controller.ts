@@ -37,6 +37,17 @@ export class SrapproasController {
     return this.srapproasService.update(+id, updateSrapproaDto);
   }
 
+  @Delete()
+  async removeAll() {
+    const oldData = await this.srapproasService.findAll();
+    let counter: number = 0;
+    for (const entry of oldData) {
+      await this.srapproasService.remove(entry.id);
+      counter++;
+    }
+    return `${SrapproasController.name}: ${counter} entries of old data removed.`;
+  }
+
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.srapproasService.remove(+id);

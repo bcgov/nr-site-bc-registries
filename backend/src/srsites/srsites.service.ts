@@ -32,6 +32,18 @@ export class SrsitesService {
     return this.findOne(id);
   }
 
+  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.srsitesRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
+  }
+
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {
     try {
       await this.srsitesRepository.delete(id);

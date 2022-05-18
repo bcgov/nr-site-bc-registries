@@ -3,7 +3,7 @@ async function testapi() {
   fetch('/site-registry/srprfcats', {
     method: 'GET',
     responseType: 'application/json',
-  }).then((res) => console.log(res));
+  }).then((res) => res.json()).then((resJson) => console.log(resJson));
 }
 
 function getPdf() {
