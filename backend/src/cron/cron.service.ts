@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { CSV_HEADERS } from '../../utils/constants';
-import * as dotenv from 'dotenv';
 import * as csv from 'csvtojson';
 import axios from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
@@ -38,8 +37,6 @@ import { SrsitdocDto } from 'src/srsitdoc/dto/srsitdoc.dto';
 import { SrsitparDto } from 'src/srsitpar/dto/srsitpar.dto';
 import { SrsiteDto } from 'src/srsites/dto/srsite.dto';
 import { SrdocparDto } from 'src/srdocpar/dto/srdocpar.dto';
-
-dotenv.config();
 
 type RawDataObject = {
     srassocs: string;
@@ -139,52 +136,22 @@ export class CronService {
     // receives raw data and parses it
     async parseData(rawData: RawDataObject) {
         const parsedData = {
-            srassocs: await csv().fromString(
-                CSV_HEADERS.SRASSOCS + rawData.srassocs
-            ),
+            srassocs: await csv().fromString(CSV_HEADERS.SRASSOCS + rawData.srassocs),
             srdate: await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate),
-            srdocpar: await csv().fromString(
-                CSV_HEADERS.SRDOCPAR + rawData.srdocpar
-            ),
-            srevents: await csv().fromString(
-                CSV_HEADERS.SREVENTS + rawData.srevents
-            ),
-            srevpart: await csv().fromString(
-                CSV_HEADERS.SREVPART + rawData.srevpart
-            ),
-            srlands: await csv().fromString(
-                CSV_HEADERS.SRLANDS + rawData.srlands
-            ),
-            srparrol: await csv().fromString(
-                CSV_HEADERS.SRPARROL + rawData.srparrol
-            ),
-            srpinpid: await csv().fromString(
-                CSV_HEADERS.SRPINPID + rawData.srpinpid
-            ),
-            srprfans: await csv().fromString(
-                CSV_HEADERS.SRPRFANS + rawData.srprfans
-            ),
-            srprfcat: await csv().fromString(
-                CSV_HEADERS.SRPRFCAT + rawData.srprfcat
-            ),
-            srprfque: await csv().fromString(
-                CSV_HEADERS.SRPRFQUE + rawData.srprfque
-            ),
-            srprfuse: await csv().fromString(
-                CSV_HEADERS.SRPRFUSE + rawData.srprfuse
-            ),
-            srprofil: await csv().fromString(
-                CSV_HEADERS.SRPROFIL + rawData.srprofil
-            ),
-            srsitdoc: await csv().fromString(
-                CSV_HEADERS.SRSITDOC + rawData.srsitdoc
-            ),
-            srsites: await csv().fromString(
-                CSV_HEADERS.SRSITES + rawData.srsites
-            ),
-            srsitpar: await csv().fromString(
-                CSV_HEADERS.SRSITPAR + rawData.srsitpar
-            ),
+            srdocpar: await csv().fromString(CSV_HEADERS.SRDOCPAR + rawData.srdocpar),
+            srevents: await csv().fromString(CSV_HEADERS.SREVENTS + rawData.srevents),
+            srevpart: await csv().fromString(CSV_HEADERS.SREVPART + rawData.srevpart),
+            srlands: await csv().fromString(CSV_HEADERS.SRLANDS + rawData.srlands),
+            srparrol: await csv().fromString(CSV_HEADERS.SRPARROL + rawData.srparrol),
+            srpinpid: await csv().fromString(CSV_HEADERS.SRPINPID + rawData.srpinpid),
+            srprfans: await csv().fromString(CSV_HEADERS.SRPRFANS + rawData.srprfans),
+            srprfcat: await csv().fromString(CSV_HEADERS.SRPRFCAT + rawData.srprfcat),
+            srprfque: await csv().fromString(CSV_HEADERS.SRPRFQUE + rawData.srprfque),
+            srprfuse: await csv().fromString(CSV_HEADERS.SRPRFUSE + rawData.srprfuse),
+            srprofil: await csv().fromString(CSV_HEADERS.SRPROFIL + rawData.srprofil),
+            srsitdoc: await csv().fromString(CSV_HEADERS.SRSITDOC + rawData.srsitdoc),
+            srsites: await csv().fromString(CSV_HEADERS.SRSITES + rawData.srsites),
+            srsitpar: await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar),
         };
 
         console.log('parseData complete');
@@ -284,11 +251,7 @@ export class CronService {
     async getCsv(fileName: string) {
         const client = axios.create();
         let url =
-            'https://' +
-            process.env.object_store_host +
-            '/' +
-            process.env.object_store_bucket +
-            `/dbdump/${fileName}`;
+            'https://' + process.env.object_store_host + '/' + process.env.object_store_bucket + `/dbdump/${fileName}`;
         let object_store_userid = process.env.object_store_userid;
         let object_store_secret = process.env.object_store_secret;
         const interceptor = aws4Interceptor(
