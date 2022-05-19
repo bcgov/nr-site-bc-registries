@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { CSV_HEADERS } from '../../utils/constants';
-import * as axios from 'axios';
+import * as dotenv from 'dotenv';
+import * as csv from 'csvtojson';
+import * as fs from 'fs';
+import axios from 'axios';
+import { aws4Interceptor } from 'aws4-axios';
 
 import { SrassocsService } from '../srassocs/srassocs.service';
 import { SrdatesService } from '../srdate/srdates.service';
@@ -36,6 +40,8 @@ import { SrsitparDto } from 'src/srsitpar/dto/srsitpar.dto';
 import { SrsiteDto } from 'src/srsites/dto/srsite.dto';
 import { SrdocparDto } from 'src/srdocpar/dto/srdocpar.dto';
 
+dotenv.config();
+
 type RawDataObject = {
     srassocs: string;
     srdate: string;
@@ -53,25 +59,6 @@ type RawDataObject = {
     srsitdoc: string;
     srsites: string;
     srsitpar: string;
-};
-
-type ParsedDataObject = {
-    srassocs: [SrassocDto];
-    srdate: [SrdateDto];
-    srdocpar: [SrdocparDto];
-    srevents: [SreventDto];
-    srevpart: [SrevpartDto];
-    srlands: [SrlandDto];
-    srparrol: [SrparrolDto];
-    srpinpid: [SrpinpidDto];
-    srprfans: [SrprfanDto];
-    srprfcat: [SrprfcatDto];
-    srprfque: [SrprfqueDto];
-    srprfuse: [SrprfuseDto];
-    srprofil: [SrprofilDto];
-    srsitdoc: [SrsitdocDto];
-    srsites: [SrsiteDto];
-    srsitpar: [SrsitparDto];
 };
 
 @Injectable()
@@ -96,7 +83,7 @@ export class CronService {
     ) {}
 
     // @Cron('0,15,30,45 * * * * *')
-    @Cron('0 30 * * * *')
+    @Cron('0 4 * * * *')
     async updateTables() {
         console.log('update tables job starting');
         // grab data from bucket
@@ -104,7 +91,7 @@ export class CronService {
         // call removeall route on each Service
         await this.removePreviousData();
         // call create on each json array entry
-        // await this.sendDataToTables(data);
+        await this.sendDataToTables(data);
         console.log('update tables job complete');
     }
 
@@ -128,7 +115,7 @@ export class CronService {
         let srsitpar = await this.getCsv('srsitpar.csv');
         let srsites = await this.getCsv('srsites.csv');
 
-        let rawData: RawDataObject = {
+        let rawData = {
             srassocs: srassocs,
             srdate: srdate,
             srdocpar: srdocpar,
@@ -146,17 +133,65 @@ export class CronService {
             srsites: srsites,
             srsitpar: srsitpar,
         };
-
+        console.log('moving to parseData');
         return this.parseData(rawData);
     }
 
     // receives raw data and parses it
     async parseData(rawData: RawDataObject) {
-        // have to parse each item in the array
-        return {
-            raw1: [{ var1: '1' }, { var1: '2' }, { var3: '3' }],
-            raw2: [{ var1: 'a' }, { var1: 'b' }, { var1: 'c' }],
+        const parsedData = {
+            srassocs: await csv().fromString(
+                CSV_HEADERS.SRASSOCS + rawData.srassocs
+            ),
+            srdate: await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate),
+            srdocpar: await csv().fromString(
+                CSV_HEADERS.SRDOCPAR + rawData.srdocpar
+            ),
+            srevents: await csv().fromString(
+                CSV_HEADERS.SREVENTS + rawData.srevents
+            ),
+            srevpart: await csv().fromString(
+                CSV_HEADERS.SREVPART + rawData.srevpart
+            ),
+            srlands: await csv().fromString(
+                CSV_HEADERS.SRLANDS + rawData.srlands
+            ),
+            srparrol: await csv().fromString(
+                CSV_HEADERS.SRPARROL + rawData.srparrol
+            ),
+            srpinpid: await csv().fromString(
+                CSV_HEADERS.SRPINPID + rawData.srpinpid
+            ),
+            srprfans: await csv().fromString(
+                CSV_HEADERS.SRPRFANS + rawData.srprfans
+            ),
+            srprfcat: await csv().fromString(
+                CSV_HEADERS.SRPRFCAT + rawData.srprfcat
+            ),
+            srprfque: await csv().fromString(
+                CSV_HEADERS.SRPRFQUE + rawData.srprfque
+            ),
+            srprfuse: await csv().fromString(
+                CSV_HEADERS.SRPRFUSE + rawData.srprfuse
+            ),
+            srprofil: await csv().fromString(
+                CSV_HEADERS.SRPROFIL + rawData.srprofil
+            ),
+            srsitdoc: await csv().fromString(
+                CSV_HEADERS.SRSITDOC + rawData.srsitdoc
+            ),
+            srsites: await csv().fromString(
+                CSV_HEADERS.SRSITES + rawData.srsites
+            ),
+            srsitpar: await csv().fromString(
+                CSV_HEADERS.SRSITPAR + rawData.srsitpar
+            ),
         };
+
+        console.log('parseData complete');
+
+        // have to parse each item in the array
+        return parsedData;
     }
 
     async removePreviousData() {
@@ -179,11 +214,66 @@ export class CronService {
         await this.srsitesService.removeAll();
     }
 
-    async sendDataToTables(parsedData: ParsedDataObject) {
-        return 'success';
+    async sendDataToTables(parsedData) {
+        const srassocs: SrassocDto = parsedData.srassocs;
+        await this.srassocsService.create(srassocs);
+        const srdate: SrdateDto = parsedData.srdate;
+        await this.srdatesService.create(srdate);
+        const srdocpar: SrdocparDto = parsedData.srdocpar;
+        await this.srdocparsService.create(srdocpar);
+        const srevents: SreventDto = parsedData.srevents;
+        await this.sreventsService.create(srevents);
+        const srevpart: SrevpartDto = parsedData.srevpart;
+        await this.srevpartsService.create(srevpart);
+        const srlands: SrlandDto = parsedData.srlands;
+        await this.srlandsService.create(srlands);
+        const srparrol: SrparrolDto = parsedData.srparrol;
+        await this.srparrolsService.create(srparrol);
+        const srpinpid: SrpinpidDto = parsedData.srpinpid;
+        await this.srpinpidsService.create(srpinpid);
+        const srprfans: SrprfanDto = parsedData.srprfans;
+        await this.srprfansService.create(srprfans);
+        const srprfcat: SrprfcatDto = parsedData.srprfcat;
+        await this.srprfcatsService.create(srprfcat);
+        const srprfque: SrprfqueDto = parsedData.srprfque;
+        await this.srprfquesService.create(srprfque);
+        const srprfuse: SrprfuseDto = parsedData.srprfuse;
+        await this.srprfusesService.create(srprfuse);
+        const srprofil: SrprofilDto = parsedData.srprofil;
+        await this.srprofilsService.create(srprofil);
+        const srsitdoc: SrsitdocDto = parsedData.srsitdoc;
+        await this.srsitdocsService.create(srsitdoc);
+        const srsitpar: SrsitparDto = parsedData.srsitpar;
+        await this.srsitparsService.create(srsitpar);
+        const srsites: SrsiteDto = parsedData.srsites;
+        await this.srsitesService.create(srsites);
+        console.log('added data to tables');
     }
 
     async getCsv(fileName: string) {
-        return '';
+        const client = axios.create();
+        let url =
+            'https://' +
+            process.env.object_store_host +
+            '/' +
+            process.env.object_store_bucket +
+            `/dbdump/${fileName}`;
+        let object_store_userid = process.env.object_store_userid;
+        let object_store_secret = process.env.object_store_secret;
+        const interceptor = aws4Interceptor(
+            {
+                region: 'us-east-1',
+                service: 'execute-api',
+            },
+            {
+                accessKeyId: object_store_userid,
+                secretAccessKey: object_store_secret,
+            }
+        );
+        client.interceptors.request.use(interceptor);
+        return client.get(url).then((res) => {
+            console.log('file received: ' + fileName);
+            return res.data;
+        });
     }
 }

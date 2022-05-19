@@ -50,6 +50,8 @@
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/testing": "^8.4.4",
     "@nestjs/typeorm": "^8.0.3",
+    "aws4-axios": "^2.4.9",
+    "csvtojson": "^2.0.10",
     "dotenv": "^16.0.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
