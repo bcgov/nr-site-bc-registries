@@ -56,3 +56,13 @@ function emailPdf() {
 function back() {
     window.history.go(-1);
 }
+
+function areaSearch() {
+    var postalCodeTab = document.getElementById('pills-postalcode');
+    var coordinatesTab = document.getElementById('pills-coordinates');
+    if (postalCodeTab.classList.contains('active')) {
+        postalCodeCircle();
+    } else if (coordinatesTab.classList.contains('active')) {
+        coordinateCircle();
+    }
+}

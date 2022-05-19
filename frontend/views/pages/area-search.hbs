@@ -28,12 +28,6 @@
                             <input type="text" class="form-control" id="postalCodeInput" value="V8V2L6" maxlength="6">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6 p-3">
-                            <button class="btn btn-secondary mr-1" id="backButton" onclick="back()">Back</button>
-                            <button class="btn btn-primary" id="postalCodeSearch" onclick="postalCodeCircle()">Search</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="tab-pane fade" id="pills-coordinates" role="tabpanel" aria-labelledby="pills-coordinates-tab">
                     <div class="row mt-2 ml-4">
@@ -52,11 +46,6 @@
                             <input type="text" pattern="\d*" class="form-control" id="longitudeInput" value="-123.36500" min="-180" max="180" step="0.001" maxlength="8">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-4 p-3">
-                            <button class="btn btn-primary" id="coordinateSearch" onclick="coordinateCircle()">Search</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -68,6 +57,14 @@
                 <div style="padding:1em">
                     <input type="radio" id="sizeLarge" name="circle" value="large">
                     <label for="sizeLarge">Large - $101.00</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-7"></div>
+                <div class="col-sm-5">
+                    <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+                    <button onclick="areaSearch()" id="searchButton" class="btn btn-primary m-2">Search</button>
                 </div>
             </div>
         </div>
