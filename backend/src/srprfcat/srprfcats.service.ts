@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srprfcat } from "./entities/srprfcat.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srprfcat } from './entities/srprfcat.entity';
 
-import { CreateSrprfcatDto } from "./dto/create-srprfcat.dto";
-import { UpdateSrprfcatDto } from "./dto/update-srprfcat.dto";
+import { CreateSrprfcatDto } from './dto/create-srprfcat.dto';
+import { UpdateSrprfcatDto } from './dto/update-srprfcat.dto';
 
 @Injectable()
 export class SrprfcatsService {
@@ -27,15 +27,12 @@ export class SrprfcatsService {
     return this.srprfcatsRepository.findOneOrFail(id);
   }
 
-  async update(
-    id: number,
-    updateSrprfcatDto: UpdateSrprfcatDto
-  ): Promise<Srprfcat> {
+  async update(id: number, updateSrprfcatDto: UpdateSrprfcatDto): Promise<Srprfcat> {
     await this.srprfcatsRepository.update({ id }, updateSrprfcatDto);
     return this.findOne(id);
   }
-  
-  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
     try {
       const oldData = await this.findAll();
       for (const entry of oldData) {

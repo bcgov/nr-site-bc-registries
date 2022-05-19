@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrevpartsService } from "./srevparts.service";
-import { CreateSrevpartDto } from "./dto/create-srevpart.dto";
-import { UpdateSrevpartDto } from "./dto/update-srevpart.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrevpartsService } from './srevparts.service';
+import { CreateSrevpartDto } from './dto/create-srevpart.dto';
+import { UpdateSrevpartDto } from './dto/update-srevpart.dto';
 
-@ApiTags("srevparts")
-@Controller("srevparts")
+@ApiTags('srevparts')
+@Controller('srevparts')
 export class SrevpartsController {
   constructor(private readonly srevpartsService: SrevpartsService) {}
 
@@ -27,13 +19,13 @@ export class SrevpartsController {
     return this.srevpartsService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srevpartsService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrevpartDto: UpdateSrevpartDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrevpartDto: UpdateSrevpartDto) {
     return this.srevpartsService.update(+id, updateSrevpartDto);
   }
 
@@ -42,8 +34,8 @@ export class SrevpartsController {
     return this.srevpartsService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srevpartsService.remove(+id);
   }
 }

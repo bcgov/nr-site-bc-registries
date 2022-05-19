@@ -1,10 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Srdate {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column("varchar", { length: 10 })
+  @Column('varchar', { length: 10 })
   downloaddate: string;
 
   constructor(partial: Partial<Srdate>) {

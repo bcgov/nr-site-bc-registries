@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { SrsitparsService } from "./srsitpars.service";
-import { SrsitparsController } from "./srsitpars.controller";
-import { Srsitpar } from "./entities/srsitpar.entity";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SrsitparsService } from './srsitpars.service';
+import { SrsitparsController } from './srsitpars.controller';
+import { Srsitpar } from './entities/srsitpar.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Srsitpar])],

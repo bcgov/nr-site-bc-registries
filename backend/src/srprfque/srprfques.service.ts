@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srprfque } from "./entities/srprfque.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srprfque } from './entities/srprfque.entity';
 
-import { CreateSrprfqueDto } from "./dto/create-srprfque.dto";
-import { UpdateSrprfqueDto } from "./dto/update-srprfque.dto";
+import { CreateSrprfqueDto } from './dto/create-srprfque.dto';
+import { UpdateSrprfqueDto } from './dto/update-srprfque.dto';
 
 @Injectable()
 export class SrprfquesService {
@@ -32,7 +32,7 @@ export class SrprfquesService {
     return this.findOne(id);
   }
 
-  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
     try {
       const oldData = await this.findAll();
       for (const entry of oldData) {

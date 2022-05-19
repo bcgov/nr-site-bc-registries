@@ -1,3 +1,3 @@
-import { CreateSrsitparDto } from "./create-srsitpar.dto";
+import { CreateSrsitparDto } from './create-srsitpar.dto';
 
 export class UpdateSrsitparDto extends CreateSrsitparDto {}

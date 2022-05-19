@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrprfansService } from "./srprfans.service";
-import { CreateSrprfanDto } from "./dto/create-srprfan.dto";
-import { UpdateSrprfanDto } from "./dto/update-srprfan.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrprfansService } from './srprfans.service';
+import { CreateSrprfanDto } from './dto/create-srprfan.dto';
+import { UpdateSrprfanDto } from './dto/update-srprfan.dto';
 
-@ApiTags("srprfans")
-@Controller("srprfans")
+@ApiTags('srprfans')
+@Controller('srprfans')
 export class SrprfansController {
   constructor(private readonly srprfansService: SrprfansService) {}
 
@@ -27,13 +19,13 @@ export class SrprfansController {
     return this.srprfansService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srprfansService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrprfanDto: UpdateSrprfanDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrprfanDto: UpdateSrprfanDto) {
     return this.srprfansService.update(+id, updateSrprfanDto);
   }
 
@@ -42,8 +34,8 @@ export class SrprfansController {
     return this.srprfansService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srprfansService.remove(+id);
   }
 }

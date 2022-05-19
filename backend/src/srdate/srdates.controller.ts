@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrdatesService } from "./srdates.service";
-import { CreateSrdateDto } from "./dto/create-srdate.dto";
-import { UpdateSrdateDto } from "./dto/update-srdate.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrdatesService } from './srdates.service';
+import { CreateSrdateDto } from './dto/create-srdate.dto';
+import { UpdateSrdateDto } from './dto/update-srdate.dto';
 
-@ApiTags("srdates")
-@Controller("srdates")
+@ApiTags('srdates')
+@Controller('srdates')
 export class SrdatesController {
   constructor(private readonly srdatesService: SrdatesService) {}
 
@@ -27,13 +19,13 @@ export class SrdatesController {
     return this.srdatesService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srdatesService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrdateDto: UpdateSrdateDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrdateDto: UpdateSrdateDto) {
     return this.srdatesService.update(+id, updateSrdateDto);
   }
 
@@ -42,8 +34,8 @@ export class SrdatesController {
     return this.srdatesService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srdatesService.remove(+id);
   }
 }

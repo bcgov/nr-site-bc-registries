@@ -1,10 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { SrprfqueService } from "./srprfques.service";
-import { Srprfque } from "./entities/srprfque.entity";
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SrprfqueService } from './srprfques.service';
+import { Srprfque } from './entities/srprfque.entity';
 
-describe("SrprfqueService", () => {
+describe('SrprfqueService', () => {
   // let service: SitesService;
   // let repo: Repository<Site>;
   // const oneSiteName = "Test Numone";

@@ -1,3 +1,3 @@
-import { CreateSrdocparDto } from "./create-srdocpar.dto";
+import { CreateSrdocparDto } from './create-srdocpar.dto';
 
 export class UpdateSrdocparDto extends CreateSrdocparDto {}

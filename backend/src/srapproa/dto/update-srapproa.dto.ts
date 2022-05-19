@@ -1,3 +1,3 @@
-import { CreateSrapproaDto } from "./create-srapproa.dto";
+import { CreateSrapproaDto } from './create-srapproa.dto';
 
 export class UpdateSrapproaDto extends CreateSrapproaDto {}

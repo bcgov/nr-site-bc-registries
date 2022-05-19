@@ -1,3 +1,3 @@
-import { CreateSrevpartDto } from "./create-srevpart.dto";
+import { CreateSrevpartDto } from './create-srevpart.dto';
 
 export class UpdateSrevpartDto extends CreateSrevpartDto {}

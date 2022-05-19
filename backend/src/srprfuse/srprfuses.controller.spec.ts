@@ -1,12 +1,11 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { SrprfusesController } from "./srprfuses.controller";
-import { SrprfusesService } from "./srprfuses.service";
-import { Srprfuse } from "./entities/srprfuse.entity";
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { SrprfusesController } from './srprfuses.controller';
+import { SrprfusesService } from './srprfuses.service';
+import { Srprfuse } from './entities/srprfuse.entity';
 
-describe("SrprfuseController", () => {
+describe('SrprfuseController', () => {
   // let controller: SrprfusesController;
-
   // beforeEach(async () => {
   //   const module: TestingModule = await Test.createTestingModule({
   //     controllers: [SrprfusesController],
@@ -18,10 +17,8 @@ describe("SrprfuseController", () => {
   //       },
   //     ],
   //   }).compile();
-
   //   controller = module.get<SrprfusesController>(SrprfusesController);
   // });
-
   // it("should be defined", () => {
   //   expect(controller).toBeDefined();
   // });

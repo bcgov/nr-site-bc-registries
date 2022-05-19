@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { SrevpartsService } from "./srevparts.service";
-import { SrevpartsController } from "./srevparts.controller";
-import { Srevpart } from "./entities/srevpart.entity";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SrevpartsService } from './srevparts.service';
+import { SrevpartsController } from './srevparts.controller';
+import { Srevpart } from './entities/srevpart.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Srevpart])],

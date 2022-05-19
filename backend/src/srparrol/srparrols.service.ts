@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srparrol } from "./entities/srparrol.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srparrol } from './entities/srparrol.entity';
 
-import { CreateSrparrolDto } from "./dto/create-srparrol.dto";
-import { UpdateSrparrolDto } from "./dto/update-srparrol.dto";
+import { CreateSrparrolDto } from './dto/create-srparrol.dto';
+import { UpdateSrparrolDto } from './dto/update-srparrol.dto';
 
 @Injectable()
 export class SrparrolsService {
@@ -32,7 +32,7 @@ export class SrparrolsService {
     return this.findOne(id);
   }
 
-  async removeAll(): Promise<{deleted: boolean; message?: string}> {
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
     try {
       const oldData = await this.findAll();
       for (const entry of oldData) {

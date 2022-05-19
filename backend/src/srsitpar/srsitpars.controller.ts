@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrsitparsService } from "./srsitpars.service";
-import { CreateSrsitparDto } from "./dto/create-srsitpar.dto";
-import { UpdateSrsitparDto } from "./dto/update-srsitpar.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrsitparsService } from './srsitpars.service';
+import { CreateSrsitparDto } from './dto/create-srsitpar.dto';
+import { UpdateSrsitparDto } from './dto/update-srsitpar.dto';
 
-@ApiTags("srsitpars")
-@Controller("srsitpars")
+@ApiTags('srsitpars')
+@Controller('srsitpars')
 export class SrsitparsController {
   constructor(private readonly srsitparsService: SrsitparsService) {}
 
@@ -27,13 +19,13 @@ export class SrsitparsController {
     return this.srsitparsService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srsitparsService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrsitparDto: UpdateSrsitparDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrsitparDto: UpdateSrsitparDto) {
     return this.srsitparsService.update(+id, updateSrsitparDto);
   }
 
@@ -42,8 +34,8 @@ export class SrsitparsController {
     return this.srsitparsService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srsitparsService.remove(+id);
   }
 }
