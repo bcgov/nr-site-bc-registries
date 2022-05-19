@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srmedia } from "./entities/srmedia.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srmedia } from './entities/srmedia.entity';
 
-import { CreateSrmediaDto } from "./dto/create-srmedia.dto";
-import { UpdateSrmediaDto } from "./dto/update-srmedia.dto";
+import { CreateSrmediaDto } from './dto/create-srmedia.dto';
+import { UpdateSrmediaDto } from './dto/update-srmedia.dto';
 
 @Injectable()
 export class SrmediasService {
@@ -30,6 +30,18 @@ export class SrmediasService {
   async update(id: number, updateSrmediaDto: UpdateSrmediaDto): Promise<Srmedia> {
     await this.srmediasRepository.update({ id }, updateSrmediaDto);
     return this.findOne(id);
+  }
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.srmediasRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
   }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {

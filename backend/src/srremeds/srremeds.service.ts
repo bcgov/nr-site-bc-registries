@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srremed } from "./entities/srremed.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srremed } from './entities/srremed.entity';
 
-import { CreateSrremedDto } from "./dto/create-srremed.dto";
-import { UpdateSrremedDto } from "./dto/update-srremed.dto";
+import { CreateSrremedDto } from './dto/create-srremed.dto';
+import { UpdateSrremedDto } from './dto/update-srremed.dto';
 
 @Injectable()
 export class SrremedsService {
@@ -30,6 +30,18 @@ export class SrremedsService {
   async update(id: number, updateSrremedDto: UpdateSrremedDto): Promise<Srremed> {
     await this.srremedsRepository.update({ id }, updateSrremedDto);
     return this.findOne(id);
+  }
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.srremedsRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
   }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {

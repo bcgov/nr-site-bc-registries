@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Sraecass } from "./entities/sraecass.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Sraecass } from './entities/sraecass.entity';
 
-import { CreateSraecassDto } from "./dto/create-sraecass.dto";
-import { UpdateSraecassDto } from "./dto/update-sraecass.dto";
+import { CreateSraecassDto } from './dto/create-sraecass.dto';
+import { UpdateSraecassDto } from './dto/update-sraecass.dto';
 
 @Injectable()
 export class SraecassService {
@@ -27,12 +27,21 @@ export class SraecassService {
     return this.sraecassRepository.findOneOrFail(id);
   }
 
-  async update(
-    id: number,
-    updateSraecassDto: UpdateSraecassDto
-  ): Promise<Sraecass> {
+  async update(id: number, updateSraecassDto: UpdateSraecassDto): Promise<Sraecass> {
     await this.sraecassRepository.update({ id }, updateSraecassDto);
     return this.findOne(id);
+  }
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.sraecassRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
   }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {

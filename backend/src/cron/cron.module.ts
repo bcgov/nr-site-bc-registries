@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { CronService } from './cron.service';
 import { SrassocsModule } from '../srassocs/srassocs.module';
 import { SrassocsService } from '../srassocs/srassocs.service';
@@ -35,6 +36,7 @@ import { SrsitesService } from '../srsites/srsites.service';
 
 @Module({
     imports: [
+        ConfigModule.forRoot(),
         SrassocsModule,
         SrdatesModule,
         SrdocparsModule,

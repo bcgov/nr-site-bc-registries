@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Srmeapop } from "./entities/srmeapop.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Srmeapop } from './entities/srmeapop.entity';
 
-import { CreateSrmeapopDto } from "./dto/create-srmeapop.dto";
-import { UpdateSrmeapopDto } from "./dto/update-srmeapop.dto";
+import { CreateSrmeapopDto } from './dto/create-srmeapop.dto';
+import { UpdateSrmeapopDto } from './dto/update-srmeapop.dto';
 
 @Injectable()
 export class SrmeapopsService {
@@ -30,6 +30,18 @@ export class SrmeapopsService {
   async update(id: number, updateSrmeapopDto: UpdateSrmeapopDto): Promise<Srmeapop> {
     await this.srmeapopsRepository.update({ id }, updateSrmeapopDto);
     return this.findOne(id);
+  }
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.srmeapopsRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
   }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {

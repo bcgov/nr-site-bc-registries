@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Site } from "./entities/site.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Site } from './entities/site.entity';
 
-import { CreateSiteDto } from "./dto/create-site.dto";
-import { UpdateSiteDto } from "./dto/update-site.dto";
+import { CreateSiteDto } from './dto/create-site.dto';
+import { UpdateSiteDto } from './dto/update-site.dto';
 
 @Injectable()
 export class SitesService {
@@ -30,6 +30,18 @@ export class SitesService {
   async update(id: number, updateSiteDto: UpdateSiteDto): Promise<Site> {
     await this.sitesRepository.update({ id }, updateSiteDto);
     return this.findOne(id);
+  }
+
+  async removeAll(): Promise<{ deleted: boolean; message?: string }> {
+    try {
+      const oldData = await this.findAll();
+      for (const entry of oldData) {
+        await this.sitesRepository.delete(entry.id);
+      }
+      return { deleted: true };
+    } catch (err) {
+      return { deleted: false, message: err.message };
+    }
   }
 
   async remove(id: number): Promise<{ deleted: boolean; message?: string }> {

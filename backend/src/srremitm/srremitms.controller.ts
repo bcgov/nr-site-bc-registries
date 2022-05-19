@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrremitmsService } from "./srremitms.service";
-import { CreateSrremitmDto } from "./dto/create-srremitm.dto";
-import { UpdateSrremitmDto } from "./dto/update-srremitm.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrremitmsService } from './srremitms.service';
+import { CreateSrremitmDto } from './dto/create-srremitm.dto';
+import { UpdateSrremitmDto } from './dto/update-srremitm.dto';
 
-@ApiTags("srremitms")
-@Controller("srremitms")
+@ApiTags('srremitms')
+@Controller('srremitms')
 export class SrremitmsController {
   constructor(private readonly srremitmsService: SrremitmsService) {}
 
@@ -27,29 +19,23 @@ export class SrremitmsController {
     return this.srremitmsService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srremitmsService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrremitmDto: UpdateSrremitmDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrremitmDto: UpdateSrremitmDto) {
     return this.srremitmsService.update(+id, updateSrremitmDto);
   }
 
   @Delete()
-  async removeAll() {
-    const oldData = await this.srremitmsService.findAll();
-    let counter: number = 0;
-    for (const entry of oldData) {
-      await this.srremitmsService.remove(entry.id);
-      counter++;
-    }
-    return `${SrremitmsController.name}: ${counter} entries of old data removed.`;
+  removeAll() {
+    return this.srremitmsService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srremitmsService.remove(+id);
   }
 }

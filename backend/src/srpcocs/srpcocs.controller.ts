@@ -1,19 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { SrpcocsService } from "./srpcocs.service";
-import { CreateSrpcocDto } from "./dto/create-srpcoc.dto";
-import { UpdateSrpcocDto } from "./dto/update-srpcoc.dto";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { SrpcocsService } from './srpcocs.service';
+import { CreateSrpcocDto } from './dto/create-srpcoc.dto';
+import { UpdateSrpcocDto } from './dto/update-srpcoc.dto';
 
-@ApiTags("srpcocs")
-@Controller("srpcocs")
+@ApiTags('srpcocs')
+@Controller('srpcocs')
 export class SrpcocsController {
   constructor(private readonly srpcocsService: SrpcocsService) {}
 
@@ -27,29 +19,23 @@ export class SrpcocsController {
     return this.srpcocsService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get(':id')
+  findOne(@Param('id') id: string) {
     return this.srpcocsService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateSrpcocDto: UpdateSrpcocDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSrpcocDto: UpdateSrpcocDto) {
     return this.srpcocsService.update(+id, updateSrpcocDto);
   }
 
   @Delete()
-  async removeAll() {
-    const oldData = await this.srpcocsService.findAll();
-    let counter: number = 0;
-    for (const entry of oldData) {
-      await this.srpcocsService.remove(entry.id);
-      counter++;
-    }
-    return `${SrpcocsController.name}: ${counter} entries of old data removed.`;
+  removeAll() {
+    return this.srpcocsService.removeAll();
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.srpcocsService.remove(+id);
   }
 }
