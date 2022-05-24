@@ -1,24 +1,24 @@
 {{#> template}}
   {{#*inline "content"}}
-    <main role='main'>
-      <div class='container'>
+    <main role="main">
+      <div class="container">
         <div class="row">
           <h2 id="searchType">asdf</h2>
         </div>
         <div class="row">
-          <div class='col-sm-2'>
+          <div class="col-sm-2">
             <p style="font-size:120%;font-weight:bold">Search Criteria: </p>
           </div>
-          <div class='col-sm-2'>
+          <div class="col-sm-2">
             <p id="searchCriteria"></p>
           </div>
-          <div class='col-sm-2'>
+          <div class="col-sm-2">
             <p id="searchCriteria2"></p>
           </div>
         </div>
-        <div class='row'>
-          <div class='col-sm'>
-            <table class='table'>
+        <div class="row">
+          <div class="col-sm">
+            <table class="table">
               <thead>
                 <tr>
                   <th><strong>Report Type</strong></th>
@@ -46,33 +46,33 @@
                 </tr>
               </tbody>
             </table>
-            <div class="row">
-              <div class="col-sm-2"></div>
-              <div class="col-sm-4">
-                <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-              </div>
-            </div>
-            <label>
-              Email:</label><input id="emailInput" value="">
           </div>
         </div>
+        <div class="row">
+          {{!-- <div class="col-sm-2"></div> --}}
+          <div class="col-sm-2">
+            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+          </div>
+        </div>
+        <label>
+          Email:</label><input id="emailInput" value="">
       </div>
     </main>
     <script>
-        var searchType = localStorage.getItem('currentSearch')
-        var searchCriteria = localStorage.getItem('searchCriteria')
-        var searchCriteria2 = localStorage.getItem('searchCriteria2')
-        if (searchType == 'pid') {
-            document.getElementById('searchType').innerHTML = "Parcel ID Search Results";
-        } else if (searchType == 'clf') {
-            document.getElementById('searchType').innerHTML = "Crown Lands File Search Results";
-        } else if (searchType == 'clp') {
-            document.getElementById('searchType').innerHTML = "Crown Lands PIN Search Results";
-        } else if (searchType == 'adr') {
-          document.getElementById('searchType').innerHTML = "Address Search Results"
+        var searchType = localStorage.getItem("currentSearch")
+        var searchCriteria = localStorage.getItem("searchCriteria")
+        var searchCriteria2 = localStorage.getItem("searchCriteria2")
+        if (searchType == "pid") {
+            document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
+        } else if (searchType == "clf") {
+            document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
+        } else if (searchType == "clp") {
+            document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
+        } else if (searchType == "adr") {
+          document.getElementById("searchType").innerHTML = "Address Search Results"
         }
-        document.getElementById('searchCriteria').innerHTML = searchCriteria;
-        document.getElementById('searchCriteria2').innerHTML = searchCriteria2;
+        document.getElementById("searchCriteria").innerHTML = searchCriteria;
+        document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
     </script>
   {{/inline}}
 {{/template}}

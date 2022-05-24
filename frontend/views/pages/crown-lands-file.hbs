@@ -1,7 +1,7 @@
 {{#> template}}
   {{#*inline "content"}}
-    <main role='main'>
-      <div class='container'>
+    <main role="main">
+      <div class="container">
         <div class="row">
           <h2 class="indented">Search By:</h2>
         </div>
@@ -29,11 +29,11 @@
     </main>
     <script>
         function searchBy() {
-            localStorage.setItem('currentSearch','clf');
-            localStorage.setItem('searchCriteria', document.getElementById('crownLandsFile').value);
-            localStorage.setItem('searchCriteria2', '');
+            localStorage.setItem("currentSearch","clf");
+            localStorage.setItem("searchCriteria", document.getElementById("crownLandsFile").value);
+            localStorage.setItem("searchCriteria2", "");
             window.location.href = "/view-search-results";
         }
     </script>
-  {{/inline}}
-{{/template}}
+  {{/template}}
+{{/inline}}

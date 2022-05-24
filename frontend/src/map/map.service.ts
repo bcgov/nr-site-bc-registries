@@ -41,8 +41,7 @@ export class MapService {
     else {
       // add a whitespace after the third character
       postalCode = postalCode.toUpperCase();
-      postalCode =
-        postalCode.substring(0, 3) + ' ' + postalCode.substring(3, 6);
+      postalCode = postalCode.substring(0, 3) + ' ' + postalCode.substring(3, 6);
       const jsonObj: postalCodeJSON = postalCodes.find((item) => {
         return item.POSTAL_CODE == postalCode;
       });
