@@ -106,4 +106,22 @@ export class SiteRegistryService {
       });
     console.log(headers + data);
   }
+
+  async testSearch(participantId: string): Promise<any> {
+    // hostname+port change in docker-compose
+    const hostname = 'http://localhost';
+    const port = '3001';
+
+    const requestUrl = `${hostname}:${port}/srparrols/${participantId}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    let data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
+  }
 }

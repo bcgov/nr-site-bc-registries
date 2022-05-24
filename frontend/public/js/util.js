@@ -66,3 +66,12 @@ function areaSearch() {
     coordinateCircle();
   }
 }
+
+async function testSearch() {
+  let participantId = document.getElementById('participantId').value;
+  let data = await fetch(`/site-registry/test-search/${participantId}`, {
+    method: 'GET',
+    responseType: 'application/json',
+  }).then((res) => res.json());
+  console.log(data);
+}

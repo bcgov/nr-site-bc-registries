@@ -23,13 +23,8 @@ export class SrparrolsService {
     return this.srparrolsRepository.find();
   }
 
-  async findOne(id: number): Promise<Srparrol> {
-    return this.srparrolsRepository.findOneOrFail(id);
-  }
-
-  async update(id: number, updateSrparrolDto: UpdateSrparrolDto): Promise<Srparrol> {
-    await this.srparrolsRepository.update({ id }, updateSrparrolDto);
-    return this.findOne(id);
+  async findOne(participantId: string): Promise<Srparrol | undefined> {
+    return this.srparrolsRepository.findOneOrFail({ participantId });
   }
 
   async removeAll(): Promise<{ deleted: boolean; message?: string }> {

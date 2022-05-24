@@ -19,14 +19,9 @@ export class SrparrolsController {
     return this.srparrolsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.srparrolsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSrparrolDto: UpdateSrparrolDto) {
-    return this.srparrolsService.update(+id, updateSrparrolDto);
+  @Get(':participantId')
+  findOne(@Param('participantId') participantId: string) {
+    return this.srparrolsService.findOne(participantId);
   }
 
   @Delete()
