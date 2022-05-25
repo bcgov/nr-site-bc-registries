@@ -6,8 +6,8 @@
           <h2 id="searchType">asdf</h2>
         </div>
         <div class="row">
-          <div class="col-sm-2">
-            <p style="font-size:120%;font-weight:bold">Search Criteria: </p>
+          <div class="col-sm-3">
+            <p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p>
           </div>
           <div class="col-sm-2">
             <p id="searchCriteria"></p>
@@ -64,15 +64,22 @@
         var searchCriteria2 = localStorage.getItem("searchCriteria2")
         if (searchType == "pid") {
             document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
         } else if (searchType == "clf") {
             document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
         } else if (searchType == "clp") {
             document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
         } else if (searchType == "adr") {
-          document.getElementById("searchType").innerHTML = "Address Search Results"
+          document.getElementById("searchType").innerHTML = "Address Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
         }
         document.getElementById("searchCriteria").innerHTML = searchCriteria;
         document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
+        document.getElementById("siteId").innerHTML = localStorage.getItem('siteId');
+        document.getElementById("updatedDate").innerHTML = localStorage.getItem('modifiedDate');
+        document.getElementById("addressCity").innerHTML = (localStorage.getItem('address_1') +', '+ localStorage.getItem('city'));
     </script>
   {{/inline}}
 {{/template}}
