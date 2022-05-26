@@ -67,98 +67,64 @@ function areaDisplay() {
   }
 }
 
-async function testSearch() {
-  let participantId = document.getElementById('participantId').value;
-  let data = await fetch(`/site-registry/test-search/${participantId}`, {
-    method: 'GET',
-    responseType: 'application/json',
-  }).then((res) => res.json());
-  console.log(data);
-}
-
 async function searchPid() {
   var parcelId = document.getElementById('parcelId').value;
-  localStorage.setItem('currentSearch', 'pid');
+  localStorage.setItem('searchType', 'pid');
   localStorage.setItem('searchCriteria', parcelId);
   localStorage.setItem('searchCriteria2', '');
   let data = await fetch(`/site-registry/searchPid/${parcelId}`, {
     method: 'GET',
     responseType: 'application/json',
   }).then((res) => res.json());
-  localStorage.setItem('siteId', data.siteId);
-  localStorage.setItem('provState', data.provState);
-  localStorage.setItem('address_1', data.address_1);
-  localStorage.setItem('city', data.city);
-  localStorage.setItem('modifiedDate', data.modifiedDate);
   window.location.href = '/view-search-results';
 }
 
 async function searchCLP() {
   var crownLandsPin = document.getElementById('crownLandsPin').value;
-  localStorage.setItem('currentSearch', 'clp');
+  localStorage.setItem('searchType', 'clp');
   localStorage.setItem('searchCriteria', crownLandsPin);
   localStorage.setItem('searchCriteria2', '');
   let data = await fetch(`/site-registry/searchCLP/${crownLandsPin}`, {
     method: 'GET',
     responseType: 'application/json',
   }).then((res) => res.json());
-  localStorage.setItem('siteId', data.siteId);
-  localStorage.setItem('provState', data.provState);
-  localStorage.setItem('address_1', data.address_1);
-  localStorage.setItem('city', data.city);
-  localStorage.setItem('modifiedDate', data.modifiedDate);
   window.location.href = '/view-search-results';
 }
 
 async function searchCLF() {
   var crownLandsFile = document.getElementById('crownLandsFile').value;
-  localStorage.setItem('currentSearch', 'clf');
+  localStorage.setItem('searchType', 'clf');
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   let data = await fetch(`/site-registry/searchCLF/${crownLandsFile}`, {
     method: 'GET',
     responseType: 'application/json',
   }).then((res) => res.json());
-  localStorage.setItem('siteId', data.siteId);
-  localStorage.setItem('provState', data.provState);
-  localStorage.setItem('address_1', data.address_1);
-  localStorage.setItem('city', data.city);
-  localStorage.setItem('modifiedDate', data.modifiedDate);
   window.location.href = '/view-search-results';
 }
 
 async function searchSiteId() {
   var siteId = document.getElementById('siteId').value;
-  localStorage.setItem('currentSearch', 'sid');
+  localStorage.setItem('searchType', 'sid');
   localStorage.setItem('searchCriteria', siteId);
   localStorage.setItem('searchCriteria2', '');
   let data = await fetch(`/site-registry/searchSiteId/${siteId}`, {
     method: 'GET',
     responseType: 'application/json',
   }).then((res) => res.json());
-  localStorage.setItem('siteId', data.siteId);
-  localStorage.setItem('provState', data.provState);
-  localStorage.setItem('address_1', data.address_1);
-  localStorage.setItem('city', data.city);
-  localStorage.setItem('modifiedDate', data.modifiedDate);
   window.location.href = '/view-search-results';
 }
 
 async function searchAddress() {
   var address = document.getElementById('address').value;
   var city = document.getElementById('city').value;
-  localStorage.setItem('currentSearch', 'adr');
+  localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
   let data = await fetch(`/site-registry/searchAddress/${address}`, {
     method: 'GET',
     responseType: 'application/json',
   }).then((res) => res.json());
-  localStorage.setItem('siteId', data.siteId);
-  localStorage.setItem('provState', data.provState);
-  localStorage.setItem('address_1', data.address_1);
-  localStorage.setItem('city', data.city);
-  localStorage.setItem('modifiedDate', data.modifiedDate);
   window.location.href = '/view-search-results';
 }
 
@@ -170,13 +136,13 @@ async function searchArea() {
     : '';
   const lat = document.getElementById('latitudeInput').value;
   const lng = Math.abs(document.getElementById('longitudeInput').value); // remove the minus sign if it exists
-  localStorage.setItem('currentSearch', 'area');
-  localStorage.setItem('searchCriteria', 'AREASEARCH');
-  localStorage.setItem('searchCriteria2', '');
+  localStorage.setItem('searchType', 'coords');
+  localStorage.setItem('searchCriteria', lat);
+  localStorage.setItem('searchCriteria2', lng);
+  localStorage.setItem('searchCriteria3', size);
   let data = await fetch(`/site-registry/searchArea/${lat}/${lng}/${size}`, {
     method: 'GET',
     responseType: 'application/json',
-  })
-    .then((res) => res.json())
-    .then((resJson) => console.log(resJson));
+  }).then((res) => res.json());
+  window.location.href = '/view-search-results';
 }

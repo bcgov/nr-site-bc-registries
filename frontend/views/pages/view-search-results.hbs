@@ -12,39 +12,20 @@
           <div class="col-sm-2">
             <p id="searchCriteria"></p>
           </div>
-          <div class="col-sm-2">
-            <p id="searchCriteria2"></p>
-          </div>
         </div>
         <div class="row">
           <div class="col-sm">
-            <table class="table">
+            <table class="table" id="sitesTable">
               <thead>
                 <tr>
                   <th><strong>Report Type</strong></th>
                   <th>Site ID</th>
                   <th>Updated Date</th>
                   <th>Address/City</th>
-                  <th></th>
-                  <th></th>
+                  <th id="downloadHeader"> </th>
+                  <th id="emailHeader">  </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td id="reportType">
-                    <select class="form-select form-select-sm">
-                        <option selected>Choose a Report Type</option>
-                        <option value="synopsis">Synopsis Report</option>
-                        <option value="detailed">Detailed Report</option>
-                    </select>
-                </td>
-                  <td id="siteId">123</td>
-                  <td id="updatedDate">May 12, 2022</td>
-                  <td id="addressCity">Victoria</td>
-                  <td id="download"><button class="btn btn-primary" onclick="getPdf()">Download</button></td>
-                  <td id="email"><button class="btn btn-primary" onclick="emailPdf()">Email</button></td>
-                </tr>
-              </tbody>
             </table>
           </div>
         </div>
@@ -54,12 +35,12 @@
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
           </div>
         </div>
-        <label>
-          Email:</label><input id="emailInput" value="">
+        {{!-- <label>
+          Email:</label><input id="emailInput" value=""> --}}
       </div>
     </main>
     <script>
-        var searchType = localStorage.getItem("currentSearch")
+        var searchType = localStorage.getItem("searchType")
         var searchCriteria = localStorage.getItem("searchCriteria")
         var searchCriteria2 = localStorage.getItem("searchCriteria2")
         if (searchType == "pid") {
@@ -74,12 +55,70 @@
         } else if (searchType == "adr") {
           document.getElementById("searchType").innerHTML = "Address Search Results";
           document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
+        } else if (searchType == "coords") {
+          document.getElementById("searchType").innerHTML = "Area Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Search Criteria:";
         }
         document.getElementById("searchCriteria").innerHTML = searchCriteria;
-        document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
-        document.getElementById("siteId").innerHTML = localStorage.getItem('siteId');
-        document.getElementById("updatedDate").innerHTML = localStorage.getItem('modifiedDate');
-        document.getElementById("addressCity").innerHTML = (localStorage.getItem('address_1') +', '+ localStorage.getItem('city'));
+    </script>
+    <script>
+      $(document).ready(function () {
+        var tableClient = $('#sitesTable').DataTable({
+          paging: false,
+		      searching: false,
+          columns: [
+            {data: "Report Type"},
+            {data: "Site ID"},
+            {data: "Updated Date"},
+            {data: "Address/City"},
+            {data: " "},
+            {data: "  "},
+          ],
+          ajax: getData(),
+        });
+      });
+
+    function getData() {
+      var searchType = localStorage.getItem("searchType");
+      var searchCriteria = localStorage.getItem("searchCriteria");
+      var searchCriteria2 = localStorage.getItem("searchCriteria2");
+      var searchCriteria3 = localStorage.getItem("searchCriteria3");
+      var url = '';
+      if (searchType == 'pid') {
+        url = `/site-registry/searchPid/${searchCriteria}`
+      } else if (searchType == 'clf') {
+        url = `/site-registry/searchCLF/${searchCriteria}`
+      } else if (searchType == 'clp') {
+        url = `/site-registry/searchCLP/${searchCriteria}`
+      } else if (searchType == 'sid') {
+        url = `/site-registry/searchSiteId/${searchCriteria}`
+      } else if (searchType == 'adr') {
+        url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
+      } else if (searchType == 'coords') {
+        url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
+      }
+      $.ajax({
+        url: url,
+        success: function (data) {
+          console.log(data);
+          var results = [];
+          $.each(data, function (ind, obj) {
+            myObj = {};
+            myObj['Report Type'] = "<select class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>"
+            myObj['Site ID'] = obj.siteId;
+            myObj['Updated Date'] = obj.modifiedDate;
+            myObj['Address/City'] = obj.city;
+            myObj[' '] = "<button class='btn btn-primary' onclick='getPdf()'>Download</button>";
+            myObj['  '] = "<button class='btn btn-primary' onclick='emailPdf()'>Email</button>";
+            results.push(myObj);
+            console.log(results)
+          });
+          $('#sitesTable').DataTable().rows.add(results).draw();
+          document.getElementById('downloadHeader').innerHTML = '';
+          document.getElementById('emailHeader').innerHTML = '';
+        },
+      });
+    }
     </script>
   {{/inline}}
 {{/template}}

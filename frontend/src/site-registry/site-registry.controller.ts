@@ -5,16 +5,6 @@ import { SiteRegistryService } from './site-registry.service';
 export class SiteRegistryController {
   constructor(private siteRegistryService: SiteRegistryService) {}
 
-  @Get('test')
-  setData(): Promise<any> {
-    return this.siteRegistryService.testParse();
-  }
-
-  @Get('test-search/:participantId')
-  async getTestSearch(@Param('participantId') participantId: string): Promise<any> {
-    return this.siteRegistryService.testSearch(participantId);
-  }
-
   @Get('searchPid/:pid')
   async getPidSearch(@Param('pid') pid: string): Promise<any> {
     return this.siteRegistryService.searchPid(pid);

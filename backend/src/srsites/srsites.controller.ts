@@ -26,32 +26,32 @@ export class SrsitesController {
   }
 
   @Get('searchPid/:pid')
-  searchPid(@Param('pid') pid: string): Promise<Srsite> {
+  searchPid(@Param('pid') pid: string): Promise<Srsite[]> {
     return this.srsitesService.searchPid(pid);
   }
 
   @Get('searchCrownPin/:pin')
-  searchCrownPin(@Param('pin') pin: string): Promise<Srsite> {
+  searchCrownPin(@Param('pin') pin: string): Promise<Srsite[]> {
     return this.srsitesService.searchCrownPin(pin);
   }
 
   @Get('searchCrownFile/:crownLandsFileNumber')
-  searchCrownFile(@Param('crownLandsFileNumber') crownLandsFileNumber: string): Promise<Srsite> {
+  searchCrownFile(@Param('crownLandsFileNumber') crownLandsFileNumber: string): Promise<Srsite[]> {
     return this.srsitesService.searchCrownFile(crownLandsFileNumber);
   }
 
   @Get('searchSiteId/:siteId')
-  searchSiteId(@Param('siteId') siteId: string): Promise<Srsite> {
+  searchSiteId(@Param('siteId') siteId: string): Promise<Srsite[]> {
     return this.srsitesService.searchSiteId(siteId);
   }
 
   @Get('searchAddress/:address')
-  searchAddress(@Param('address') address: string): Promise<Srsite> {
+  searchAddress(@Param('address') address: string): Promise<Srsite[]> {
     return this.srsitesService.searchAddress(address);
   }
 
   @Get('searchArea/:lat/:lng/:size')
-  searchArea(@Param('lat') lat: string, @Param('lng') lng: string, @Param('size') size: string): Promise<Srsite> {
+  searchArea(@Param('lat') lat: string, @Param('lng') lng: string, @Param('size') size: string): Promise<Srsite[]> {
     return this.srsitesService.searchArea(lat, lng, size);
   }
 

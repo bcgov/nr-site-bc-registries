@@ -32,34 +32,38 @@ export class SrsitesService {
     return this.srsitesRepository.findOneOrFail(id);
   }
 
-  async searchPid(pid: string): Promise<Srsite> {
+  async searchPid(pid: string): Promise<Srsite[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
-    return this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    return [site];
   }
 
-  async searchCrownPin(pin: string): Promise<Srsite> {
+  async searchCrownPin(pin: string): Promise<Srsite[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
-    return this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    return [site];
   }
 
-  async searchCrownFile(crownLandsFileNumber: string): Promise<Srsite> {
+  async searchCrownFile(crownLandsFileNumber: string): Promise<Srsite[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
-    return this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    return [site];
   }
 
-  async searchSiteId(siteId: string): Promise<Srsite> {
-    return this.srsitesRepository.findOne({ siteId: siteId });
+  async searchSiteId(siteId: string): Promise<Srsite[]> {
+    const site = await this.srsitesRepository.findOne({ siteId: siteId });
+    return [site];
   }
 
-  async searchAddress(address: string): Promise<Srsite> {
+  async searchAddress(address: string): Promise<Srsite[]> {
     const site = await this.srsitesRepository
       .createQueryBuilder()
       .where('LOWER(address_1) = LOWER(:address)', { address })
       .getOne();
-    return site;
+    return [site];
   }
 
-  async searchArea(lat: string, lng: string, size: string): Promise<any> {
+  async searchArea(lat: string, lng: string, size: string): Promise<Srsite[]> {
     const radius = size == 'Small' ? 564.19 : size == 'Large' ? 5641.89 : 0;
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
