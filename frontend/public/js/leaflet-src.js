@@ -1,8 +1,7 @@
 var map = L.map('map').setView([48.428, -123.365], 15);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-  attribution:
-    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
@@ -54,8 +53,8 @@ var circleOptions = {
   fillColor: '#3f0',
   fillOpacity: 0.25,
 };
-var radiusSmall = 159.15494309;
-var radiusLarge = 15915.494309;
+var radiusSmall = 564.19; // 1 sq km area
+var radiusLarge = 5641.89; // 100 sq km area
 var latlng = [48.428, -123.365]; // victoria - these coords arent actually used when drawing though
 // circles have to be instantiated here and not inside a function or you'll get a cryptic error
 // other objects like markers and rectangles can be created anywhere though
@@ -70,10 +69,8 @@ smallCircle.on({
     map.on('mousemove', function (e) {
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         smallCircle.setLatLng(e.latlng);
-        document.getElementById('latitudeInput').value =
-          smallCircle._latlng.lat.toFixed(5);
-        document.getElementById('longitudeInput').value =
-          smallCircle._latlng.lng.toFixed(5);
+        document.getElementById('latitudeInput').value = smallCircle._latlng.lat.toFixed(5);
+        document.getElementById('longitudeInput').value = smallCircle._latlng.lng.toFixed(5);
       }
     });
   },
@@ -84,10 +81,8 @@ largeCircle.on({
     map.on('mousemove', function (e) {
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         largeCircle.setLatLng(e.latlng);
-        document.getElementById('latitudeInput').value =
-          largeCircle._latlng.lat;
-        document.getElementById('longitudeInput').value =
-          largeCircle._latlng.lng;
+        document.getElementById('latitudeInput').value = largeCircle._latlng.lat.toFixed(5);
+        document.getElementById('longitudeInput').value = largeCircle._latlng.lng.toFixed(5);
       }
     });
   },
@@ -120,6 +115,8 @@ function postalCodeCircle() {
             ? 'l'
             : '';
           if (checkCoords(latitude, longitude)) {
+            document.getElementById('latitudeInput').value = latitude.toFixed(5);
+            document.getElementById('longitudeInput').value = longitude.toFixed(5);
             drawCircle(latitude, longitude, size);
           }
         }
@@ -179,21 +176,17 @@ function drawCircle(latitude, longitude, size) {
     if (size == 's') {
       smallCircle._latlng.lat = latitude;
       smallCircle._latlng.lng = longitude;
-      document.getElementById('latitudeInput').value =
-        smallCircle._latlng.lat.toFixed(5);
-      document.getElementById('longitudeInput').value =
-        smallCircle._latlng.lng.toFixed(5);
+      document.getElementById('latitudeInput').value = smallCircle._latlng.lat.toFixed(5);
+      document.getElementById('longitudeInput').value = smallCircle._latlng.lng.toFixed(5);
       smallCircle.addTo(map);
-      map.setView([latitude, longitude], 16);
+      map.setView([latitude, longitude], 15);
     } else if (size == 'l') {
       largeCircle._latlng.lat = latitude;
       largeCircle._latlng.lng = longitude;
-      document.getElementById('latitudeInput').value =
-        smallCircle._latlng.lat.toFixed(5);
-      document.getElementById('longitudeInput').value =
-        smallCircle._latlng.lng.toFixed(5);
+      document.getElementById('latitudeInput').value = largeCircle._latlng.lat.toFixed(5);
+      document.getElementById('longitudeInput').value = largeCircle._latlng.lng.toFixed(5);
       largeCircle.addTo(map);
-      map.setView([latitude, longitude], 10);
+      map.setView([latitude, longitude], 12);
     }
   } else {
     console.log('Invalid lat/long');
@@ -205,9 +198,7 @@ function checkPostalCode(postalCode) {
   // var regex = new RegExp(
   //   /([ABCEGHJKLMNPRSTVXY]\d)([ABCEGHJKLMNPRSTVWXYZ]\d){2}/i,
   // );
-  var regex = new RegExp(
-    /([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i,
-  ); // BC POSTAL CODE
+  var regex = new RegExp(/([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i); // BC POSTAL CODE
   if (regex.test(postalCode.toString().replace(/\W+/g, ''))) {
     return true;
   } else {
@@ -216,9 +207,7 @@ function checkPostalCode(postalCode) {
 }
 
 function checkCoords(lat, lng) {
-  return lat >= 48.224 && lat <= 60.0 && lng >= -139.061 && lng <= -114.054
-    ? true
-    : false;
+  return lat >= 48.224 && lat <= 60.0 && lng >= -139.061 && lng <= -114.054 ? true : false;
   // return lat <= 90 && lat >= -90 && long <= 180 && long >= -180 ? true : false;
 }
 

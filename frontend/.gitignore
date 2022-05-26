@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# postal codes file
+utils/postalCodes.json

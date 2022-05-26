@@ -1,11 +1,14 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import * as dotenv from 'dotenv';
 import { lastValueFrom, map } from 'rxjs';
 import { siteDto } from 'utils/types';
-
-dotenv.config();
+import { templateBase64, testData, plainTextTemplate } from 'utils/constants';
+import * as base64 from 'base-64';
+import * as utf8 from 'utf8';
+var axios = require('axios');
+import * as fs from 'fs';
+import { URLSearchParams } from 'node:url';
 
 @Injectable()
 export class BCRegistryService {
@@ -44,58 +47,14 @@ export class BCRegistryService {
     // console.log(postalCodeJSON);
     // fs.writeFile(jsonOutput, postalCodeJSON, {});
     const id = '8';
-    const requestUrl = `http://backend:3000/sites/`;
+    const requestUrl = `http://localhost:3001/sites/`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
 
-    const data: siteDto = {
-      docid: 2,
-      site_id: 1,
-      siteid: 1,
-      catid: 1,
-      sequenceno: 1,
-      pin: 1,
-      pidno: 1,
-      eventid: 1,
-      associatedsiteid: 1,
-      participant_id: 1,
-      participantid: 1,
-      questionid: 1,
-      parentid: 1,
-      ownerid: 1,
-      contactid: 1,
-      completorid: 1,
-      aec_id: 1,
-      lat: 1,
-      latdeg: 1,
-      latmin: 1,
-      latsec: 1,
-      lon: 1,
-      londeg: 1,
-      lonmin: 1,
-      lonsec: 1,
-      regdate: new Date(),
-      eventdate: new Date(),
-      approval_date: new Date(),
-      moddate: new Date(),
-      tombdate: new Date(),
-      effectivedate: new Date(),
-      enddate: new Date(),
-      datenoted: new Date(),
-      date_completed: new Date(),
-      expirydate: new Date(),
-      datecompleted: new Date(),
-      datereceived: new Date(),
-      datelocalauthority: new Date(),
-      dateregistrar: new Date(),
-      datedecision: new Date(),
-      dateentered: new Date(),
-      submissiondate: new Date(),
-      documentdate: new Date(),
-    };
+    const data = testData;
 
     await lastValueFrom(
       this.httpService.get(requestUrl, requestConfig).pipe(
@@ -103,8 +62,8 @@ export class BCRegistryService {
           console.log('Get request');
           console.log(response.data);
           return response.data;
-        }),
-      ),
+        })
+      )
     );
 
     const responseData = await lastValueFrom(
@@ -113,9 +72,213 @@ export class BCRegistryService {
           console.log('Post request');
           console.log(response.data);
           return response.data;
-        }),
-      ),
+        })
+      )
     );
     return { xd: 'hello' };
+  }
+
+  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  async getHtml(token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
+    let htmlData: string;
+
+    var data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'html',
+        overwrite: true,
+        reportName: 'test-report.html',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${templateBase64}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        htmlData = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return htmlData;
+  }
+
+  async getPlainText(token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
+    let plainTextData: string;
+    var data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'txt',
+        overwrite: true,
+        reportName: 'test-report.txt',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${plainTextTemplate}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        plainTextData = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return plainTextData;
+  }
+
+  async getPdf(): Promise<any> {
+    const authorizationToken = await this.getToken();
+    const data = testData;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'pdf',
+        overwrite: true,
+        reportName: 'test-report',
+      },
+      template: {
+        content: `${templateBase64}`,
+        encodingType: 'base64',
+        fileType: 'html',
+      },
+    });
+
+    const config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      responseType: 'arraybuffer',
+      data: md,
+    };
+
+    const response = await axios(config);
+    return response.data;
+  }
+
+  async emailPdf(email: string): Promise<any> {
+    const authorizationToken = await this.getToken();
+    const htmlFile = await this.getHtml(authorizationToken.toString());
+    const textFile = await this.getPlainText(authorizationToken.toString());
+    const encodedHtml = base64.encode(utf8.encode(htmlFile));
+    const encodedTextFile = base64.encode(utf8.encode(textFile));
+    var data = JSON.stringify({
+      attachments: [
+        {
+          content: `${encodedTextFile}`,
+          contentType: 'string',
+          encoding: 'base64',
+          filename: 'testfile.txt',
+        },
+      ],
+      bodyType: 'html',
+      body: `${htmlFile}`,
+      contexts: [
+        {
+          context: {
+            something: {
+              greeting: 'Hello',
+              target: 'World',
+            },
+            someone: 'user',
+          },
+          delayTS: 0,
+          tag: 'tag',
+          to: [`${email}`],
+        },
+      ],
+      encoding: 'utf-8',
+      from: 'testingedmail@asdfasdf.com',
+      priority: 'normal',
+      subject: 'Hello {{ someone }}',
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authorizationToken}`,
+      },
+      data: data,
+    };
+
+    return axios(config)
+      .then((response) => {
+        return 'Email Sent';
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  getToken(): Promise<Object> {
+    let url = 'https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token';
+    let service_client_id = process.env.service_client_id;
+    let service_client_secret = process.env.service_client_secret;
+    const token = `${service_client_id}:${service_client_secret}`;
+    const encodedToken = Buffer.from(token).toString('base64');
+    let config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic ' + encodedToken,
+      },
+    };
+    const grantTypeParam = new URLSearchParams();
+    grantTypeParam.append('grant_type', 'client_credentials');
+    return axios
+      .post(url, grantTypeParam, config)
+      .then((response) => {
+        return response.data.access_token;
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   }
 }

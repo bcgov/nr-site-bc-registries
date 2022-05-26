@@ -1,266 +1,266 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SiteDto {
   @ApiProperty({
-    description: "The ID of the site",
+    description: 'The ID of the site',
   })
   id: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   docid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   site_id: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   siteid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   catid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   sequenceno: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   pin: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   pidno: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   eventid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   associatedsiteid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   participant_id: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   participantid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   questionid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   parentid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   ownerid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   contactid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   completeorid: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   aec_id: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   lat: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   latdeg: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   latmin: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   latsec: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   lon: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   londeg: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   lonmin: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   lonsec: number;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   regdate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   eventdate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   approval_date: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   moddate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   tombdate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   effectivedate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   enddate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   datenoted: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   date_completed: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   expirydate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   datecompleted: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   datereceived: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   datelocalauthority: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   dateregistrar: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   datedecision: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   dateentered: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   submissiondate: Date;
 
   @ApiProperty({
-    description: "",
-    default: "",
+    description: '',
+    default: '',
   })
   documentdate: Date;
 }

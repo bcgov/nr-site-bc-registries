@@ -1,7 +1,7 @@
 {{#> template}}
   {{#*inline "content"}}
-    <main role='main'>
-      <div class='container'>
+    <main role="main">
+      <div class="container">
         <div class="row">
           <h2 class="indented">Search By:</h2>
         </div>
@@ -22,17 +22,10 @@
           <div class="col-sm-2"></div>
           <div class="col-sm-4">
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-            <button onclick="searchBy()" id="searchButton" class="btn btn-primary m-2">View Search Results</button>
+            <button onclick="searchCLP()" id="searchButton" class="btn btn-primary m-2">View Search Results</button>
           </div>
         </div>
       </div>
     </main>
-    <script>
-        function searchBy() {
-            localStorage.setItem('currentSearch','clp');
-            localStorage.setItem('searchCriteria', document.getElementById('crownLandsPin').value);
-            window.location.href = "/view-search-results";
-        }
-    </script>
   {{/inline}}
 {{/template}}

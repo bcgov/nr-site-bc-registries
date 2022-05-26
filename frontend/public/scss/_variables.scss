@@ -12,13 +12,13 @@ $theme-colors: (
   warning: #f9ca54,
   danger: #d93e45,
   // new entries
-    primary-nav: #036,
+  primary-nav: #036,
   secondary-nav: #5475a7,
-  bcgold: #fcba19
+  bcgold: #fcba19,
 );
 
 // Add our font as default
-$bcgov-font-path: "../fonts" !default;
+$bcgov-font-path: '../fonts' !default;
 $font-family-sans-serif: BCSans, Verdana, Arial, sans serif;
 $font-family-base: $font-family-sans-serif;
 $line-height-base: 1.6;
