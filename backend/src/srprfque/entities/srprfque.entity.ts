@@ -17,8 +17,8 @@ export class Srprfque {
   effectiveDate: string; // a10;
   @Column('varchar', { length: 10 })
   expiryDate: string; // a10;
-  @Column('varchar', { length: 200 })
-  questionDescription: string; // a200;
+  @Column('varchar', { length: 400 })
+  questionDescription: string; // a200; - some entries are larger than 200 characters
 
   constructor(partial: Partial<Srprfque>) {
     Object.assign(this, partial);

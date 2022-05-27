@@ -17,10 +17,10 @@ export class Srsite {
   address_1: string; // a50;
   @Column('varchar', { length: 50, default: '' })
   address_2: string; // a50;
-  @Column('varchar', { length: 50, default: '' })
-  address_3: string; // a50;
-  @Column('varchar', { length: 50, default: '' })
-  address_4: string; // a50;
+  // @Column('varchar', { length: 50, default: '' })
+  // address_3: string; // a50;
+  // @Column('varchar', { length: 50, default: '' })
+  // address_4: string; // a50;
   @Column('varchar', { length: 30 })
   city: string; // a30;
   @Column('varchar', { length: 2 })

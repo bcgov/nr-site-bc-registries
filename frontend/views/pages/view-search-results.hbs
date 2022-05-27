@@ -6,11 +6,17 @@
           <h2 id="searchType">asdf</h2>
         </div>
         <div class="row">
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p>
           </div>
           <div class="col-sm-2">
-            <p id="searchCriteria"></p>
+            <table>
+              <tr>
+              <td><p id="searchCriteria"></p></td>  
+              <td><p id="searchCriteria2"></p></td>  
+              <td><p id="searchCriteria3"></p></td>  
+              </tr>
+            </table>
           </div>
         </div>
         <div class="row">
@@ -30,19 +36,18 @@
           </div>
         </div>
         <div class="row">
-          {{!-- <div class="col-sm-2"></div> --}}
           <div class="col-sm-2">
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
           </div>
         </div>
-        {{!-- <label>
-          Email:</label><input id="emailInput" value=""> --}}
       </div>
     </main>
     <script>
         var searchType = localStorage.getItem("searchType")
         var searchCriteria = localStorage.getItem("searchCriteria")
         var searchCriteria2 = localStorage.getItem("searchCriteria2")
+        var searchCriteria3 = localStorage.getItem("searchCriteria3")
+        document.getElementById("searchCriteria").innerHTML = searchCriteria;
         if (searchType == "pid") {
             document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
             document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
@@ -55,11 +60,16 @@
         } else if (searchType == "adr") {
           document.getElementById("searchType").innerHTML = "Address Search Results";
           document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
+          document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
         } else if (searchType == "coords") {
           document.getElementById("searchType").innerHTML = "Area Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Search Criteria:";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+          document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
+          document.getElementById("searchCriteria3").innerHTML = searchCriteria3;
+          document.getElementById("criteriaTitle").innerHTML = 'Latitude';
+          document.getElementById("criteriaTitle2").innerHTML = 'Longitude';
+          document.getElementById("criteriaTitle3").innerHTML = 'Area Size';
         }
-        document.getElementById("searchCriteria").innerHTML = searchCriteria;
     </script>
     <script>
       $(document).ready(function () {
@@ -100,7 +110,6 @@
       $.ajax({
         url: url,
         success: function (data) {
-          console.log(data);
           var results = [];
           $.each(data, function (ind, obj) {
             myObj = {};
@@ -108,10 +117,9 @@
             myObj['Site ID'] = obj.siteId;
             myObj['Updated Date'] = obj.modifiedDate;
             myObj['Address/City'] = obj.city;
-            myObj[' '] = "<button class='btn btn-primary' onclick='getPdf()'>Download</button>";
-            myObj['  '] = "<button class='btn btn-primary' onclick='emailPdf()'>Email</button>";
+            myObj[' '] = "<button class='btn btn-primary' onclick='requestPdfDownload()'>Download</button>";
+            myObj['  '] = "<button class='btn btn-primary' onclick='requestPdfEmail()'>Email</button>";
             results.push(myObj);
-            console.log(results)
           });
           $('#sitesTable').DataTable().rows.add(results).draw();
           document.getElementById('downloadHeader').innerHTML = '';

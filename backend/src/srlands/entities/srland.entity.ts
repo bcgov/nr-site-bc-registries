@@ -7,8 +7,8 @@ export class Srland {
   id: number;
   @Column('varchar', { length: 10 })
   siteId: string; // a10;
-  @Column('varchar', { length: 40 })
-  landUse: string; // a40;
+  @Column('varchar', { length: 100 })
+  landUse: string; // a40; - some entries are larger than 40 characters
   @Column('varchar', { length: 255 })
   noteString: string; // a255;
 

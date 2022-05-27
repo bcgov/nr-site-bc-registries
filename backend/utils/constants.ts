@@ -16,6 +16,8 @@ export const CSV_HEADERS = {
     'siteId,dateCompleted,ownerParticipantId,contactParticipantId,completorParticipantId,dateLocalAuthority,dateRegistrar,dateDecision,comments\n',
   SRSITDOC: 'siteId,docId,titleString,submissionDate,documentDate,noteString\n',
   SRSITES:
-    'siteId,region,status,commonName,address_1,address_2,address_3,address_4,city,provState,postalCode,lat,latDeg,latMin,latSec,lon,lonDeg,lonMin,lonSec,victoriaFileNumber,regionalFileNumber,classification,locationDescription,registeredDate,modifiedDate,detailRemovedDate\n',
+    'siteId,region,status,commonName,address_1,address_2,city,provState,postalCode,lat,latDeg,latMin,latSec,lon,lonDeg,lonMin,lonSec,victoriaFileNumber,regionalFileNumber,classification,locationDescription,registeredDate,modifiedDate,detailRemovedDate\n',
   SRSITPAR: 'siteId,participantId,nameString,effectiveDate,endDate,noteString,participantType\n',
 };
+// srsites with address_3 & address_4
+// SRSITES: 'siteId,region,status,commonName,address_1,address_2,address_3,address_4,city,provState,postalCode,lat,latDeg,latMin,latSec,lon,lonDeg,lonMin,lonSec,victoriaFileNumber,regionalFileNumber,classification,locationDescription,registeredDate,modifiedDate,detailRemovedDate\n',
