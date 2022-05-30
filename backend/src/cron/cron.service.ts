@@ -183,10 +183,14 @@ export class CronService {
   async sendDataToTables(parsedData) {
     console.log('adding data to tables...');
     let counter = 0;
-    // const srassocs: [SrassocDto] = parsedData.srassocs;
-    // for (const entry of srassocs) {
-    //   await this.srassocsService.create(entry);
-    // }
+    console.log('');
+    process.stdout.write(`Adding srassocs entry `);
+    const srassocs: [SrassocDto] = parsedData.srassocs;
+    for (const entry of srassocs) {
+      counter += 1;
+      process.stdout.write(`\rAdding srassocs entry ${counter}/${srassocs.length}`);
+      await this.srassocsService.create(entry);
+    }
     const srdate: [SrdateDto] = parsedData.srdate;
     process.stdout.write(`Adding srdate   entry `);
     for (const entry of srdate) {
@@ -283,10 +287,15 @@ export class CronService {
       process.stdout.write(`\rAdding srprfuse entry ${counter}/${srprfuse.length}`);
       await this.srprfusesService.create(entry);
     }
-    // const srprofil: [SrprofilDto] = parsedData.srprofil;
-    // for (const entry of srprofil) {
-    //   await this.srprofilsService.create(entry);
-    // }
+    const srprofil: [SrprofilDto] = parsedData.srprofil;
+    counter = 0;
+    console.log('');
+    process.stdout.write(`Adding srprofil entry `);
+    for (const entry of srprofil) {
+      counter += 1;
+      process.stdout.write(`\rAdding srprofil entry ${counter}/${srprofil.length}`);
+      await this.srprofilsService.create(entry);
+    }
     const srsitdoc: [SrsitdocDto] = parsedData.srsitdoc;
     counter = 0;
     console.log('');
