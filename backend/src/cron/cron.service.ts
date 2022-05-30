@@ -60,7 +60,7 @@ export class CronService {
   ) {}
 
   // @Cron('0,15,30,45 * * * * *')
-  @Cron('10 27 * * * *')
+  @Cron('0 25 * * * *')
   async updateTables() {
     console.log('update tables job starting');
     const timeTaken = 'Total time';
@@ -180,7 +180,7 @@ export class CronService {
     process.stdout.write(`Adding srdate   entry `);
     for (const entry of srdate) {
       counter += 1;
-      process.stdout.write(`\rAdding srdate entry ${counter}/${srdate.length}`);
+      process.stdout.write(`\rAdding srdate   entry ${counter}/${srdate.length}`);
       await this.srdatesService.create(entry);
     }
     const srdocpar: [SrdocparDto] = parsedData.srdocpar;
@@ -302,10 +302,10 @@ export class CronService {
     const srsites: [SrsiteDto] = parsedData.srsites;
     counter = 0;
     console.log('');
-    process.stdout.write(`Adding srsite entry `);
+    process.stdout.write(`Adding srsite   entry `);
     for (const entry of srsites) {
       counter += 1;
-      process.stdout.write(`\rAdding srsite  entry ${counter}/${srsites.length}`);
+      process.stdout.write(`\rAdding srsite   entry ${counter}/${srsites.length}`);
       await this.srsitesService.create(entry);
     }
     console.log('\nadded data to tables');
