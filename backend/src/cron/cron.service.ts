@@ -5,8 +5,6 @@ import * as csv from 'csvtojson';
 import axios from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
 
-import * as fs from 'fs';
-
 import { SrassocsService } from '../srassocs/srassocs.service';
 import { SrdatesService } from '../srdate/srdates.service';
 import { SrdocparsService } from '../srdocpar/srdocpars.service';
@@ -62,7 +60,7 @@ export class CronService {
   ) {}
 
   // @Cron('0,15,30,45 * * * * *')
-  @Cron('20 49 * * * *')
+  @Cron('10 27 * * * *')
   async updateTables() {
     console.log('update tables job starting');
     const timeTaken = 'Total time';
@@ -81,35 +79,21 @@ export class CronService {
   async getData() {
     // query the bucket
     let srassocs = await this.getCsv('srassocs.csv');
-    // let srdate = await this.getCsv('srdate.csv');
-    let srdate = fs.readFileSync('./utils/srdate.csv');
-    // let srdocpar = await this.getCsv('srdocpar.csv');
-    let srdocpar = fs.readFileSync('./utils/srdocpar.csv');
-    // let srevents = await this.getCsv('srevents.csv');
-    let srevents = fs.readFileSync('./utils/srevents.csv');
-    // let srevpart = await this.getCsv('srevpart.csv');
-    let srevpart = fs.readFileSync('./utils/srevpart.csv');
-    // let srlands = await this.getCsv('srlands.csv');
-    let srlands = fs.readFileSync('./utils/srlands.csv');
-    // let srparrol = await this.getCsv('srparrol.csv');
-    let srparrol = fs.readFileSync('./utils/srparrol.csv');
-    // let srpinpid = await this.getCsv('srpinpid.csv');
-    let srpinpid = fs.readFileSync('./utils/srpinpid.csv');
-    // let srprfans = await this.getCsv('srprfans.csv');
-    let srprfans = fs.readFileSync('./utils/srprfans.csv');
-    // let srprfcat = await this.getCsv('srprfcat.csv');
-    let srprfcat = fs.readFileSync('./utils/srprfcat.csv');
-    // let srprfque = await this.getCsv('srprfque.csv');
-    let srprfque = fs.readFileSync('./utils/srprfque.csv');
-    // let srprfuse = await this.getCsv('srprfuse.csv');
-    let srprfuse = fs.readFileSync('./utils/srprfuse.csv');
+    let srdate = await this.getCsv('srdate.csv');
+    let srdocpar = await this.getCsv('srdocpar.csv');
+    let srevents = await this.getCsv('srevents.csv');
+    let srevpart = await this.getCsv('srevpart.csv');
+    let srlands = await this.getCsv('srlands.csv');
+    let srparrol = await this.getCsv('srparrol.csv');
+    let srpinpid = await this.getCsv('srpinpid.csv');
+    let srprfans = await this.getCsv('srprfans.csv');
+    let srprfcat = await this.getCsv('srprfcat.csv');
+    let srprfque = await this.getCsv('srprfque.csv');
+    let srprfuse = await this.getCsv('srprfuse.csv');
     let srprofil = await this.getCsv('srprofil.csv');
-    // let srsitdoc = await this.getCsv('srsitdoc.csv');
-    let srsitdoc = fs.readFileSync('./utils/srsitdoc.csv');
-    // let srsites = await this.getCsv('srsites.csv');
-    let srsites = fs.readFileSync('./utils/srsites.csv');
-    // let srsitpar = await this.getCsv('srsitpar.csv');
-    let srsitpar = fs.readFileSync('./utils/srsitpar.csv');
+    let srsitdoc = await this.getCsv('srsitdoc.csv');
+    let srsites = await this.getCsv('srsites.csv');
+    let srsitpar = await this.getCsv('srsitpar.csv');
 
     let rawData = {
       srassocs: srassocs,
@@ -181,9 +165,8 @@ export class CronService {
   }
 
   async sendDataToTables(parsedData) {
-    console.log('adding data to tables...');
+    console.log('adding data to tables...\n');
     let counter = 0;
-    console.log('');
     process.stdout.write(`Adding srassocs entry `);
     const srassocs: [SrassocDto] = parsedData.srassocs;
     for (const entry of srassocs) {
@@ -192,6 +175,8 @@ export class CronService {
       await this.srassocsService.create(entry);
     }
     const srdate: [SrdateDto] = parsedData.srdate;
+    counter = 0;
+    console.log('');
     process.stdout.write(`Adding srdate   entry `);
     for (const entry of srdate) {
       counter += 1;
