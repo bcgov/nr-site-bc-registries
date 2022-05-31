@@ -3,7 +3,7 @@ import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { siteDto } from 'utils/types';
-import { templateBase64, testData, plainTextTemplate } from 'utils/constants';
+import { templateBase64, testData, plainTextTemplate, synopsisTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import * as utf8 from 'utf8';
 var axios = require('axios');
@@ -79,11 +79,9 @@ export class BCRegistryService {
   }
 
   // sends preset data + base64 encoded html template and returns an html document with the data inserted
-  async getHtml(token?: string): Promise<string> {
+  async getSynopsisHtml(data, token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getToken();
     let htmlData: string;
-
-    var data = testData;
 
     const md = JSON.stringify({
       data,
@@ -98,7 +96,7 @@ export class BCRegistryService {
       template: {
         encodingType: 'base64',
         fileType: 'html',
-        content: `${templateBase64}`,
+        content: `${synopsisTemplate}`,
       },
     });
 
@@ -166,57 +164,96 @@ export class BCRegistryService {
     return plainTextData;
   }
 
-  async getPdf(): Promise<any> {
+  async getPdf(reportType: string, siteId: string): Promise<any> {
     const authorizationToken = await this.getToken();
-    const data = testData;
+    // const data = testData;
+    const hostname = 'http://localhost';
+    const port = '3001';
 
-    const md = JSON.stringify({
-      data,
-      formatters:
-        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-      options: {
-        cacheReport: true,
-        convertTo: 'pdf',
-        overwrite: true,
-        reportName: 'test-report',
-      },
-      template: {
-        content: `${templateBase64}`,
-        encodingType: 'base64',
-        fileType: 'html',
-      },
-    });
-
-    const config = {
-      method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+    const requestUrl =
+      reportType == 'synopsis'
+        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        : reportType == 'detailed'
+        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : '';
+    const requestConfig: AxiosRequestConfig = {
       headers: {
-        Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
       },
-      responseType: 'arraybuffer',
-      data: md,
     };
 
-    const response = await axios(config);
-    return response.data;
+    if (requestUrl !== '') {
+      let data = await lastValueFrom(
+        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+      );
+
+      const md = JSON.stringify({
+        data,
+        formatters:
+          '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+        options: {
+          cacheReport: true,
+          convertTo: 'pdf',
+          overwrite: true,
+          reportName: 'test-report',
+        },
+        template: {
+          content: `${synopsisTemplate}`,
+          encodingType: 'base64',
+          fileType: 'html',
+        },
+      });
+
+      const config = {
+        method: 'post',
+        url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+        headers: {
+          Authorization: `Bearer ${authorizationToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'arraybuffer',
+        data: md,
+      };
+
+      const response = await axios(config);
+      return response.data;
+    } else {
+      return Error('No report type selected');
+    }
   }
 
-  async emailPdf(email: string): Promise<any> {
+  async emailPdf(reportType: string, email: string, siteId: string): Promise<any> {
     const authorizationToken = await this.getToken();
-    const htmlFile = await this.getHtml(authorizationToken.toString());
+
+    // get the report data & combine it with the template
+    // these should be changed to env variables
+    const hostname = 'http://localhost';
+    const port = '3001';
+
+    const requestUrl =
+      reportType == 'synopsis'
+        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        : reportType == 'detailed'
+        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : '';
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    let htmlFile = '';
+    if (requestUrl !== '') {
+      let siteData = await lastValueFrom(
+        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+      );
+
+      htmlFile = await this.getSynopsisHtml(siteData, authorizationToken.toString());
+    }
     const textFile = await this.getPlainText(authorizationToken.toString());
-    const encodedHtml = base64.encode(utf8.encode(htmlFile));
-    const encodedTextFile = base64.encode(utf8.encode(textFile));
+    // const encodedTextFile = base64.encode(utf8.encode(textFile));
+
     var data = JSON.stringify({
-      attachments: [
-        {
-          content: `${encodedTextFile}`,
-          contentType: 'string',
-          encoding: 'base64',
-          filename: 'testfile.txt',
-        },
-      ],
       bodyType: 'html',
       body: `${htmlFile}`,
       contexts: [

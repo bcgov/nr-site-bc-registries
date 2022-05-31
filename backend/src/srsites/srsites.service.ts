@@ -8,6 +8,12 @@ import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
 import { isInsideArea } from '../../utils/util';
+import { Srevent } from '../srevents/entities/srevent.entity';
+import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
+import { Srland } from '../srlands/entities/srland.entity';
+import { Srassoc } from '../srassocs/entities/srassoc.entity';
+import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
+import { MinimalSiteData } from 'utils/constants';
 
 @Injectable()
 export class SrsitesService {
@@ -15,7 +21,17 @@ export class SrsitesService {
     @InjectRepository(Srsite)
     private srsitesRepository: Repository<Srsite>,
     @InjectRepository(Srpinpid)
-    private srpinpidsRepository: Repository<Srpinpid>
+    private srpinpidsRepository: Repository<Srpinpid>,
+    @InjectRepository(Srevent)
+    private sreventsRepository: Repository<Srevent>,
+    @InjectRepository(Srsitdoc)
+    private srsitdocsRepository: Repository<Srsitdoc>,
+    @InjectRepository(Srsitpar)
+    private srsitparsRepository: Repository<Srsitpar>,
+    @InjectRepository(Srland)
+    private srlandsRepository: Repository<Srland>,
+    @InjectRepository(Srassoc)
+    private srassocsRepository: Repository<Srassoc>
   ) {}
 
   async create(srsite: CreateSrsiteDto): Promise<Srsite> {
@@ -32,35 +48,45 @@ export class SrsitesService {
     return this.srsitesRepository.findOneOrFail(id);
   }
 
-  async searchPid(pid: string): Promise<Srsite[]> {
+  async searchPid(pid: string): Promise<MinimalSiteData[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
-    return [site];
+    return [
+      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+    ];
   }
 
-  async searchCrownPin(pin: string): Promise<Srsite[]> {
+  async searchCrownPin(pin: string): Promise<MinimalSiteData[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
-    return [site];
+    return [
+      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+    ];
   }
 
-  async searchCrownFile(crownLandsFileNumber: string): Promise<Srsite[]> {
+  async searchCrownFile(crownLandsFileNumber: string): Promise<MinimalSiteData[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
-    return [site];
+    return [
+      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+    ];
   }
 
-  async searchSiteId(siteId: string): Promise<Srsite[]> {
+  async searchSiteId(siteId: string): Promise<MinimalSiteData[]> {
     const site = await this.srsitesRepository.findOne({ siteId: siteId });
-    return [site];
+    return [
+      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+    ];
   }
 
-  async searchAddress(address: string): Promise<Srsite[]> {
+  async searchAddress(address: string): Promise<MinimalSiteData[]> {
     const site = await this.srsitesRepository
       .createQueryBuilder()
       .where('LOWER(address_1) = LOWER(:address)', { address })
       .getOne();
-    return [site];
+    return [
+      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+    ];
   }
 
   async searchArea(lat: string, lng: string, size: string): Promise<Srsite[]> {
@@ -77,6 +103,44 @@ export class SrsitesService {
       if (isInsideArea(userLatlng, latlng, radius)) sites.push(site);
     }
     return sites;
+  }
+
+  async getSynopsisReportData(siteId: string) {
+    const srevents = await this.sreventsRepository.findAndCount({ siteId: siteId });
+    const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
+    const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
+    const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
+    const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
+    const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
+    const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
+    const srsite = await this.srsitesRepository.findOne({ siteId: siteId });
+    return {
+      siteId: siteId,
+      account: '?',
+      victoriaFileNumber: srsite.victoriaFileNumber,
+      regionalFileNumber: srsite.regionalFileNumber,
+      region: srsite.region,
+      lat: srsite.lat,
+      lon: srsite.lon,
+      commonName: srsite.commonName,
+      address_1: srsite.address_1,
+      address_2: srsite.address_2,
+      city: srsite.city,
+      postalCode: srsite.postalCode,
+      provState: srsite.provState,
+      registeredDate: srsite.registeredDate,
+      modifiedDate: srsite.modifiedDate,
+      detailRemovedDate: srsite.detailRemovedDate,
+      notations: srevents[1],
+      participants: srsitpars[1],
+      assocSites: srassocs[1] + srassocs2[1],
+      documents: srsitdoc[1],
+      suspLandUse: srlands[1],
+      parcelDesc: srpinpid.legalDescription,
+      locationDescription: srsite.locationDescription,
+      status: srsite.status,
+      feeCat: '?',
+    };
   }
 
   async update(id: number, updateSrsiteDto: UpdateSrsiteDto): Promise<Srsite> {

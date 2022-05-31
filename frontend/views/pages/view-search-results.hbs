@@ -113,12 +113,12 @@
           var results = [];
           $.each(data, function (ind, obj) {
             myObj = {};
-            myObj['Report Type'] = "<select class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>"
+            myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
             myObj['Site ID'] = obj.siteId;
-            myObj['Updated Date'] = obj.modifiedDate;
+            myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
             myObj['Address/City'] = obj.city;
-            myObj[' '] = "<button class='btn btn-primary' onclick='requestPdfDownload()'>Download</button>";
-            myObj['  '] = "<button class='btn btn-primary' onclick='requestPdfEmail()'>Email</button>";
+            myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="requestPdfDownload('${obj.siteId}')">Download</button>`;
+            myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="requestPdfEmail('${obj.siteId}')">Email</button>`;
             results.push(myObj);
           });
           $('#sitesTable').DataTable().rows.add(results).draw();
