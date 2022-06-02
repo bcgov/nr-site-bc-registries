@@ -10,30 +10,37 @@
       th {
         text-align: right;
         padding-right: 20px;
-        width: 20%;
+        width: 10em;
+        background-color: white;
       }
       td {
         text-align: left;
         padding-right: 20px;
+        min-width: 5em;
       }
       table {
         width: 100%;
+      }
+      .rightalign {
+        width: 100%;
+        text-align: right;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <p>As of: {d.modifiedDate}</p>
-      <p>{d.todaysDate}</p>
-      <p>{d.currentTime}</p>
+      <div class="rightalign">As of: {d.modifiedDate}</div>
+      <div class="rightalign">{d.todaysDate}</div>
+      <div class="rightalign">{d.currentTime}</div>
       <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
       <p style="text-align: center; margin: 0">For: {d.account}</p>
-      <p>Folio:</p>
-      <hr size="5" />
+      <!-- <p>Folio:</p> -->
 
+      <hr size="5" />
       <h3 style="text-align: center">Synopsis Report</h3>
+      <br />
       <h4>SITE LOCATION</h4>
-      <table class="tworow">
+      <table>
         <tr>
           <th>Site ID:</th>
           <td>{d.siteId}</td>
@@ -54,9 +61,10 @@
           <th>Region:</th>
           <td>{d.region}</td>
         </tr>
-      </table>
-      <br />
-      <table class="tworow">
+        <tr>
+          <th>&nbsp;</th>
+          <td>&nbsp;</td>
+        </tr>
         <tr>
           <th>Common Name:</th>
           <td>{d.commonName}</td>
@@ -76,8 +84,8 @@
           <td>{d.postalCode}</td>
         </tr>
       </table>
-      <br />
-      <table class="threerow">
+      <hr />
+      <table>
         <tr>
           <th>Registered:</th>
           <td>{d.registeredDate}</td>
@@ -86,9 +94,6 @@
           <th>Detail Removed:</th>
           <td>{d.detailRemovedDate}</td>
         </tr>
-      </table>
-      <hr />
-      <table class="threerow">
         <tr>
           <th>Notations:</th>
           <td>{d.notations}</td>
@@ -110,23 +115,14 @@
           <th>Parcel Descriptions:</th>
           <td>{d.parcelDesc}</td>
         </tr>
-      </table>
-      <br />
-      <table>
         <tr>
           <th>Location Description:</th>
           <td>{d.locationDescription}</td>
         </tr>
-      </table>
-      <br />
-      <table>
         <tr>
           <th>Status:</th>
           <td>{d.status}</td>
         </tr>
-      </table>
-      <hr />
-      <table>
         <tr>
           <th>Fee Category:</th>
           <td>{d.classification}</td>

@@ -2,48 +2,56 @@
 <html lang="en" class="fill-height-md">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <style>
       .container {
-        width: 600px;
+        width: 595px;
         height: auto;
       }
       th {
         text-align: right;
-        width: 150px;
+        padding-right: 20px;
+        width: 10em;
+        background-color: white;
+      }
+      td {
+        text-align: left;
+        padding-right: 20px;
+        min-width: 5em;
       }
       table {
-        width: 500px;
+        width: 100%;
       }
-      tr {
-        width: 500px;
-      }
-      hr {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
+      .rightalign {
+        width: 100%;
+        text-align: right;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <p>As of: {d.modifiedDate}</p>
-      <p>{d.todaysDate}</p>
-      <p>{d.currentTime}</p>
-      <h2>BC Online: Site Registry</h2>
-      <p>For: {d.account}</p>
-      <p>Folio:</p>
+      <div class="rightalign">As of: {d.modifiedDate}</div>
+      <div class="rightalign">{d.todaysDate}</div>
+      <div class="rightalign">{d.currentTime}</div>
+      <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
+      <p style="text-align: center; margin: 0">For: {d.account}</p>
+      <!-- <p>Folio:</p> -->
 
-      <h3>Synopsis Report</h3>
+      <hr size="5" />
+      <h3 style="text-align: center">Detailed Report</h3>
+      <br />
       <h4>SITE LOCATION</h4>
-
       <table>
         <tr>
           <th>Site ID:</th>
           <td>{d.siteId}</td>
+          <th>Latitude:</th>
+          <td>{d.lat}</td>
         </tr>
         <tr>
           <th>Victoria File:</th>
           <td>{d.victoriaFileNumber}</td>
+          <th>Longitude:</th>
+          <td>{d.lon}</td>
         </tr>
         <tr>
           <th>Regional File:</th>
@@ -54,22 +62,14 @@
           <td>{d.region}</td>
         </tr>
         <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-          <th>Latitude:</th>
-          <td>{d.lat}</td>
-        </tr>
-        <tr>
-          <th>Longitude:</th>
-          <td>{d.lon}</td>
-        </tr>
-        <tr>
+          <th>&nbsp;</th>
           <td>&nbsp;</td>
         </tr>
         <tr>
           <th>Common Name:</th>
           <td>{d.commonName}</td>
+          <th>Prov/State:</th>
+          <td>{d.provState}</td>
         </tr>
         <tr>
           <th>Site Address:</th>
@@ -83,71 +83,45 @@
           <th>Postal Code:</th>
           <td>{d.postalCode}</td>
         </tr>
-        <tr>
-          <th>Prov/State:</th>
-          <td>{d.provState}</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-        </tr>
+      </table>
+      <hr />
+      <table>
         <tr>
           <th>Registered:</th>
           <td>{d.registeredDate}</td>
-        </tr>
-        <tr>
           <th>Updated:</th>
           <td>{d.modifiedDate}</td>
-        </tr>
-        <tr>
           <th>Detail Removed:</th>
           <td>{d.detailRemovedDate}</td>
         </tr>
         <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
           <th>Notations:</th>
           <td>{d.notations}</td>
-        </tr>
-        <tr>
           <th>Participants:</th>
           <td>{d.participants}</td>
-        </tr>
-        <tr>
           <th>Associated Sites:</th>
           <td>{d.assocSites}</td>
         </tr>
         <tr>
           <th>Documents:</th>
           <td>{d.documents}</td>
-        </tr>
-        <tr>
           <th>Susp. Land Use:</th>
           <td>{d.suspLandUse}</td>
         </tr>
-        <tr>
-          <td>&nbsp;</td>
-        </tr>
+      </table>
+      <hr />
+      <table>
         <tr>
           <th>Parcel Descriptions:</th>
           <td>{d.parcelDesc}</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
         </tr>
         <tr>
           <th>Location Description:</th>
           <td>{d.locationDescription}</td>
         </tr>
         <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
           <th>Status:</th>
           <td>{d.status}</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
         </tr>
         <tr>
           <th>Fee Category:</th>
