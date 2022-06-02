@@ -3,13 +3,13 @@ import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { siteDto } from 'utils/types';
-import { templateBase64, testData, plainTextTemplate, synopsisTemplate } from 'utils/constants';
+import { plainTextTemplate, synopsisTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import * as utf8 from 'utf8';
 var axios = require('axios');
 import * as fs from 'fs';
 import { URLSearchParams } from 'node:url';
-
+let testData = '';
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService) {}

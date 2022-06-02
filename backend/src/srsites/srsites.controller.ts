@@ -65,6 +65,11 @@ export class SrsitesController {
     return this.srsitesService.getSynopsisReportData(siteId);
   }
 
+  @Get('detailedReport/:siteId')
+  getDetailedReportData(@Param('siteId') siteId: string) {
+    return this.srsitesService.getDetailedReportData(siteId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSrsiteDto: UpdateSrsiteDto) {
     return this.srsitesService.update(+id, updateSrsiteDto);

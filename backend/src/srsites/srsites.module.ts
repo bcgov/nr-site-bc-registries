@@ -8,13 +8,15 @@ import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
-import { Srassoc } from 'src/srassocs/entities/srassoc.entity';
+import { Srassoc } from '../srassocs/entities/srassoc.entity';
+import { Srevpart } from '../srevpart/entities/srevpart.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Srsite]),
     TypeOrmModule.forFeature([Srpinpid]),
     TypeOrmModule.forFeature([Srevent]),
+    TypeOrmModule.forFeature([Srevpart]),
     TypeOrmModule.forFeature([Srsitdoc]),
     TypeOrmModule.forFeature([Srsitpar]),
     TypeOrmModule.forFeature([Srland]),

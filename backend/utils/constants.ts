@@ -3,7 +3,7 @@ export const CSV_HEADERS = {
   SRASSOCS: 'siteId,associatedSiteId,effectDate,noteString\n',
   SRDATE: 'downloaddate\n',
   SRDOCPAR: 'docId,nameString,roleString\n',
-  SREVENTS: 'siteId,eventId,eventType,eventClass,eventDate,ministryContact,noteString,requiredAction\n',
+  SREVENTS: 'siteId,eventId,eventType,eventClass,eventDate,approvedDate,ministryContact,noteString,requiredAction\n',
   SREVPART: 'eventId,nameString,roleString\n',
   SRLANDS: 'siteId,landUse,noteString\n',
   SRPARROL: 'participantId,roleString\n',

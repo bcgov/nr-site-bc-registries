@@ -60,7 +60,7 @@ export class CronService {
   ) {}
 
   // @Cron('0,15,30,45 * * * * *')
-  @Cron('0 25 * * * *')
+  @Cron('25 24 * * * *')
   async updateTables() {
     console.log('update tables job starting');
     const timeTaken = 'Total time';
@@ -119,6 +119,23 @@ export class CronService {
 
   // receives raw data and parses it
   async parseData(rawData) {
+    // db export of srprfcat splits question type into two pieces, recombine them here
+    let srprfcatTemp = await csv().fromString(
+      'categoryId,sequenceNumber,effectiveDate,expiryDate,questionType,questionType2,categoryDescription\n' +
+        rawData.srprfcat
+    );
+    let srprfcat = [];
+    for (let entry of srprfcatTemp) {
+      let newEntry = {
+        categoryId: entry.categoryId,
+        sequenceNumber: entry.sequenceNumber,
+        effectiveDate: entry.effectiveDate,
+        expiryDate: entry.expiryDate,
+        questionType: entry.questionType + ' - ' + entry.questionType2,
+        categoryDescription: entry.categoryDescription,
+      };
+      srprfcat.push(newEntry);
+    }
     const parsedData = {
       srassocs: await csv().fromString(CSV_HEADERS.SRASSOCS + rawData.srassocs),
       srdate: await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate),
@@ -129,7 +146,7 @@ export class CronService {
       srparrol: await csv().fromString(CSV_HEADERS.SRPARROL + rawData.srparrol),
       srpinpid: await csv().fromString(CSV_HEADERS.SRPINPID + rawData.srpinpid),
       srprfans: await csv().fromString(CSV_HEADERS.SRPRFANS + rawData.srprfans),
-      srprfcat: await csv().fromString(CSV_HEADERS.SRPRFCAT + rawData.srprfcat),
+      srprfcat: srprfcat,
       srprfque: await csv().fromString(CSV_HEADERS.SRPRFQUE + rawData.srprfque),
       srprfuse: await csv().fromString(CSV_HEADERS.SRPRFUSE + rawData.srprfuse),
       srprofil: await csv().fromString(CSV_HEADERS.SRPROFIL + rawData.srprofil),

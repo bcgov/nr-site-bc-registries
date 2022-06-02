@@ -7,13 +7,14 @@ import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { isInsideArea } from '../../utils/util';
+import { getCurrentTime, getTodaysDate, isInsideArea } from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { MinimalSiteData } from 'utils/constants';
+import { Srevpart } from 'src/srevpart/entities/srevpart.entity';
 
 @Injectable()
 export class SrsitesService {
@@ -24,6 +25,8 @@ export class SrsitesService {
     private srpinpidsRepository: Repository<Srpinpid>,
     @InjectRepository(Srevent)
     private sreventsRepository: Repository<Srevent>,
+    @InjectRepository(Srevpart)
+    private srevpartsRepository: Repository<Srevpart>,
     @InjectRepository(Srsitdoc)
     private srsitdocsRepository: Repository<Srsitdoc>,
     @InjectRepository(Srsitpar)
@@ -114,14 +117,29 @@ export class SrsitesService {
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
     const srsite = await this.srsitesRepository.findOne({ siteId: siteId });
+
+    // construct strings for displaying lat/lon
+    let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
+      .toFixed(1)
+      .toString();
+    if (latSec.length == 3) latSec = '0' + latSec;
+    const lat = parseInt(srsite.latDeg) + 'd ' + parseInt(srsite.latMin) + 'm ' + latSec + 's';
+    let lonSec = parseFloat(srsite.lonSec.slice(0, 2) + '.' + srsite.lonSec.slice(2))
+      .toFixed(1)
+      .toString();
+    if (lonSec.length == 3) lonSec = '0' + lonSec;
+    const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
+
     return {
-      siteId: siteId,
-      account: '?',
+      siteId: parseInt(siteId),
+      account: 'user_account',
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
       victoriaFileNumber: srsite.victoriaFileNumber,
       regionalFileNumber: srsite.regionalFileNumber,
       region: srsite.region,
-      lat: srsite.lat,
-      lon: srsite.lon,
+      lat: lat,
+      lon: lon,
       commonName: srsite.commonName,
       address_1: srsite.address_1,
       address_2: srsite.address_2,
@@ -139,7 +157,68 @@ export class SrsitesService {
       parcelDesc: srpinpid.legalDescription,
       locationDescription: srsite.locationDescription,
       status: srsite.status,
-      feeCat: '?',
+      classification: srsite.classification,
+    };
+  }
+
+  async getDetailedReportData(siteId: string) {
+    const srevents = await this.sreventsRepository.findAndCount({ siteId: siteId });
+    const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
+    const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
+    const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
+    const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
+    const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
+    const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
+    const srsite = await this.srsitesRepository.findOne({ siteId: siteId });
+    // entity relations might be a better solution than this
+    // add corresponding participants to each notation
+    for (let entry of srevents[0]) {
+      const eventId = entry.eventId;
+      const srevparts = this.srevpartsRepository.find({ eventId });
+      entry['participantsArray'] = srevparts;
+    }
+    // construct strings for displaying lat/lon
+    let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
+      .toFixed(1)
+      .toString();
+    if (latSec.length == 3) latSec = '0' + latSec;
+    const lat = parseInt(srsite.latDeg) + 'd ' + parseInt(srsite.latMin) + 'm ' + latSec + 's';
+    let lonSec = parseFloat(srsite.lonSec.slice(0, 2) + '.' + srsite.lonSec.slice(2))
+      .toFixed(1)
+      .toString();
+    if (lonSec.length == 3) lonSec = '0' + lonSec;
+    const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
+
+    return {
+      siteId: parseInt(siteId),
+      account: 'user_account',
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+      victoriaFileNumber: srsite.victoriaFileNumber,
+      regionalFileNumber: srsite.regionalFileNumber,
+      region: srsite.region,
+      lat: lat,
+      lon: lon,
+      commonName: srsite.commonName,
+      address_1: srsite.address_1,
+      address_2: srsite.address_2,
+      city: srsite.city,
+      postalCode: srsite.postalCode,
+      provState: srsite.provState,
+      registeredDate: srsite.registeredDate,
+      modifiedDate: srsite.modifiedDate,
+      detailRemovedDate: srsite.detailRemovedDate,
+      notations: srevents[1],
+      participants: srsitpars[1],
+      assocSites: srassocs[1] + srassocs2[1],
+      documents: srsitdoc[1],
+      suspLandUse: srlands[1],
+      parcelDesc: srpinpid.legalDescription,
+      locationDescription: srsite.locationDescription,
+      status: srsite.status,
+      classification: srsite.classification,
+      notationsArray: srevents[0],
+      participantsArray: srsitpars[0],
     };
   }
 
