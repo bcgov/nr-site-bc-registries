@@ -76,8 +76,11 @@ export class SrsitesService {
   }
 
   async searchSiteId(siteId: string): Promise<MinimalSiteData[]> {
-    const siteIdTrimmed = parseInt(siteId);
-    const site = await this.srsitesRepository.findOne({ siteId: siteIdTrimmed.toString() });
+    let siteIdWithZeroes = siteId;
+    for (let i = 0; i < 10 - siteId.length; i++) {
+      siteIdWithZeroes = '0' + siteIdWithZeroes;
+    }
+    const site = await this.srsitesRepository.findOne({ siteId: siteIdWithZeroes });
     return [
       { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
     ];

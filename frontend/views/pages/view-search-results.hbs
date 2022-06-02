@@ -111,7 +111,7 @@
           $.each(data, function (ind, obj) {
             myObj = {};
             myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
-            myObj['Site ID'] = obj.siteId;
+            myObj['Site ID'] = parseInt(obj.siteId);
             myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
             myObj['Address/City'] = obj.city;
             myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="requestPdfDownload('${obj.siteId}')">Download</button>`;
