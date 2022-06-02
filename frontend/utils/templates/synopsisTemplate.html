@@ -19,27 +19,17 @@
       table {
         width: 100%;
       }
-      #mydiv {
-        width: 20em;
-        height: 20px;
-        background-color: red;
-        color: red;
-      }
     </style>
   </head>
   <body>
     <div class="container">
-      <table>
-        <tr>
-          <td style="width: 300px">As of: {d.todaysDate}</td>
-          <td></td>
-          <td style="width: 300px; text-align: right">{d.currentTime}</td>
-        </tr>
-      </table>
+      <p>As of: {d.modifiedDate}</p>
+      <p>{d.todaysDate}</p>
+      <p>{d.currentTime}</p>
       <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
       <p style="text-align: center; margin: 0">For: {d.account}</p>
       <p>Folio:</p>
-      <div id="mydiv"></div>
+      <hr size="5" />
 
       <h3 style="text-align: center">Synopsis Report</h3>
       <h4>SITE LOCATION</h4>
@@ -97,7 +87,7 @@
           <td>{d.detailRemovedDate}</td>
         </tr>
       </table>
-      <br />
+      <hr />
       <table class="threerow">
         <tr>
           <th>Notations:</th>
@@ -114,7 +104,7 @@
           <td>{d.suspLandUse}</td>
         </tr>
       </table>
-      <br />
+      <hr />
       <table>
         <tr>
           <th>Parcel Descriptions:</th>
@@ -135,7 +125,7 @@
           <td>{d.status}</td>
         </tr>
       </table>
-      <br />
+      <hr />
       <table>
         <tr>
           <th>Fee Category:</th>

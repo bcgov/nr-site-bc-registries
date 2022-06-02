@@ -1,167 +1,20 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, StreamableFile } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { siteDto } from 'utils/types';
-import { plainTextTemplate, synopsisTemplate } from 'utils/constants';
+import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
-import * as utf8 from 'utf8';
 var axios = require('axios');
-import * as fs from 'fs';
 import { URLSearchParams } from 'node:url';
-let testData = '';
+import * as fs from 'fs';
+
+let synopsisTemplate, detailedPartialTemplate;
+
 @Injectable()
 export class BCRegistryService {
-  constructor(private httpService: HttpService) {}
-
-  async getText(): Promise<{ xd: string }> {
-    // const requestUrl = `https://bcregistry-sandbox.apigee.net/pay/api/v1/accounts/${process.env.userid}/statements`;
-    // const requestUrl = `https://bcregistry-sandbox.apigee.net/pay/api/v1/payment-requests`;
-    // const requestUrl = `https://bcregistry-sandbox.apigee.net/pay/api/v1/accounts/${process.env.userid}/payments/queries`;
-    // const requestUrl = `http://${process.env.host}/api/v1/payment-requests/2/receipts`;
-    // const requestUrl = `http://${process.env.host}/pay/api/v1/payment-requests`;
-    // const requestConfig: AxiosRequestConfig = {
-    // //   headers: {
-    // //     'Account-Id': `${process.env.userid}`,
-    // //     Authorization: `Bearer ${process.env.secret}`,
-    // //   },
-    //   //   params: {
-    //   //     bucket: process.env.bucket,
-    //   //     secret: process.env.secret,
-    //   //     userid: process.env.userid,
-    //   //     sitesWeb: process.env.sitesWeb,
-    //   //   },
-    // };
-    // const responseData = await lastValueFrom(
-    //   this.httpService.post(requestUrl, null, requestConfig).pipe(
-    //     map((response) => {
-    //       console.log(response.data);
-    //       return response.data;
-    //     }),
-    //   ),
-    // );
-    // console.log(responseData);
-    // const readStream = fs.createReadStream(csvFile);
-    // const writeStream = fs.createWriteStream(jsonOutput);
-    // readStream.pipe(csvToJson()).pipe(writeStream);
-    // console.log(postalCodeJSON);
-    // fs.writeFile(jsonOutput, postalCodeJSON, {});
-    const id = '8';
-    const requestUrl = `http://localhost:3001/sites/`;
-    const requestConfig: AxiosRequestConfig = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    const data = testData;
-
-    await lastValueFrom(
-      this.httpService.get(requestUrl, requestConfig).pipe(
-        map((response) => {
-          console.log('Get request');
-          console.log(response.data);
-          return response.data;
-        })
-      )
-    );
-
-    const responseData = await lastValueFrom(
-      this.httpService.post(requestUrl, data, requestConfig).pipe(
-        map((response) => {
-          console.log('Post request');
-          console.log(response.data);
-          return response.data;
-        })
-      )
-    );
-    return { xd: 'hello' };
-  }
-
-  // sends preset data + base64 encoded html template and returns an html document with the data inserted
-  async getSynopsisHtml(data, token?: string): Promise<string> {
-    const authorizationToken = token != null ? token : await this.getToken();
-    let htmlData: string;
-
-    const md = JSON.stringify({
-      data,
-      formatters:
-        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-      options: {
-        cacheReport: true,
-        convertTo: 'html',
-        overwrite: true,
-        reportName: 'test-report.html',
-      },
-      template: {
-        encodingType: 'base64',
-        fileType: 'html',
-        content: `${synopsisTemplate}`,
-      },
-    });
-
-    var config = {
-      method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
-      headers: {
-        Authorization: `Bearer ${authorizationToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: md,
-    };
-
-    await axios(config)
-      .then(function (response) {
-        htmlData = response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    return htmlData;
-  }
-
-  async getPlainText(token?: string): Promise<string> {
-    const authorizationToken = token != null ? token : await this.getToken();
-    let plainTextData: string;
-    var data = testData;
-
-    const md = JSON.stringify({
-      data,
-      formatters:
-        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-      options: {
-        cacheReport: true,
-        convertTo: 'txt',
-        overwrite: true,
-        reportName: 'test-report.txt',
-      },
-      template: {
-        encodingType: 'base64',
-        fileType: 'html',
-        content: `${plainTextTemplate}`,
-      },
-    });
-
-    var config = {
-      method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
-      headers: {
-        Authorization: `Bearer ${authorizationToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: md,
-    };
-
-    await axios(config)
-      .then(function (response) {
-        plainTextData = response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    return plainTextData;
+  constructor(private httpService: HttpService) {
+    synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
+    detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
   }
 
   async getPdf(reportType: string, siteId: string): Promise<any> {
@@ -186,7 +39,12 @@ export class BCRegistryService {
       let data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
-
+      let documentTemplate: string;
+      if (reportType == 'detailed') {
+        documentTemplate = this.buildDetailedTemplate(data);
+      } else {
+        documentTemplate = synopsisTemplate;
+      }
       const md = JSON.stringify({
         data,
         formatters:
@@ -198,7 +56,7 @@ export class BCRegistryService {
           reportName: 'test-report',
         },
         template: {
-          content: `${synopsisTemplate}`,
+          content: `${documentTemplate}`,
           encodingType: 'base64',
           fileType: 'html',
         },
@@ -242,16 +100,20 @@ export class BCRegistryService {
       },
     };
 
-    let htmlFile = '';
+    let documentTemplate: string;
+    let htmlFile: string;
     if (requestUrl !== '') {
       let siteData = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
 
-      htmlFile = await this.getSynopsisHtml(siteData, authorizationToken.toString());
+      if (reportType == 'detailed') {
+        documentTemplate = this.buildDetailedTemplate(siteData);
+      } else {
+        documentTemplate = synopsisTemplate;
+      }
+      htmlFile = await this.getHtml(siteData, documentTemplate, authorizationToken.toString());
     }
-    const textFile = await this.getPlainText(authorizationToken.toString());
-    // const encodedTextFile = base64.encode(utf8.encode(textFile));
 
     var data = JSON.stringify({
       bodyType: 'html',
@@ -271,7 +133,7 @@ export class BCRegistryService {
         },
       ],
       encoding: 'utf-8',
-      from: 'testingedmail@asdfasdf.com',
+      from: 'BCOLHELP@gov.bc.ca',
       priority: 'normal',
       subject: 'Hello {{ someone }}',
     });
@@ -293,6 +155,150 @@ export class BCRegistryService {
       .catch(function (error) {
         console.log(error);
       });
+  }
+
+  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  async getHtml(data: any, template: string, token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
+    let htmlData: string;
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'html',
+        overwrite: true,
+        reportName: 'test-report.html',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${template}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        htmlData = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return htmlData;
+  }
+
+  async getPlainText(token?: string): Promise<string> {
+    const authorizationToken = token != null ? token : await this.getToken();
+    let plainTextData: string;
+    var data = '';
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: true,
+        convertTo: 'txt',
+        overwrite: true,
+        reportName: 'test-report.txt',
+      },
+      template: {
+        encodingType: 'base64',
+        fileType: 'html',
+        content: `${plainTextTemplate}`,
+      },
+    });
+
+    var config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      data: md,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        plainTextData = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    return plainTextData;
+  }
+
+  buildDetailedTemplate(data): string {
+    let template: string = detailedPartialTemplate;
+    template = template.concat('<hr size="3" color="black">');
+    let notationsLength = data.notationsArray.length;
+    let counter = 0;
+    if (notationsLength > 0) {
+      template = template.concat('<h4>NOTATIONS</h4>\n');
+      for (let notation of data.notationsArray) {
+        template = template.concat('<table>\n');
+        template = template.concat(`<tr><th>Notation Type:</th><td>${notation.eventType}</td></tr>`);
+        template = template.concat(`<tr><th>Notation Class:</th><td>${notation.eventClass}</td></tr>`);
+        template = template.concat(`<tr><th>Initiated:</th><td>${notation.eventDate}</td></tr>`);
+        template = template.concat(`<tr><th>Approved:</th><td>${notation.approvedDate}</td></tr>`);
+        template = template.concat(`<tr><th>Ministry Contact:</th><td>${notation.ministryContact}</td></tr>`);
+        template = template.concat(`</table>`);
+        if (notation.participantsArray.length > 0) {
+          template = template.concat(`<table><tr><th>Notation Participants</th></tr>`);
+          for (let notationParticipant of notation.participantsArray) {
+            template = template.concat(`<tr><td>${notationParticipant.nameString}</td></tr>`);
+          }
+          template = template.concat(`</table>`);
+          template = template.concat(`<table><tr><th>Notation Roles</th></tr>`);
+          for (let notationParticipant of notation.participantArray) {
+            template = template.concat(`<tr><td>${notationParticipant.roleString}</td></tr>`);
+          }
+          template = template.concat(`</table>`);
+        }
+        template = template.concat(`<table><tr><th>Note:</th><td>${notation.noteString}</td></tr></table>`);
+        counter++;
+        if (counter < notationsLength) {
+          template = template.concat('<hr>');
+        }
+      }
+      template = template.concat('<hr size="2" color="black">');
+    }
+    let participantsLength = data.participantsArray.length;
+    counter = 0;
+    if (participantsLength > 0) {
+      template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
+      for (let participant of data.participantsArray) {
+        template = template.concat('<table>\n');
+        template = template.concat(`<tr><th>Participant:</th><td>${participant.nameString}</td></tr>`);
+        template = template.concat(`<tr><th>Role(s):</th><td>${participant.participantType}</td></tr>`);
+        template = template.concat(`<tr><th>Start Date:</th><td>${participant.effectiveDate}</td></tr>`);
+        template = template.concat(`<tr><th>End Date:</th><td>${participant.endDate}</td></tr>`);
+        template = template.concat(`<tr><th>Notes:</th><td>${participant.noteString}</td></tr>`);
+        template = template.concat(`</table>`);
+        counter++;
+        if (counter < participantsLength) {
+          template = template.concat('<hr>');
+        }
+      }
+      template = template.concat('<hr size="2" color="black">');
+    }
+    template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
+    return base64.encode(template);
   }
 
   getToken(): Promise<Object> {
