@@ -8,20 +8,24 @@ var axios = require('axios');
 import { URLSearchParams } from 'node:url';
 import * as fs from 'fs';
 
-let synopsisTemplate, detailedPartialTemplate;
+let synopsisTemplate: string;
+let detailedPartialTemplate: string;
+let hostname: string;
+let port: number;
 
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService) {
     synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
     detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
+    // docker hostname is the container name, use localhost for local development
+    hostname = process.env.BACKEND_URL ? `http://${process.env.BACKEND_URL}` : `http://localhost`;
+    // local development backend port is 3001, docker backend port is 3000
+    port = process.env.BACKEND_URL ? 3000 : 3001;
   }
 
   async getPdf(reportType: string, siteId: string): Promise<any> {
     const authorizationToken = await this.getToken();
-    // const data = testData;
-    const hostname = 'http://localhost';
-    const port = '3001';
 
     const requestUrl =
       reportType == 'synopsis'
@@ -82,11 +86,6 @@ export class BCRegistryService {
 
   async emailPdf(reportType: string, email: string, siteId: string): Promise<any> {
     const authorizationToken = await this.getToken();
-
-    // get the report data & combine it with the template
-    // these should be changed to env variables
-    const hostname = 'http://localhost';
-    const port = '3001';
 
     const requestUrl =
       reportType == 'synopsis'
