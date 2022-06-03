@@ -60,7 +60,7 @@ export class CronService {
   ) {}
 
   // @Cron('0,15,30,45 * * * * *')
-  @Cron('25 24 * * * *')
+  @Cron('0 0 0 * * *')
   async updateTables() {
     console.log('update tables job starting');
     const timeTaken = 'Total time';
@@ -70,7 +70,9 @@ export class CronService {
     // call removeall route on each Service
     await this.removePreviousData();
     // call create on each json array entry
-    await this.sendDataToTables(data);
+    process.env.POSTGRESQL_HOST == 'database'
+      ? await this.sendDataToTablesQuietly(data)
+      : await this.sendDataToTables(data);
     console.log('update tables job complete');
     console.timeEnd(timeTaken);
   }
@@ -323,6 +325,75 @@ export class CronService {
     for (const entry of srsites) {
       counter += 1;
       process.stdout.write(`\rAdding srsite   entry ${counter}/${srsites.length}`);
+      await this.srsitesService.create(entry);
+    }
+    console.log('\nadded data to tables');
+  }
+
+  async sendDataToTablesQuietly(parsedData) {
+    console.log('adding data to tables...\n');
+    const srassocs: [SrassocDto] = parsedData.srassocs;
+    for (const entry of srassocs) {
+      await this.srassocsService.create(entry);
+    }
+    const srdate: [SrdateDto] = parsedData.srdate;
+    for (const entry of srdate) {
+      await this.srdatesService.create(entry);
+    }
+    const srdocpar: [SrdocparDto] = parsedData.srdocpar;
+    for (const entry of srdocpar) {
+      await this.srdocparsService.create(entry);
+    }
+    const srevents: [SreventDto] = parsedData.srevents;
+    for (const entry of srevents) {
+      await this.sreventsService.create(entry);
+    }
+    const srevpart: [SrevpartDto] = parsedData.srevpart;
+    for (const entry of srevpart) {
+      await this.srevpartsService.create(entry);
+    }
+    const srlands: [SrlandDto] = parsedData.srlands;
+    for (const entry of srlands) {
+      await this.srlandsService.create(entry);
+    }
+    const srparrol: [SrparrolDto] = parsedData.srparrol;
+    for (const entry of srparrol) {
+      await this.srparrolsService.create(entry);
+    }
+    const srpinpid: [SrpinpidDto] = parsedData.srpinpid;
+    for (const entry of srpinpid) {
+      await this.srpinpidsService.create(entry);
+    }
+    const srprfans: [SrprfanDto] = parsedData.srprfans;
+    for (const entry of srprfans) {
+      await this.srprfansService.create(entry);
+    }
+    const srprfcat: [SrprfcatDto] = parsedData.srprfcat;
+    for (const entry of srprfcat) {
+      await this.srprfcatsService.create(entry);
+    }
+    const srprfque: [SrprfqueDto] = parsedData.srprfque;
+    for (const entry of srprfque) {
+      await this.srprfquesService.create(entry);
+    }
+    const srprfuse: [SrprfuseDto] = parsedData.srprfuse;
+    for (const entry of srprfuse) {
+      await this.srprfusesService.create(entry);
+    }
+    const srprofil: [SrprofilDto] = parsedData.srprofil;
+    for (const entry of srprofil) {
+      await this.srprofilsService.create(entry);
+    }
+    const srsitdoc: [SrsitdocDto] = parsedData.srsitdoc;
+    for (const entry of srsitdoc) {
+      await this.srsitdocsService.create(entry);
+    }
+    const srsitpar: [SrsitparDto] = parsedData.srsitpar;
+    for (const entry of srsitpar) {
+      await this.srsitparsService.create(entry);
+    }
+    const srsites: [SrsiteDto] = parsedData.srsites;
+    for (const entry of srsites) {
       await this.srsitesService.create(entry);
     }
     console.log('\nadded data to tables');
