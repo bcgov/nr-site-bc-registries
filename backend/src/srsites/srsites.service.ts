@@ -51,6 +51,11 @@ export class SrsitesService {
     return this.srsitesRepository.findOneOrFail(id);
   }
 
+  async countEntries(): Promise<number> {
+    const numEntries = (await this.srsitesRepository.findAndCount())[1];
+    return numEntries;
+  }
+
   async searchPid(pid: string): Promise<MinimalSiteData[]> {
     const srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });

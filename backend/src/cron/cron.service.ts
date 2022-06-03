@@ -59,7 +59,15 @@ export class CronService {
     private srsitparsService: SrsitparsService
   ) {}
 
-  // @Cron('0,15,30,45 * * * * *')
+  // called on app startup - check the srsites table for data, if none then clean the db and get new data
+  async initTablesData() {
+    const numSrsitesEntries = await this.srsitesService.countEntries();
+    if (numSrsitesEntries == 0) {
+      console.log('Database is empty, grabbing data');
+      await this.updateTables();
+    }
+  }
+
   @Cron('0 0 0 * * *')
   async updateTables() {
     console.log('update tables job starting');
