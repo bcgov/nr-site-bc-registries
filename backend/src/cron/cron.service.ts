@@ -115,12 +115,12 @@ export class CronService {
       srsites: srsites,
       srsitpar: srsitpar,
     };
-    console.log('moving to parseData');
     return this.parseData(rawData);
   }
 
   // receives raw data and parses it
   async parseData(rawData) {
+    console.log('parsing data');
     // db export of srprfcat splits question type into two pieces, recombine them here
     let srprfcatTemp = await csv().fromString(
       'categoryId,sequenceNumber,effectiveDate,expiryDate,questionType,questionType2,categoryDescription\n' +
@@ -156,8 +156,6 @@ export class CronService {
       srsites: await csv().fromString(CSV_HEADERS.SRSITES + rawData.srsites),
       srsitpar: await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar),
     };
-
-    console.log('parseData complete');
 
     // have to parse each item in the array
     return parsedData;
@@ -331,7 +329,7 @@ export class CronService {
   }
 
   async sendDataToTablesQuietly(parsedData) {
-    console.log('adding data to tables...\n');
+    console.log('adding data to tables...');
     const srassocs: [SrassocDto] = parsedData.srassocs;
     for (const entry of srassocs) {
       await this.srassocsService.create(entry);
@@ -396,7 +394,7 @@ export class CronService {
     for (const entry of srsites) {
       await this.srsitesService.create(entry);
     }
-    console.log('\nadded data to tables');
+    console.log('added data to tables');
   }
 
   async getCsv(fileName: string) {
