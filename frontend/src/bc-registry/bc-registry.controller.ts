@@ -3,17 +3,21 @@ import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')
 export class BCRegistryController {
-  constructor(private testService: BCRegistryService) {}
+  constructor(private bcRegistryService: BCRegistryService) {}
 
-  @Get('download-pdf')
+  @Get('download-pdf/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=cool.pdf')
-  async getTest(): Promise<any> {
-    return new StreamableFile(await this.testService.getPdf());
+  async getPdf(@Param('reportType') reportType: string, @Param('siteId') siteId: string): Promise<any> {
+    return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId));
   }
 
-  @Get('email-pdf/:email')
-  getTest2(@Param('email') email: string): Promise<any> {
-    return this.testService.emailPdf(email);
+  @Get('email-pdf/:reportType/:email/:siteId')
+  getTest2(
+    @Param('reportType') reportType: string,
+    @Param('email') email: string,
+    @Param('siteId') siteId: string
+  ): Promise<any> {
+    return this.bcRegistryService.emailPdf(reportType, email, siteId);
   }
 }

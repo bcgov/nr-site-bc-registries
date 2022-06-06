@@ -15,9 +15,11 @@ export class Srevent {
   eventClass: string; // a80;
   @Column('varchar', { length: 10 })
   eventDate: string; // a10;
+  @Column('varchar', { length: 10 })
+  approvedDate: string; // a10;
   @Column('varchar', { length: 150 })
   ministryContact: string; // a150;
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   noteString: string; // a255;
   @Column('varchar', { length: 2000 })
   requiredAction: string; // a2000;

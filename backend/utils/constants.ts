@@ -3,7 +3,7 @@ export const CSV_HEADERS = {
   SRASSOCS: 'siteId,associatedSiteId,effectDate,noteString\n',
   SRDATE: 'downloaddate\n',
   SRDOCPAR: 'docId,nameString,roleString\n',
-  SREVENTS: 'siteId,eventId,eventType,eventClass,eventDate,ministryContact,noteString,requiredAction\n',
+  SREVENTS: 'siteId,eventId,eventType,eventClass,eventDate,approvedDate,ministryContact,noteString,requiredAction\n',
   SREVPART: 'eventId,nameString,roleString\n',
   SRLANDS: 'siteId,landUse,noteString\n',
   SRPARROL: 'participantId,roleString\n',
@@ -21,3 +21,10 @@ export const CSV_HEADERS = {
 };
 // srsites with address_3 & address_4
 // SRSITES: 'siteId,region,status,commonName,address_1,address_2,address_3,address_4,city,provState,postalCode,lat,latDeg,latMin,latSec,lon,lonDeg,lonMin,lonSec,victoriaFileNumber,regionalFileNumber,classification,locationDescription,registeredDate,modifiedDate,detailRemovedDate\n',
+
+export type MinimalSiteData = {
+  siteId: string;
+  city: string;
+  modifiedDate: string;
+  registeredDate: string;
+};
