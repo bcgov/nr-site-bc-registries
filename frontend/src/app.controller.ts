@@ -1,16 +1,15 @@
-import { Get, Controller, Render } from '@nestjs/common';
-import * as dotenv from 'dotenv';
+import { Get, Controller, Render, UseGuards } from '@nestjs/common';
+import { AuthGuard, Unprotected } from 'nest-keycloak-connect';
+import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
-import { AppService } from './app.service';
-
-dotenv.config();
 
 @Controller()
 export class AppController {
-  constructor(private appService: AppService) {}
+  constructor() {}
 
   @Get()
   @Render('index')
+  @Unprotected()
   root() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -23,6 +22,7 @@ export class AppController {
 
   @Get('parcel-id')
   @Render('parcel-id')
+  @Unprotected()
   getParcelId() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -35,6 +35,7 @@ export class AppController {
 
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
+  // @UseGuards(AuthenticationGuard)
   getCrownLandsPin() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -47,6 +48,7 @@ export class AppController {
 
   @Get('crown-lands-file')
   @Render('crown-lands-file')
+  // @UseGuards(AuthenticationGuard)
   getCrownLandsFile() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -59,6 +61,7 @@ export class AppController {
 
   @Get('site-id-search')
   @Render('site-id-search')
+  // @UseGuards(AuthenticationGuard)
   getSiteIdSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -71,6 +74,7 @@ export class AppController {
 
   @Get('address-search')
   @Render('address-search')
+  // @UseGuards(AuthenticationGuard)
   getAddressSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -83,6 +87,7 @@ export class AppController {
 
   @Get('area-search')
   @Render('area-search')
+  // @UseGuards(AuthenticationGuard)
   getAreaSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -95,6 +100,7 @@ export class AppController {
 
   @Get('view-search-results')
   @Render('view-search-results')
+  // @UseGuards(AuthenticationGuard)
   getViewSearchResults() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
