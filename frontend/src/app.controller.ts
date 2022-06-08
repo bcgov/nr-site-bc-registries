@@ -1,7 +1,8 @@
-import { Get, Controller, Render, UseGuards } from '@nestjs/common';
-import { AuthGuard, Unprotected } from 'nest-keycloak-connect';
+import { Get, Controller, Render, UseGuards, UseFilters } from '@nestjs/common';
+import { AuthenticatedUser, AuthGuard, Unprotected } from 'nest-keycloak-connect';
 import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
+import { AuthenticationFilter } from './authentication/authentication.filter';
 
 @Controller()
 export class AppController {
@@ -22,7 +23,8 @@ export class AppController {
 
   @Get('parcel-id')
   @Render('parcel-id')
-  @Unprotected()
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getParcelId() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -35,7 +37,7 @@ export class AppController {
 
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
-  // @UseGuards(AuthenticationGuard)
+  @UseGuards(AuthGuard)
   getCrownLandsPin() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -108,6 +110,30 @@ export class AppController {
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
+        };
+  }
+
+  @Get('authenticate')
+  @Render('authenticate')
+  getAuthenticate() {
+    return process.env.site_environment == 'DEVELOPMENT'
+      ? {
+          title: 'DEVELOPMENT - ' + 'Authenticating...',
+        }
+      : {
+          title: 'Authenticating...',
+        };
+  }
+
+  @Get('callback')
+  @Render('callback')
+  getCallback() {
+    return process.env.site_environment == 'DEVELOPMENT'
+      ? {
+          title: 'DEVELOPMENT - ' + 'Authentication Complete',
+        }
+      : {
+          title: 'Authentication Complete',
         };
   }
 }
