@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="fill-height-md">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .container {
+        width: 595px;
+        height: auto;
+      }
+      th {
+        text-align: right;
+        padding-right: 20px;
+        width: 10em;
+        background-color: white;
+      }
+      td {
+        text-align: left;
+        padding-right: 20px;
+        min-width: 5em;
+      }
+      table {
+        width: 100%;
+      }
+      .rightalign {
+        width: 100%;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="rightalign">As of: {d.modifiedDate}</div>
+      <div class="rightalign">{d.todaysDate}</div>
+      <div class="rightalign">{d.currentTime}</div>
+      <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
+      <p style="text-align: center; margin: 0">For: {d.account}</p>
+      <!-- <p>Folio:</p> -->
+
+      <hr size="5" />
+      <h3 style="text-align: center">Synopsis Report</h3>
+      <br />
+      <h4>SITE LOCATION</h4>
+      <table>
+        <tr>
+          <th>Site ID:</th>
+          <td>{d.siteId}</td>
+          <th>Latitude:</th>
+          <td>{d.lat}</td>
+        </tr>
+        <tr>
+          <th>Victoria File:</th>
+          <td>{d.victoriaFileNumber}</td>
+          <th>Longitude:</th>
+          <td>{d.lon}</td>
+        </tr>
+        <tr>
+          <th>Regional File:</th>
+          <td>{d.regionalFileNumber}</td>
+        </tr>
+        <tr>
+          <th>Region:</th>
+          <td>{d.region}</td>
+        </tr>
+        <tr>
+          <th>&nbsp;</th>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <th>Common Name:</th>
+          <td>{d.commonName}</td>
+          <th>Prov/State:</th>
+          <td>{d.provState}</td>
+        </tr>
+        <tr>
+          <th>Site Address:</th>
+          <td>{d.address_1} {d.address_2}</td>
+        </tr>
+        <tr>
+          <th>City:</th>
+          <td>{d.city}</td>
+        </tr>
+        <tr>
+          <th>Postal Code:</th>
+          <td>{d.postalCode}</td>
+        </tr>
+      </table>
+      <hr />
+      <table>
+        <tr>
+          <th>Registered:</th>
+          <td>{d.registeredDate}</td>
+          <th>Updated:</th>
+          <td>{d.modifiedDate}</td>
+          <th>Detail Removed:</th>
+          <td>{d.detailRemovedDate}</td>
+        </tr>
+        <tr>
+          <th>Notations:</th>
+          <td>{d.notations}</td>
+          <th>Participants:</th>
+          <td>{d.participants}</td>
+          <th>Associated Sites:</th>
+          <td>{d.assocSites}</td>
+        </tr>
+        <tr>
+          <th>Documents:</th>
+          <td>{d.documents}</td>
+          <th>Susp. Land Use:</th>
+          <td>{d.suspLandUse}</td>
+        </tr>
+      </table>
+      <hr />
+      <table>
+        <tr>
+          <th>Parcel Descriptions:</th>
+          <td>{d.parcelDesc}</td>
+        </tr>
+        <tr>
+          <th>Location Description:</th>
+          <td>{d.locationDescription}</td>
+        </tr>
+        <tr>
+          <th>Status:</th>
+          <td>{d.status}</td>
+        </tr>
+        <tr>
+          <th>Fee Category:</th>
+          <td>{d.classification}</td>
+        </tr>
+      </table>
+      <p>No Site Profile has been submitted for this site</p>
+      <p style="text-align: center">End of Synopsis Report</p>
+    </div>
+  </body>
+</html>

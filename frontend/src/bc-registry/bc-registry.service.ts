@@ -16,9 +16,8 @@ let port: number;
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService) {
-    
-    synopsisTemplate = base64.encode(fs.readFileSync('./public/templates/synopsisTemplate.html', 'utf8'));
-    detailedPartialTemplate = fs.readFileSync('./public/templates/detailedPartialTemplate.html', 'utf8');
+    synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
+    detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? `http://${process.env.BACKEND_URL}` : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
