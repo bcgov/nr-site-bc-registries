@@ -3,20 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <style>
+      @page {
+        margin: 1cm;
+      }
       .container {
         width: 595px;
         height: auto;
+        font-family: Georgia, 'Times New Roman', Times, serif;
       }
       th {
         text-align: right;
         padding-right: 20px;
         width: 10em;
+        font-size: 18px;
         background-color: white;
       }
       td {
         text-align: left;
         padding-right: 20px;
         min-width: 5em;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
       }
       table {
         width: 100%;
@@ -38,8 +45,10 @@
 
       <hr size="5" />
       <h3 style="text-align: center">Synopsis Report</h3>
+      <hr />
       <br />
       <h4>SITE LOCATION</h4>
+
       <table>
         <tr>
           <th>Site ID:</th>
@@ -84,7 +93,9 @@
           <td>{d.postalCode}</td>
         </tr>
       </table>
+
       <hr />
+
       <table>
         <tr>
           <th>Registered:</th>
@@ -109,7 +120,9 @@
           <td>{d.suspLandUse}</td>
         </tr>
       </table>
+
       <hr />
+
       <table>
         <tr>
           <th>Parcel Descriptions:</th>
@@ -128,8 +141,18 @@
           <td>{d.classification}</td>
         </tr>
       </table>
-      <p>No Site Profile has been submitted for this site</p>
-      <p style="text-align: center">End of Synopsis Report</p>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-sm text-center">No Site Profile has been submitted for this site</div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-sm text-center">End of Synopsis Report</div>
+      </div>
     </div>
   </body>
 </html>
