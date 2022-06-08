@@ -16,6 +16,7 @@ let port: number;
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService) {
+    
     synopsisTemplate = base64.encode(fs.readFileSync('./public/templates/synopsisTemplate.html', 'utf8'));
     detailedPartialTemplate = fs.readFileSync('./public/templates/detailedPartialTemplate.html', 'utf8');
     // docker hostname is the container name, use localhost for local development
