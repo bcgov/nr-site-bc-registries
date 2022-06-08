@@ -123,8 +123,5 @@
   },
   "overrides": {
     "minimist@<1.2.6": "1.2.6"
-  },
-  "directories": {
-    "templates:": ".utils/templates"
   }
 }

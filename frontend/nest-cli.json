@@ -4,7 +4,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      { "include": "utils/templates/","watchAssets": true }
+      { 
+        "include": "utils/templates/",
+        "watchAssets": true 
+      },
+      {
+        "include": "../views",
+        "outDir": "dist/views",
+        "watchAssets": true 
+      }
     ]
   }
 }
