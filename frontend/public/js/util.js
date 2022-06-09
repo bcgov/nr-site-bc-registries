@@ -120,6 +120,7 @@ async function requestPdfDownload(siteId) {
   } else {
     alert('Not yet paid');
   }
+  await delay(5);
   $(':button').prop('disabled', false);
 }
 
@@ -134,7 +135,14 @@ async function requestPdfEmail(siteId) {
   $(':button').prop('disabled', false);
 }
 
-function getPdf(siteId) {
+// wait for n seconds
+function delay(n) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, n * 1000);
+  });
+}
+
+async function getPdf(siteId) {
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
     var req = new XMLHttpRequest();
