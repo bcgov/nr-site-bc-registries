@@ -3,20 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <style>
+      @page {
+        margin: 1cm;
+      }
       .container {
         width: 595px;
         height: auto;
+        font-family: Georgia, 'Times New Roman', Times, serif;
       }
       th {
         text-align: right;
         padding-right: 20px;
         width: 10em;
+        font-size: 18px;
         background-color: white;
       }
       td {
         text-align: left;
         padding-right: 20px;
         min-width: 5em;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
       }
       table {
         width: 100%;
@@ -38,6 +45,7 @@
 
       <hr size="5" />
       <h3 style="text-align: center">Detailed Report</h3>
+      <hr />
       <br />
       <h4>SITE LOCATION</h4>
       <table>
@@ -45,13 +53,13 @@
           <th>Site ID:</th>
           <td>{d.siteId}</td>
           <th>Latitude:</th>
-          <td>{d.lat}</td>
+          <td style="min-width: 10em">{d.lat}</td>
         </tr>
         <tr>
           <th>Victoria File:</th>
           <td>{d.victoriaFileNumber}</td>
           <th>Longitude:</th>
-          <td>{d.lon}</td>
+          <td style="min-width: 10em">{d.lon}</td>
         </tr>
         <tr>
           <th>Regional File:</th>
