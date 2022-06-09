@@ -101,6 +101,26 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
                       key: database-user
+                - name: object_store_bucket
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_bucket
+                - name: object_store_host
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_host
+                - name: object_store_secret
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_secret
+                - name: object_store_userid
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_userid
               ports:
                 - containerPort: 3000
                   protocol: TCP

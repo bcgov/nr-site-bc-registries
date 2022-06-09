@@ -26,6 +26,10 @@ services:
       POSTGRESQL_USER: default
       POSTGRESQL_PASSWORD: default
       POSTGRESQL_DATABASE: default
+      object_store_bucket: ZXBkc2J4
+      object_store_host: nrs.objectstore.gov.bc.ca
+      object_store_secret:
+      object_store_userid:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 1m30s
