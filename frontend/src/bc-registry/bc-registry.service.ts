@@ -4,9 +4,10 @@ import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
-var axios = require('axios');
 import { URLSearchParams } from 'node:url';
 import * as fs from 'fs';
+const HTML5ToPDF = require('html5-to-pdf');
+const axios = require('axios');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -54,8 +55,8 @@ export class BCRegistryService {
         formatters:
           '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
         options: {
-          cacheReport: true,
-          convertTo: 'pdf',
+          cacheReport: false,
+          convertTo: 'html',
           overwrite: true,
           reportName: 'test-report',
         },
@@ -73,12 +74,12 @@ export class BCRegistryService {
           Authorization: `Bearer ${authorizationToken}`,
           'Content-Type': 'application/json',
         },
-        responseType: 'arraybuffer',
+        responseType: 'string',
         data: md,
       };
 
       const response = await axios(config);
-      return response.data;
+      return this.generatePdf(response.data);
     } else {
       return Error('No report type selected');
     }
@@ -248,8 +249,12 @@ export class BCRegistryService {
     let notationsLength = data.notationsArray.length;
     let counter = 0;
     if (notationsLength > 0) {
+      template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>NOTATIONS</h4>\n');
       for (let notation of data.notationsArray) {
+        if (counter > 0) {
+          template = template.concat('<div style="page-break-inside: avoid">\n');
+        }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Notation Type:</th><td>${notation.eventType}</td></tr>`);
         template = template.concat(`<tr><th>Notation Class:</th><td>${notation.eventClass}</td></tr>`);
@@ -270,6 +275,7 @@ export class BCRegistryService {
           template = template.concat(`</table>`);
         }
         template = template.concat(`<table><tr><th>Note:</th><td>${notation.noteString}</td></tr></table>`);
+        template = template.concat('</div>');
         counter++;
         if (counter < notationsLength) {
           template = template.concat('<hr>');
@@ -280,28 +286,44 @@ export class BCRegistryService {
     let participantsLength = data.participantsArray.length;
     counter = 0;
     if (participantsLength > 0) {
+      template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
       for (let participant of data.participantsArray) {
+        if (counter > 0) {
+          template = template.concat('<div style="page-break-inside: avoid">\n');
+        }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Participant:</th><td>${participant.nameString}</td></tr>`);
         template = template.concat(`<tr><th>Role(s):</th><td>${participant.participantType}</td></tr>`);
         template = template.concat(`<tr><th>Start Date:</th><td>${participant.effectiveDate}</td></tr>`);
         template = template.concat(`<tr><th>End Date:</th><td>${participant.endDate}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${participant.noteString}</td></tr>`);
-        template = template.concat(`</table>`);
+        template = template.concat(`</table></div>`);
         counter++;
         if (counter < participantsLength) {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="2" color="black">');
+      template = template.concat('');
+      template = template.concat('<hr size="5" color="black">');
     }
     template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
     return base64.encode(template);
   }
 
+  async generatePdf(htmlFile: string) {
+    const html5ToPDF = new HTML5ToPDF({
+      inputBody: htmlFile,
+      include: ['./utils/templates/css/bootstrap.min.css'],
+    });
+    await html5ToPDF.start();
+    const buffer = await html5ToPDF.build();
+    await html5ToPDF.close();
+    return buffer;
+  }
+
   getToken(): Promise<Object> {
-    let url = 'https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token';
+    let url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
     let service_client_id = process.env.service_client_id;
     let service_client_secret = process.env.service_client_secret;
     const token = `${service_client_id}:${service_client_secret}`;

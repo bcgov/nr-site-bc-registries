@@ -3,7 +3,7 @@
     <main role="main">
       <div class="container">
         <div class="row">
-          <h2 id="searchType">asdf</h2>
+          <h2 id="searchType">Search</h2>
         </div>
         <div class="row">
           <div class="col-sm-2">
@@ -64,8 +64,17 @@
         } else if (searchType == "coords") {
           document.getElementById("searchType").innerHTML = "Area Search Results";
           document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
-          document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
+          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("latDms");
+          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("lonDms");
           document.getElementById("searchCriteria3").innerHTML = searchCriteria3;
+        } else if (searchType == "postal") {
+          document.getElementById("searchType").innerHTML = "Area Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("postalCode");
+          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("searchCriteria3");
+        } else if (searchType == "sid") {
+          document.getElementById("searchType").innerHTML = "Site ID Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Site ID:";
         }
     </script>
     <script>
@@ -101,7 +110,7 @@
         url = `/site-registry/searchSiteId/${searchCriteria}`
       } else if (searchType == 'adr') {
         url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
-      } else if (searchType == 'coords') {
+      } else if (searchType == 'coords' || searchType == 'postal') {
         url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
       }
       $.ajax({
