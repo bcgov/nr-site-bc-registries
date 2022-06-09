@@ -64,18 +64,52 @@ async function searchAddress() {
 }
 
 async function searchArea() {
-  const size = document.getElementById('sizeSmall').checked
-    ? 'Small'
-    : document.getElementById('sizeLarge').checked
-    ? 'Large'
-    : '';
-  const lat = document.getElementById('latitudeInput').value;
-  const lng = Math.abs(document.getElementById('longitudeInput').value); // remove the minus sign if it exists
-  localStorage.setItem('searchType', 'coords');
-  localStorage.setItem('searchCriteria', lat);
-  localStorage.setItem('searchCriteria2', lng);
-  localStorage.setItem('searchCriteria3', size);
-  window.location.href = '/view-search-results';
+  if (checkAreaSearchInputs()) {
+    const size = document.getElementById('sizeSmall').checked
+      ? 'Small'
+      : document.getElementById('sizeLarge').checked
+      ? 'Large'
+      : '';
+    var postalCodeTab = document.getElementById('pills-postalcode');
+    var coordinatesTab = document.getElementById('pills-coordinates');
+    const latLon = getLatLon();
+    if (postalCodeTab.classList.contains('active')) {
+      localStorage.setItem('searchType', 'postal');
+      localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+    } else if (coordinatesTab.classList.contains('active')) {
+      const dms = getDMS(latLon.lat, latLon.lon);
+      localStorage.setItem('searchType', 'coords');
+      localStorage.setItem('latDms', dms.latDeg + 'deg ' + dms.latMin + 'min ' + dms.latSec + 'sec');
+      localStorage.setItem('lonDms', dms.lonDeg + 'deg ' + dms.lonMin + 'min ' + dms.lonSec + 'sec');
+    }
+    localStorage.setItem('searchCriteria', latLon.lat.toFixed(5));
+    localStorage.setItem('searchCriteria2', Math.abs(latLon.lon).toFixed(5));
+    localStorage.setItem('searchCriteria3', size);
+
+    window.location.href = '/view-search-results';
+  }
+}
+
+function checkAreaSearchInputs() {
+  var postalCodeTab = document.getElementById('pills-postalcode');
+  let latLonArray = [];
+  latLonArray.push(document.getElementById('latDegInput').value);
+  latLonArray.push(document.getElementById('latMinInput').value);
+  latLonArray.push(document.getElementById('latSecInput').value);
+  latLonArray.push(document.getElementById('lonDegInput').value);
+  latLonArray.push(document.getElementById('lonMinInput').value);
+  latLonArray.push(document.getElementById('lonSecInput').value);
+  for (let value of latLonArray) {
+    if (value.length == 0) {
+      return false;
+    }
+  }
+  if (postalCodeTab.classList.contains('active')) {
+    if (document.getElementById('postalCodeInput').value.length !== 6) {
+      return false;
+    }
+  }
+  return true;
 }
 
 async function requestPdfDownload(siteId) {

@@ -42,6 +42,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
       ? 'l'
       : '';
     if (checkCoords(latitude, longitude)) {
+      setDMSInputs(latitude, longitude);
       drawCircle(latitude, longitude, size);
     }
     map.removeLayer(layer);
@@ -69,8 +70,7 @@ smallCircle.on({
     map.on('mousemove', function (e) {
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         smallCircle.setLatLng(e.latlng);
-        document.getElementById('latitudeInput').value = smallCircle._latlng.lat.toFixed(5);
-        document.getElementById('longitudeInput').value = smallCircle._latlng.lng.toFixed(5);
+        setDMSInputs(e.latlng.lat, e.latlng.lng);
       }
     });
   },
@@ -81,8 +81,7 @@ largeCircle.on({
     map.on('mousemove', function (e) {
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         largeCircle.setLatLng(e.latlng);
-        document.getElementById('latitudeInput').value = largeCircle._latlng.lat.toFixed(5);
-        document.getElementById('longitudeInput').value = largeCircle._latlng.lng.toFixed(5);
+        setDMSInputs(e.latlng.lat, e.latlng.lng);
       }
     });
   },
@@ -100,7 +99,6 @@ function postalCodeCircle() {
   if (checkPostalCode(postalCode)) {
     postalCode.replace(' ', '');
 
-    // ~~~using txt file~~~
     fetch(`/map/postalcode/${postalCode}`)
       .then(function (response) {
         return response.json();
@@ -115,8 +113,7 @@ function postalCodeCircle() {
             ? 'l'
             : '';
           if (checkCoords(latitude, longitude)) {
-            document.getElementById('latitudeInput').value = latitude.toFixed(5);
-            document.getElementById('longitudeInput').value = longitude.toFixed(5);
+            setDMSInputs(latitude, longitude);
             drawCircle(latitude, longitude, size);
           }
         }
@@ -127,36 +124,12 @@ function postalCodeCircle() {
   } else {
     console.log('Bad Postal Code');
   }
-  // ~~~using geocoder~~~
-  // const url = `https://geocoder.ca/${postalCode}?json=1`;
-  // fetch(url)
-  //   .then(function (response) {
-  //     if (response.status == 403) {
-  //       console.log('API request failed');
-  //       return null;
-  //     }
-  //     return response.json();
-  //   })
-  //   .then(function (data) {
-  //     if (data !== null) {
-  //       const latitude = parseFloat(data.latt);
-  //       const longitude = parseFloat(data.longt);
-  //       const size = document.getElementById('sizeSmall').checked
-  //         ? 's'
-  //         : document.getElementById('sizeLarge').checked
-  //         ? 'l'
-  //         : '';
-  //       drawCircle(latitude, longitude, size);
-  //     }
-  //   })
-  //   .catch(function () {
-  //     console.log('Failed to fetch the postal code coordinates');
-  //   });
 }
 
 function coordinateCircle() {
-  const latitude = parseFloat(document.getElementById('latitudeInput').value);
-  const longitude = parseFloat(document.getElementById('longitudeInput').value);
+  const latLon = getLatLon();
+  const latitude = latLon.lat;
+  const longitude = latLon.lon;
   const size = document.getElementById('sizeSmall').checked
     ? 's'
     : document.getElementById('sizeLarge').checked
@@ -176,28 +149,19 @@ function drawCircle(latitude, longitude, size) {
     if (size == 's') {
       smallCircle._latlng.lat = latitude;
       smallCircle._latlng.lng = longitude;
-      document.getElementById('latitudeInput').value = smallCircle._latlng.lat.toFixed(5);
-      document.getElementById('longitudeInput').value = smallCircle._latlng.lng.toFixed(5);
       smallCircle.addTo(map);
       map.setView([latitude, longitude], 15);
     } else if (size == 'l') {
       largeCircle._latlng.lat = latitude;
       largeCircle._latlng.lng = longitude;
-      document.getElementById('latitudeInput').value = largeCircle._latlng.lat.toFixed(5);
-      document.getElementById('longitudeInput').value = largeCircle._latlng.lng.toFixed(5);
       largeCircle.addTo(map);
       map.setView([latitude, longitude], 12);
     }
-  } else {
-    console.log('Invalid lat/long');
   }
 }
 
 function checkPostalCode(postalCode) {
   postalCode = postalCode.toString().trim();
-  // var regex = new RegExp(
-  //   /([ABCEGHJKLMNPRSTVXY]\d)([ABCEGHJKLMNPRSTVWXYZ]\d){2}/i,
-  // );
   var regex = new RegExp(/([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i); // BC POSTAL CODE
   if (regex.test(postalCode.toString().replace(/\W+/g, ''))) {
     return true;
@@ -211,4 +175,39 @@ function checkCoords(lat, lng) {
   // return lat <= 90 && lat >= -90 && long <= 180 && long >= -180 ? true : false;
 }
 
+// ********************************************************
+// functions that deal with coordinate conversions
+function getLatLon() {
+  const latDeg = parseFloat(document.getElementById('latDegInput').value);
+  const latMin = parseFloat(document.getElementById('latMinInput').value);
+  const latSec = parseFloat(document.getElementById('latSecInput').value);
+  const lonDeg = parseFloat(document.getElementById('lonDegInput').value);
+  const lonMin = parseFloat(document.getElementById('lonMinInput').value);
+  const lonSec = parseFloat(document.getElementById('lonSecInput').value);
+
+  const lat = latDeg + latMin / 60 + latSec / 3600;
+  const lon = -1 * (lonDeg + lonMin / 60 + lonSec / 3600);
+  return { lat, lon };
+}
+
+function getDMS(lat, lon) {
+  if (lon < 0) lon = lon * -1;
+  let latDeg = parseInt(lat);
+  let latMin = parseInt((lat - latDeg) * 60);
+  let latSec = parseFloat((lat - latDeg - latMin / 60) * 3600).toFixed(1);
+  let lonDeg = parseInt(lon);
+  let lonMin = parseInt((lon - lonDeg) * 60);
+  let lonSec = parseFloat((lon - lonDeg - lonMin / 60) * 3600).toFixed(1);
+  return { latDeg, latMin, latSec, lonDeg, lonMin, lonSec };
+}
+
+function setDMSInputs(lat, lon) {
+  const dms = getDMS(lat, lon);
+  document.getElementById('latDegInput').value = dms.latDeg;
+  document.getElementById('latMinInput').value = dms.latMin;
+  document.getElementById('latSecInput').value = dms.latSec;
+  document.getElementById('lonDegInput').value = dms.lonDeg;
+  document.getElementById('lonMinInput').value = dms.lonMin;
+  document.getElementById('lonSecInput').value = dms.lonSec;
+}
 // ********************************************************
