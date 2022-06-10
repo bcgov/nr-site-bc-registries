@@ -11,6 +11,8 @@ export class AppController {
   @Get()
   @Render('index')
   @Unprotected()
+  // @UseFilters(AuthenticationFilter)
+  // @UseGuards(AuthGuard)
   root() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -37,6 +39,7 @@ export class AppController {
 
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
+  @UseFilters(AuthenticationFilter)
   @UseGuards(AuthGuard)
   getCrownLandsPin() {
     return process.env.site_environment == 'DEVELOPMENT'
@@ -125,8 +128,8 @@ export class AppController {
         };
   }
 
-  @Get('callback')
-  @Render('callback')
+  @Get('success')
+  @Render('success')
   getCallback() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {

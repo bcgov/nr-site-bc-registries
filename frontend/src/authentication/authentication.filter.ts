@@ -2,7 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/co
 import { UnauthorizedException } from '@nestjs/common';
 
 let keycloak_login_fullurl, keycloak_login_baseurl, keycloak_login_params, keycloak_header;
-let redirectUri = encodeURI('http://127.0.0.1:3000/authenticate');
+let redirectUri = encodeURI('http://localhost:3000/authenticate');
 
 @Catch(HttpException)
 export class AuthenticationFilter implements ExceptionFilter {

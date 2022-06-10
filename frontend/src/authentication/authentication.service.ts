@@ -33,7 +33,7 @@ export class AuthenticationService {
     this.realm = process.env.KEYCLOAK_REALM;
     this.client_id = process.env.KEYCLOAK_CLIENT_ID;
     this.secret = process.env.KEYCLOAK_SECRET;
-    this.redirect_uri = 'http://127.0.0.1:3000/callback';
+    this.redirect_uri = 'http://localhost:3000/authenticate';
     this.grant_type = 'authorization_code';
   }
 
@@ -44,29 +44,14 @@ export class AuthenticationService {
    * If it fails, the token is invalid or expired
    */
   async authenticate(code: string): Promise<any> {
-    console.log(code);
     const url = `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/token`;
     const authorization = base64.encode(`${this.client_id}:${this.secret}`);
-    const datas =
-      'code=' +
-      encodeURIComponent(code) +
-      '&grant_type=' +
-      encodeURIComponent(this.grant_type) +
-      '&client_id=' +
-      encodeURIComponent(this.client_id) +
-      '&redirect_uri=' +
-      encodeURIComponent(this.redirect_uri);
 
     const params = new URLSearchParams();
     params.append('code', code);
     params.append('grant_type', this.grant_type);
     params.append('client_id', this.client_id);
     params.append('redirect_uri', this.redirect_uri);
-
-    const data = {
-      mode: 'application/x-www-form-urlencoded',
-      raw: datas,
-    };
 
     const config = {
       headers: {
@@ -78,9 +63,10 @@ export class AuthenticationService {
       .post(url, params, config)
       .then((res) => console.log(res))
       .catch((err) => {
-        console.log(err.response.data);
+        console.log(err.response);
+        return { message: 'error' };
       });
     this.httpService.post(url, params, config);
-    return '???';
+    return { message: 'success' };
   }
 }
