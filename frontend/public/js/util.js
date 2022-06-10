@@ -211,6 +211,7 @@ async function finishAuthentication() {
 
   await fetch(`/authentication`, {
     method: 'POST',
+    responseType: 'application/json',
     mode: 'cors',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -221,7 +222,8 @@ async function finishAuthentication() {
     referrerPolicy: 'no-referrer',
     body: JSON.stringify({ code: code }),
   })
-    .then((res) => console.log(res))
+    .then((res) => res.json())
+    .then((resJson) => console.log(resJson))
     .catch((err) => {
       console.log(err);
     });

@@ -59,14 +59,16 @@ export class AuthenticationService {
         Authorization: `Basic ${authorization}`,
       },
     };
-    axios
+    return axios
       .post(url, params, config)
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res.data);
+        return res.data;
+      })
       .catch((err) => {
         console.log(err.response);
         return { message: 'error' };
       });
     this.httpService.post(url, params, config);
-    return { message: 'success' };
   }
 }
