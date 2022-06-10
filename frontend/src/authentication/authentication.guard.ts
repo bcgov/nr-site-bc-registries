@@ -1,7 +1,8 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AuthenticationService } from './authentication.service';
 import { Request } from 'express';
+import { URL } from 'url';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -10,24 +11,17 @@ export class AuthenticationGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
-    const header = request.header('Authorization');
-    if (!header) {
-      throw new HttpException('Authorization: Bearer <token> header missing', HttpStatus.UNAUTHORIZED);
-    }
-
-    const parts = header.split(' ');
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      throw new HttpException('Authorization: Bearer <token> header invalid', HttpStatus.UNAUTHORIZED);
-    }
-
-    const token = parts[1];
-
-    try {
-      // Store the user on the request object if we want to retrieve it from the controllers
-      request['user'] = await this.authenticationService.authenticate(token);
+    const url = new URL('http://' + request.headers.host + request.url);
+    const urlPath = url.pathname == '/' ? '' : url.pathname;
+    const redirect = url.origin + urlPath;
+    const code = url.searchParams.get('code');
+    const tokenObject = await this.authenticationService.authenticate(code, redirect);
+    if (tokenObject.access_token) {
+      console.log('guard ok');
+      console.log(tokenObject.access_token);
       return true;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.UNAUTHORIZED);
+    } else {
+      throw new UnauthorizedException('Invalid code, redirecting.');
     }
   }
 }

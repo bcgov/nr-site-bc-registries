@@ -1,21 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
 import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
-
-// import { User } from './user.model';
-
-// interface KeycloakUserInfoResponse {
-//   sub: string;
-//   email_verified: boolean;
-//   name: string;
-//   preferred_username: string;
-//   given_name: string;
-//   family_name: string;
-//   email: string;
-// }
 
 export class AuthenticationError extends Error {}
 
@@ -25,15 +11,15 @@ export class AuthenticationService {
   private readonly realm: string;
   private readonly client_id: string;
   private readonly secret: string;
-  private readonly redirect_uri: string;
+  private redirect_uri: string;
   private readonly grant_type: string;
 
-  constructor(private httpService: HttpService) {
+  constructor() {
     this.baseURL = process.env.KEYCLOAK_BASE_URL;
     this.realm = process.env.KEYCLOAK_REALM;
     this.client_id = process.env.KEYCLOAK_CLIENT_ID;
     this.secret = process.env.KEYCLOAK_SECRET;
-    this.redirect_uri = 'http://localhost:3000/authenticate';
+    // this.redirect_uri = 'http://localhost:3000';
     this.grant_type = 'authorization_code';
   }
 
@@ -43,9 +29,10 @@ export class AuthenticationService {
    * If it succeeds, the token is valid and we get the user infos in the response
    * If it fails, the token is invalid or expired
    */
-  async authenticate(code: string): Promise<any> {
+  async authenticate(code: string, redirect: string): Promise<any> {
     const url = `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/token`;
     const authorization = base64.encode(`${this.client_id}:${this.secret}`);
+    this.redirect_uri = redirect;
 
     const params = new URLSearchParams();
     params.append('code', code);
@@ -62,13 +49,12 @@ export class AuthenticationService {
     return axios
       .post(url, params, config)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         return res.data;
       })
       .catch((err) => {
-        console.log(err.response);
-        return { message: 'error' };
+        console.log(err.response.data);
+        return err.response.data;
       });
-    this.httpService.post(url, params, config);
   }
 }

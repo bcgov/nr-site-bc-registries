@@ -11,8 +11,8 @@ export class AppController {
   @Get()
   @Render('index')
   @Unprotected()
-  // @UseFilters(AuthenticationFilter)
-  // @UseGuards(AuthGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   root() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -40,7 +40,7 @@ export class AppController {
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
   @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthenticationGuard)
   getCrownLandsPin() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -53,7 +53,8 @@ export class AppController {
 
   @Get('crown-lands-file')
   @Render('crown-lands-file')
-  // @UseGuards(AuthenticationGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getCrownLandsFile() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -66,7 +67,8 @@ export class AppController {
 
   @Get('site-id-search')
   @Render('site-id-search')
-  // @UseGuards(AuthenticationGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getSiteIdSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -79,7 +81,8 @@ export class AppController {
 
   @Get('address-search')
   @Render('address-search')
-  // @UseGuards(AuthenticationGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getAddressSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -92,7 +95,8 @@ export class AppController {
 
   @Get('area-search')
   @Render('area-search')
-  // @UseGuards(AuthenticationGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getAreaSearch() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -105,7 +109,8 @@ export class AppController {
 
   @Get('view-search-results')
   @Render('view-search-results')
-  // @UseGuards(AuthenticationGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   getViewSearchResults() {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -113,30 +118,6 @@ export class AppController {
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
-        };
-  }
-
-  @Get('authenticate')
-  @Render('authenticate')
-  getAuthenticate() {
-    return process.env.site_environment == 'DEVELOPMENT'
-      ? {
-          title: 'DEVELOPMENT - ' + 'Authenticating...',
-        }
-      : {
-          title: 'Authenticating...',
-        };
-  }
-
-  @Get('success')
-  @Render('success')
-  getCallback() {
-    return process.env.site_environment == 'DEVELOPMENT'
-      ? {
-          title: 'DEVELOPMENT - ' + 'Authentication Complete',
-        }
-      : {
-          title: 'Authentication Complete',
         };
   }
 }
