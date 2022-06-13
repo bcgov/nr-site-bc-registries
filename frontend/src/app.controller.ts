@@ -1,25 +1,33 @@
-import { Get, Controller, Render, UseGuards, UseFilters } from '@nestjs/common';
-import { AuthenticatedUser, AuthGuard, Unprotected } from 'nest-keycloak-connect';
+import { Get, Controller, Render, UseGuards, UseFilters, Req, Param, Query, Res } from '@nestjs/common';
 import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
 import { AuthenticationFilter } from './authentication/authentication.filter';
+import { Response } from 'express';
+import { AuthenticationService } from './authentication/authentication.service';
 
 @Controller()
 export class AppController {
-  constructor() {}
+  constructor(private authenticationService: AuthenticationService) {}
 
   @Get()
   @Render('index')
-  @Unprotected()
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  root() {
+  async root(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+    console.log(userObject);
+    const userSettings = await this.authenticationService.getUserSettings(token, userObject.keycloakGuid);
+    console.log(userSettings[0].id); // id for pay api
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.INDEX,
+          username: userObject.name,
         };
   }
 
@@ -27,13 +35,18 @@ export class AppController {
   @Render('parcel-id')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getParcelId() {
+  async getParcelId(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
+          username: userObject.name,
         };
   }
 
@@ -41,13 +54,18 @@ export class AppController {
   @Render('crown-lands-pin')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getCrownLandsPin() {
+  async getCrownLandsPin(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
+          username: userObject.name,
         };
   }
 
@@ -55,13 +73,18 @@ export class AppController {
   @Render('crown-lands-file')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getCrownLandsFile() {
+  async getCrownLandsFile(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
+          username: userObject.name,
         };
   }
 
@@ -69,13 +92,18 @@ export class AppController {
   @Render('site-id-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getSiteIdSearch() {
+  async getSiteIdSearch(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
+          username: userObject.name,
         };
   }
 
@@ -83,13 +111,18 @@ export class AppController {
   @Render('address-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getAddressSearch() {
+  async getAddressSearch(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
+          username: userObject.name,
         };
   }
 
@@ -97,13 +130,18 @@ export class AppController {
   @Render('area-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getAreaSearch() {
+  async getAreaSearch(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
+          username: userObject.name,
         };
   }
 
@@ -111,13 +149,18 @@ export class AppController {
   @Render('view-search-results')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  getViewSearchResults() {
+  async getViewSearchResults(@Res() res: Response) {
+    const token = res.locals.token;
+    const userObject = await this.authenticationService.getUserDetails(token);
+
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          username: userObject.name,
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          username: userObject.name,
         };
   }
 }

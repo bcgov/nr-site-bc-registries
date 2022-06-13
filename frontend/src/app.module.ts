@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BCRegistryModule } from './bc-registry/bc-registry.module';
@@ -6,9 +6,9 @@ import { MapModule } from './map/map.module';
 import { SiteRegistryModule } from './site-registry/site-registry.module';
 import { PayModule } from './pay/pay.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthGuard, KeycloakConnectModule, PolicyEnforcementMode, TokenValidation } from 'nest-keycloak-connect';
-import { APP_GUARD } from '@nestjs/core';
+import { KeycloakConnectModule } from 'nest-keycloak-connect';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { AppMiddleware } from './app.middleware';
 
 @Module({
   imports: [
@@ -28,4 +28,8 @@ import { AuthenticationModule } from './authentication/authentication.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AppMiddleware).forRoutes(AppController); // only applies when rendering pages for now
+  }
+}

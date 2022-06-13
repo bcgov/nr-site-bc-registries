@@ -7,20 +7,67 @@ export class AuthenticationError extends Error {}
 
 @Injectable()
 export class AuthenticationService {
-  private readonly baseURL: string;
+  private readonly keycloak_base_url: string;
   private readonly realm: string;
   private readonly client_id: string;
   private readonly secret: string;
-  private redirect_uri: string;
   private readonly grant_type: string;
+  private readonly bc_registry_base_url: string;
+  private readonly xapikey: string;
+  private redirect_uri: string;
 
   constructor() {
-    this.baseURL = process.env.KEYCLOAK_BASE_URL;
+    this.keycloak_base_url = process.env.KEYCLOAK_BASE_URL;
     this.realm = process.env.KEYCLOAK_REALM;
     this.client_id = process.env.KEYCLOAK_CLIENT_ID;
     this.secret = process.env.KEYCLOAK_SECRET;
-    // this.redirect_uri = 'http://localhost:3000';
     this.grant_type = 'authorization_code';
+    this.xapikey = process.env.KEYCLOAK_XAPIKEY;
+    this.bc_registry_base_url = process.env.BC_REGISTRY_BASE_URL;
+  }
+
+  async getUserDetails(token: string) {
+    const config = {
+      url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
+      headers: {
+        'x-apikey': this.xapikey,
+        Authorization: `Bearer ${token}`,
+        Accept: '*/*',
+        Host: 'bcregistry-test.apigee.net',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+    };
+    return axios(config)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        return err.response.data;
+      });
+  }
+
+  async getUserSettings(token: string, guid: string) {
+    const config = {
+      url: `${this.bc_registry_base_url}/auth/api/v1/users/${guid}/settings`,
+      headers: {
+        'x-apikey': this.xapikey,
+        Authorization: `Bearer ${token}`,
+        Accept: '*/*',
+        Host: 'bcregistry-test.apigee.net',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+    };
+    return axios(config)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        return err.response.data;
+      });
   }
 
   /**
@@ -29,8 +76,8 @@ export class AuthenticationService {
    * If it succeeds, the token is valid and we get the user infos in the response
    * If it fails, the token is invalid or expired
    */
-  async authenticate(code: string, redirect: string): Promise<any> {
-    const url = `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/token`;
+  async getToken(code: string, redirect: string): Promise<any> {
+    const url = `${this.keycloak_base_url}/auth/realms/${this.realm}/protocol/openid-connect/token`;
     const authorization = base64.encode(`${this.client_id}:${this.secret}`);
     this.redirect_uri = redirect;
 

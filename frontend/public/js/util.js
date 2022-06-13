@@ -205,45 +205,6 @@ async function createInvoice() {
   return response.statusCode;
 }
 
-// async function finishAuthentication() {
-//   var url = new URL(window.location.href);
-//   var code = url.searchParams.get('code');
-//   if (code) {
-//     await fetch(`/authentication`, {
-//       method: 'POST',
-//       responseType: 'application/json',
-//       mode: 'cors',
-//       cache: 'no-cache',
-//       credentials: 'same-origin',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: code,
-//       },
-//       redirect: 'follow',
-//       referrerPolicy: 'no-referrer',
-//       body: JSON.stringify({ code: code }),
-//     })
-//       .then((res) => res.json())
-//       .then((res) => console.log(res))
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   }
-// }
-
-function countdown() {
-  seconds = document.getElementById('countdown').innerHTML - 1;
-  if (seconds < 0) {
-    // Chnage your redirection link here
-    window.location.assign('../');
-  } else {
-    // Update remaining seconds
-    // Count down using javascript
-    window.setTimeout(`countdown()`, 1000);
-    document.getElementById('countdown').innerHTML = seconds;
-  }
-}
-
 function getAccessCode() {
   var url = new URL(window.location.href);
   var accessCode = url.searchParams.get('accessCodeVariableName');
