@@ -19,15 +19,16 @@ export class AppController {
     console.log(userObject);
     const userSettings = await this.authenticationService.getUserSettings(token, userObject.keycloakGuid);
     console.log(userSettings[0].id); // id for pay api
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.INDEX,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -38,15 +39,16 @@ export class AppController {
   async getParcelId(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -57,15 +59,16 @@ export class AppController {
   async getCrownLandsPin(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -76,15 +79,16 @@ export class AppController {
   async getCrownLandsFile(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -95,15 +99,16 @@ export class AppController {
   async getSiteIdSearch(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -114,15 +119,16 @@ export class AppController {
   async getAddressSearch(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -133,15 +139,16 @@ export class AppController {
   async getAreaSearch(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
-          username: userObject.name,
+          username: name,
         };
   }
 
@@ -152,15 +159,16 @@ export class AppController {
   async getViewSearchResults(@Res() res: Response) {
     const token = res.locals.token;
     const userObject = await this.authenticationService.getUserDetails(token);
+    const name = userObject.firstname + ' ' + userObject.lastname;
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: userObject.name,
+          username: name,
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: userObject.name,
+          username: name,
         };
   }
 }
