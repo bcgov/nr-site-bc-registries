@@ -7,57 +7,10 @@ export type postalCodeJSON = {
   LONGITUDE: string;
 };
 
-export type siteDto = {
-  docid: number;
-  site_id: number;
-  siteid: number;
-  catid: number;
-  sequenceno: number;
-  pin: number;
-  pidno: number;
-  eventid: number;
-  associatedsiteid: number;
-  participant_id: number;
-  participantid: number;
-  questionid: number;
-  parentid: number;
-  ownerid: number;
-  contactid: number;
-  completorid: number;
-  aec_id: number;
-  lat: number;
-  latdeg: number;
-  latmin: number;
-  latsec: number;
-  lon: number;
-  londeg: number;
-  lonmin: number;
-  lonsec: number;
-  regdate: Date;
-  eventdate: Date;
-  approval_date: Date;
-  moddate: Date;
-  tombdate: Date;
-  effectivedate: Date;
-  enddate: Date;
-  datenoted: Date;
-  date_completed: Date;
-  expirydate: Date;
-  datecompleted: Date;
-  datereceived: Date;
-  datelocalauthority: Date;
-  dateregistrar: Date;
-  datedecision: Date;
-  dateentered: Date;
-  submissiondate: Date;
-  documentdate: Date;
-};
-
-export type Srprfcat = {
-  categoryId: string; // a10;
-  sequenceNumber: string; // a10;
-  effectiveDate: string; // a10;
-  expiryDate: string; // a10;
-  questionType: string; // a1;
-  categoryDescription: string; // a200;
+export type SessionData = {
+  access_token: string;
+  refresh_token: string;
+  name: string;
+  label: string;
+  accountId: number;
 };

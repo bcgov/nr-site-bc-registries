@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
+import jwt_decode from 'jwt-decode';
 
 export class AuthenticationError extends Error {}
 
@@ -26,6 +27,7 @@ export class AuthenticationService {
     this.bc_registry_base_url = process.env.BC_REGISTRY_BASE_URL;
   }
 
+  // function unnecessary since the token contains this info
   async getUserDetails(token: string) {
     const config = {
       url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
@@ -105,25 +107,45 @@ export class AuthenticationService {
       });
   }
 
-  async getHealthCheck(token: string): Promise<any> {
-    const config = {
-      url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
-      headers: {
-        'x-apikey': this.xapikey,
-        Authorization: `Bearer ${token}`,
-        Accept: '*/*',
-        Host: 'bcregistry-test.apigee.net',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
-      },
-    };
-    return axios(config)
-      .then(() => {
-        return true;
-      })
-      .catch((err) => {
-        console.log('Token health check failed: ' + err.response.data.errorMessage);
+  async getHealthCheck(token: string): Promise<boolean> {
+    const decodedToken: { name: string; exp: number; iat: number } = jwt_decode(token);
+    // check that it was decoded
+    if (decodedToken.name) {
+      // check if token has expired
+      if (new Date().getTime() / 1000 > decodedToken.exp) {
         return false;
-      });
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+    // test a route on each page load
+    // const config = {
+    //   url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
+    //   headers: {
+    //     'x-apikey': this.xapikey,
+    //     Authorization: `Bearer ${token}`,
+    //     Accept: '*/*',
+    //     Host: 'bcregistry-test.apigee.net',
+    //     'Accept-Encoding': 'gzip, deflate, br',
+    //     Connection: 'keep-alive',
+    //   },
+    // };
+    // return axios(config)
+    //   .then(() => {
+    //     return true;
+    //   })
+    //   .catch((err) => {
+    //     console.log('Token health check failed: ' + err.response.data.errorMessage);
+    //     return false;
+    //   });
+  }
+
+  async getTokenDetails(token: string): Promise<{ name: string; label: string; accountId: number }> {
+    const decodedToken: { sub: string; name: string } = jwt_decode(token);
+    const userSettings = await this.getUserSettings(token, decodedToken.sub);
+    // there are multiple roles in userSettings, the first entry may not be the correct one every time so logic here may need to be improved
+    return { name: decodedToken.name, label: userSettings[0].label, accountId: userSettings[0].id };
   }
 }

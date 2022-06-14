@@ -2,32 +2,25 @@ import { Get, Controller, Render, UseGuards, UseFilters, Req, Res, Session } fro
 import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
 import { AuthenticationFilter } from './authentication/authentication.filter';
-import { AuthenticationService } from './authentication/authentication.service';
+import { SessionData } from 'utils/types';
 
 @Controller()
 export class AppController {
-  constructor(private authenticationService: AuthenticationService) {}
-
   @Get()
   @Render('index')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async root(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-    // console.log(userObject);
-    // const userSettings = await this.authenticationService.getUserSettings(token, userObject.keycloakGuid);
-    // console.log(userSettings[0].id); // id for pay api
-
+  async root(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.INDEX,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -35,19 +28,17 @@ export class AppController {
   @Render('parcel-id')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getParcelId(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getParcelId(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -55,19 +46,17 @@ export class AppController {
   @Render('crown-lands-pin')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getCrownLandsPin(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getCrownLandsPin(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -75,19 +64,17 @@ export class AppController {
   @Render('crown-lands-file')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getCrownLandsFile(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getCrownLandsFile(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -95,19 +82,17 @@ export class AppController {
   @Render('site-id-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getSiteIdSearch(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getSiteIdSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -115,19 +100,17 @@ export class AppController {
   @Render('address-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getAddressSearch(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getAddressSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -135,19 +118,17 @@ export class AppController {
   @Render('area-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getAreaSearch(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getAreaSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
@@ -155,19 +136,17 @@ export class AppController {
   @Render('view-search-results')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getViewSearchResults(@Session() session: { token?: string }) {
-    const token = session.token;
-    const userObject = await this.authenticationService.getUserDetails(token);
-    const name = userObject.firstname + ' ' + userObject.lastname;
-
+  async getViewSearchResults(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: name,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 }

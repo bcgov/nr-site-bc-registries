@@ -1,5 +1,3 @@
-import { siteDto } from './types';
-
 export const PAGE_TITLES = {
   INDEX: 'BC Site Registry',
   PARCEL_ID: 'Parcel ID Search',
