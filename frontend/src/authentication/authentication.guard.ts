@@ -14,17 +14,32 @@ export class AuthenticationGuard implements CanActivate {
     const urlPath = url.pathname == '/' ? '' : url.pathname;
     const redirect = url.origin + urlPath;
     const code = url.searchParams.get('code') ? url.searchParams.get('code') : null;
+    const token = request.session.data ? request.session.data.access_token : null;
+
+    if (code == null && token == null) {
+      throw new UnauthorizedException('No code provided, redirecting.');
+    }
 
     // health check on token
-    if (request.session.token && (await this.authenticationService.getHealthCheck(request.session.token))) {
-      // token is good
-      return true;
+    if (token) {
+      if (await this.authenticationService.getHealthCheck(token)) {
+        // token is good
+        return true;
+      } else {
+        throw new UnauthorizedException('Invalid token, redirecting');
+      }
     } else {
       // get token from code and run a health check
       const tokenObject = await this.authenticationService.getToken(code, redirect);
-      if (await this.authenticationService.getHealthCheck(tokenObject.access_token)) {
-        // health check is good, pass the token to the controller so it can set it in the session
-        request.session.token = tokenObject.access_token;
+      if (!tokenObject.error && (await this.authenticationService.getHealthCheck(tokenObject.access_token))) {
+        // health check is good, set the session variables
+        const tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
+        request.session.data = {
+          ...tokenObject,
+          name: tokenDetails.name,
+          label: tokenDetails.label,
+          accountId: tokenDetails.accountId,
+        };
         return true;
       } else {
         // health check is bad (meaning code is bad) so redirect
