@@ -104,4 +104,26 @@ export class AuthenticationService {
         return err.response.data;
       });
   }
+
+  async getHealthCheck(token: string): Promise<any> {
+    const config = {
+      url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
+      headers: {
+        'x-apikey': this.xapikey,
+        Authorization: `Bearer ${token}`,
+        Accept: '*/*',
+        Host: 'bcregistry-test.apigee.net',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+    };
+    return axios(config)
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        console.log('Token health check failed: ' + err.response.data.errorMessage);
+        return false;
+      });
+  }
 }

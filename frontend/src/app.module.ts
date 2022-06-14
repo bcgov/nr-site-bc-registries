@@ -8,7 +8,7 @@ import { PayModule } from './pay/pay.module';
 import { ConfigModule } from '@nestjs/config';
 import { KeycloakConnectModule } from 'nest-keycloak-connect';
 import { AuthenticationModule } from './authentication/authentication.module';
-import { AppMiddleware } from './app.middleware';
+import { SessionModule } from 'nestjs-session';
 
 @Module({
   imports: [
@@ -24,12 +24,11 @@ import { AppMiddleware } from './app.middleware';
       clientId: process.env.KEYCLOAK_CLIENT_ID,
       secret: process.env.KEYCLOAK_SECRET,
     }),
+    SessionModule.forRoot({
+      session: { secret: process.env.SESSION_SECRET },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AppMiddleware).forRoutes(AppController); // only applies when rendering pages for now
-  }
-}
+export class AppModule {}

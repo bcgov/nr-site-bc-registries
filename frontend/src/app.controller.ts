@@ -1,8 +1,7 @@
-import { Get, Controller, Render, UseGuards, UseFilters, Req, Param, Query, Res } from '@nestjs/common';
+import { Get, Controller, Render, UseGuards, UseFilters, Req, Res, Session } from '@nestjs/common';
 import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
 import { AuthenticationFilter } from './authentication/authentication.filter';
-import { Response } from 'express';
 import { AuthenticationService } from './authentication/authentication.service';
 
 @Controller()
@@ -13,13 +12,13 @@ export class AppController {
   @Render('index')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async root(@Res() res: Response) {
-    const token = res.locals.token;
+  async root(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
-    console.log(userObject);
-    const userSettings = await this.authenticationService.getUserSettings(token, userObject.keycloakGuid);
-    console.log(userSettings[0].id); // id for pay api
     const name = userObject.firstname + ' ' + userObject.lastname;
+    // console.log(userObject);
+    // const userSettings = await this.authenticationService.getUserSettings(token, userObject.keycloakGuid);
+    // console.log(userSettings[0].id); // id for pay api
 
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
@@ -36,8 +35,8 @@ export class AppController {
   @Render('parcel-id')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getParcelId(@Res() res: Response) {
-    const token = res.locals.token;
+  async getParcelId(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -56,8 +55,8 @@ export class AppController {
   @Render('crown-lands-pin')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getCrownLandsPin(@Res() res: Response) {
-    const token = res.locals.token;
+  async getCrownLandsPin(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -76,8 +75,8 @@ export class AppController {
   @Render('crown-lands-file')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getCrownLandsFile(@Res() res: Response) {
-    const token = res.locals.token;
+  async getCrownLandsFile(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -96,8 +95,8 @@ export class AppController {
   @Render('site-id-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getSiteIdSearch(@Res() res: Response) {
-    const token = res.locals.token;
+  async getSiteIdSearch(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -116,8 +115,8 @@ export class AppController {
   @Render('address-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getAddressSearch(@Res() res: Response) {
-    const token = res.locals.token;
+  async getAddressSearch(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -136,8 +135,8 @@ export class AppController {
   @Render('area-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getAreaSearch(@Res() res: Response) {
-    const token = res.locals.token;
+  async getAreaSearch(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
@@ -156,8 +155,8 @@ export class AppController {
   @Render('view-search-results')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
-  async getViewSearchResults(@Res() res: Response) {
-    const token = res.locals.token;
+  async getViewSearchResults(@Session() session: { token?: string }) {
+    const token = session.token;
     const userObject = await this.authenticationService.getUserDetails(token);
     const name = userObject.firstname + ' ' + userObject.lastname;
 
