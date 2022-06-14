@@ -17,10 +17,10 @@ async function bootstrap() {
   app.setViewEngine('hbs');
 
   const pool = new Pool({
-    user: process.env.POSTGRESQL_USER,
-    host: process.env.POSTGRESQL_HOST,
-    database: process.env.POSTGRESQL_DATABASE,
-    password: process.env.POSTGRESQL_PASSWORD,
+    user: process.env.SESSION_PG_USER,
+    host: process.env.SESSION_PG_HOST,
+    database: process.env.SESSION_PG_DATABASE,
+    password: process.env.SESSION_PG_PASSWORD,
     port: 5432,
   });
 
