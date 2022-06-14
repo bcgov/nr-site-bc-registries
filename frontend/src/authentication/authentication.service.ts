@@ -142,10 +142,10 @@ export class AuthenticationService {
     //   });
   }
 
-  async getTokenDetails(token: string): Promise<{ name: string; label: string; accountId: number }> {
+  async getTokenDetails(token: string): Promise<{ name: string; label: string; account_id: number }> {
     const decodedToken: { sub: string; name: string } = jwt_decode(token);
     const userSettings = await this.getUserSettings(token, decodedToken.sub);
     // there are multiple roles in userSettings, the first entry may not be the correct one every time so logic here may need to be improved
-    return { name: decodedToken.name, label: userSettings[0].label, accountId: userSettings[0].id };
+    return { name: decodedToken.name, label: userSettings[0].label, account_id: userSettings[0].id };
   }
 }

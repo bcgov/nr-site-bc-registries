@@ -38,7 +38,7 @@ export class AuthenticationGuard implements CanActivate {
           ...tokenObject,
           name: tokenDetails.name,
           label: tokenDetails.label,
-          accountId: tokenDetails.accountId,
+          account_id: tokenDetails.account_id,
         };
         return true;
       } else {

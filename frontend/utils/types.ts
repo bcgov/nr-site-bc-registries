@@ -12,5 +12,5 @@ export type SessionData = {
   refresh_token: string;
   name: string;
   label: string;
-  accountId: number;
+  account_id: number;
 };

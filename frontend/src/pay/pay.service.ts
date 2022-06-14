@@ -3,8 +3,7 @@ var axios = require('axios');
 
 @Injectable()
 export class PayService {
-  async createInvoice(): Promise<any> {
-    // test api data
+  async createInvoice(account_id: number): Promise<string> {
     var data = JSON.stringify({
       filingInfo: {
         filingTypes: [
@@ -26,8 +25,7 @@ export class PayService {
       url: process.env.baseUrl,
       headers: {
         Accept: 'application/json',
-        Prefer: 'example=/api/v1/payment-requests',
-        'Account-Id': process.env.account_id,
+        'Account-Id': account_id,
         'x-apikey': process.env.apikey,
         'Content-Type': 'application/json',
       },
@@ -35,6 +33,7 @@ export class PayService {
     };
 
     return axios(config)
+      .then((response) => console.log(response))
       .then((response) => response.data.statusCode)
       .catch(function (error) {
         console.log(error);
