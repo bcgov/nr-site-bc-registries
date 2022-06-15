@@ -4,7 +4,7 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
-import { Pool } from 'pg';
+import { Pool, Client } from 'pg';
 const pgSession = require('connect-pg-simple')(expressSession);
 
 async function bootstrap() {
@@ -16,6 +16,29 @@ async function bootstrap() {
   hbs.registerPartials(join(__dirname, '..', '../views/layout'));
   app.setViewEngine('hbs');
 
+  const client = new Client({
+    user: process.env.SESSION_PG_USER,
+    host: process.env.SESSION_PG_HOST,
+    database: process.env.SESSION_PG_DATABASE,
+    password: process.env.SESSION_PG_PASSWORD,
+    port: 5432,
+  });
+
+  await client.connect();
+  // await client.query(`DROP DATABASE IF EXISTS ${process.env.SESSION_PG_DATABASE}`);
+  await client.query(`DROP TABLE IF EXISTS "session";`);
+  await client.query(`
+    CREATE TABLE "session" (
+      "sid" varchar NOT NULL COLLATE "default",
+      "sess" json NOT NULL,
+      "expire" timestamp(6) NOT NULL
+    )
+    WITH (OIDS=FALSE);
+    ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+    CREATE INDEX "IDX_session_expire" ON "session" ("expire");
+  `);
+  await client.end();
+
   const pool = new Pool({
     user: process.env.SESSION_PG_USER,
     host: process.env.SESSION_PG_HOST,
@@ -24,10 +47,8 @@ async function bootstrap() {
     port: 5432,
   });
 
-  // createTableIfMissing doesn't seem to work
   const postgresStore = new pgSession({
     pool: pool,
-    createTableIfMissing: true,
   });
 
   let sessionOptions: expressSession.SessionOptions;
