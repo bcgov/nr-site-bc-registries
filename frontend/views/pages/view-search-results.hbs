@@ -6,18 +6,14 @@
           <h2 id="searchType">Search</h2>
         </div>
         <div class="row">
-          <div class="col-sm-2">
-            <p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p>
-          </div>
-          <div class="col-sm-2">
-            <table>
-              <tr>
+          <table>
+            <tr>
+              <th><p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p></th>
               <td><p id="searchCriteria"></p></td>  
               <td><p id="searchCriteria2"></p></td>  
               <td><p id="searchCriteria3"></p></td>  
-              </tr>
-            </table>
-          </div>
+            </tr>
+          </table>
         </div>
         <div class="row">
           <div class="col-sm">
@@ -49,14 +45,14 @@
         var searchCriteria3 = localStorage.getItem("searchCriteria3")
         document.getElementById("searchCriteria").innerHTML = searchCriteria;
         if (searchType == "pid") {
-            document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
-            document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
+          document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
         } else if (searchType == "clf") {
-            document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
-            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
+          document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
         } else if (searchType == "clp") {
-            document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
-            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
+          document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
+          document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
         } else if (searchType == "adr") {
           document.getElementById("searchType").innerHTML = "Address Search Results";
           document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
