@@ -112,10 +112,13 @@ function checkAreaSearchInputs() {
   return true;
 }
 
+// ******************************
+// TODO move most of this logic to the backend
 async function requestPdfDownload(siteId) {
   $(':button').prop('disabled', true);
   const statusCode = await createInvoice();
-  if (statusCode == ('APPROVED' || 'PAID' || 'COMPLETED')) {
+  console.log(statusCode);
+  if (statusCode.match(/^(APPROVED|PAID|COMPLETED)$/)) {
     getPdf(siteId);
   } else {
     alert('Not yet paid');
@@ -127,13 +130,22 @@ async function requestPdfDownload(siteId) {
 async function requestPdfEmail(siteId) {
   $(':button').prop('disabled', true);
   const statusCode = await createInvoice();
-  if (statusCode == ('APPROVED' || 'PAID' || 'COMPLETED')) {
+  if (statusCode.match(/^(APPROVED|PAID|COMPLETED)$/)) {
     emailPdf(siteId);
   } else {
     alert('Not yet paid');
   }
   $(':button').prop('disabled', false);
 }
+
+async function createInvoice() {
+  const response = await fetch(`/pay/createinvoice/`, {
+    method: 'GET',
+    responseType: 'application/json',
+  }).then((res) => res.json());
+  return response.statusCode;
+}
+// ******************************
 
 // wait for n seconds
 function delay(n) {
@@ -195,14 +207,6 @@ function emailPdf(siteId) {
   } else {
     alert('Please select a Report Type');
   }
-}
-
-async function createInvoice() {
-  const response = await fetch(`/pay/createinvoice/`, {
-    method: 'GET',
-    responseType: 'application/json',
-  }).then((res) => res.json());
-  return response.statusCode;
 }
 
 function getAccessCode() {

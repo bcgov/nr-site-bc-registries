@@ -30,15 +30,26 @@ async function bootstrap() {
     createTableIfMissing: true,
   });
 
-  app.use(
-    expressSession({
+  let sessionOptions: expressSession.SessionOptions;
+  if (process.env.site_environment == 'DEVELOPMENT') {
+    sessionOptions = {
       store: postgresStore,
       secret: process.env.COOKIE_SECRET,
       resave: true,
       saveUninitialized: true,
-      cookie: { maxAge: 30 * 60 * 1000 }, // 1800 seconds / 30 minutes
-    })
-  );
+      cookie: { maxAge: 8 * 60 * 60 * 1000 }, // 8 hours - refresh token duration
+    };
+  } else {
+    // secure: true seems to hide the cookie from the user and create a new session on every request...
+    sessionOptions = {
+      store: postgresStore,
+      secret: process.env.COOKIE_SECRET,
+      resave: true,
+      saveUninitialized: true,
+      cookie: { maxAge: 8 * 60 * 60 * 1000, secure: true }, // 8 hours - refresh token duration
+    };
+  }
+  app.use(expressSession(sessionOptions));
 
   await app.listen(3000);
 }

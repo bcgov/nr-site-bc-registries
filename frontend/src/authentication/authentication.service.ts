@@ -3,6 +3,7 @@ import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
 import jwt_decode from 'jwt-decode';
+import { TokenObject } from 'utils/types';
 
 export class AuthenticationError extends Error {}
 
@@ -98,7 +99,6 @@ export class AuthenticationService {
     return axios
       .post(url, params, config)
       .then((res) => {
-        // console.log(res.data);
         return res.data;
       })
       .catch((err) => {
@@ -107,18 +107,27 @@ export class AuthenticationService {
       });
   }
 
-  async getHealthCheck(token: string): Promise<boolean> {
-    const decodedToken: { name: string; exp: number; iat: number } = jwt_decode(token);
+  async getHealthCheck(token: string): Promise<string> {
+    let decodedToken: { name: string; exp: number; auth_time: number };
+    try {
+      decodedToken = jwt_decode(token);
+    } catch (err) {
+      return 'bad';
+    }
     // check that it was decoded
     if (decodedToken.name) {
+      const currentTime = new Date().getTime() / 1000;
+      const refresh_expiry = decodedToken.auth_time + 28800;
+      console.log('current time: ' + currentTime);
+      console.log('token exp: ' + decodedToken.exp);
       // check if token has expired
-      if (new Date().getTime() / 1000 > decodedToken.exp) {
-        return false;
+      if (currentTime < decodedToken.exp) {
+        return 'good';
+      } else if (currentTime > refresh_expiry) {
+        return 'bad';
       } else {
-        return true;
+        return 'expired';
       }
-    } else {
-      return false;
     }
     // test a route on each page load
     // const config = {
@@ -147,5 +156,30 @@ export class AuthenticationService {
     const userSettings = await this.getUserSettings(token, decodedToken.sub);
     // there are multiple roles in userSettings, the first entry may not be the correct one every time so logic here may need to be improved
     return { name: decodedToken.name, label: userSettings[0].label, account_id: userSettings[0].id };
+  }
+
+  async refreshToken(refresh_token: string): Promise<TokenObject> {
+    const url = `${this.keycloak_base_url}/auth/realms/${this.realm}/protocol/openid-connect/token`;
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', refresh_token);
+    params.append('client_id', this.client_id);
+    params.append('client_secret', this.secret);
+
+    var config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    return axios
+      .post(url, params, config)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        return err.response.data;
+      });
   }
 }

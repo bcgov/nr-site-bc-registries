@@ -14,3 +14,11 @@ export type SessionData = {
   label: string;
   account_id: number;
 };
+
+export type TokenObject = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
+  error?: any;
+};

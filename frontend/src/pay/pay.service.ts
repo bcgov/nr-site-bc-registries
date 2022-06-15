@@ -33,7 +33,6 @@ export class PayService {
     };
 
     return axios(config)
-      .then((response) => console.log(response))
       .then((response) => response.data.statusCode)
       .catch(function (error) {
         console.log(error);
