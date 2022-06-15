@@ -3,7 +3,7 @@ var axios = require('axios');
 
 @Injectable()
 export class PayService {
-  async createInvoice(account_id: number): Promise<string> {
+  async createInvoice(token: string, account_id: number): Promise<string> {
     var data = JSON.stringify({
       filingInfo: {
         filingTypes: [
@@ -26,8 +26,9 @@ export class PayService {
       headers: {
         Accept: 'application/json',
         'Account-Id': account_id,
-        'x-apikey': process.env.apikey,
+        'x-apikey': process.env.KEYCLOAK_XAPIKEY,
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       data: data,
     };

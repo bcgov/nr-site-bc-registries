@@ -8,6 +8,6 @@ export class PayController {
 
   @Get('createInvoice')
   async getInvoice(@Session() session: { data?: SessionData }): Promise<any> {
-    return { statusCode: await this.payService.createInvoice(session.data.account_id) };
+    return { statusCode: await this.payService.createInvoice(session.data.access_token, session.data.account_id) };
   }
 }
