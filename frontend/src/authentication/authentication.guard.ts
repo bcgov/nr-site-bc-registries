@@ -24,7 +24,6 @@ export class AuthenticationGuard implements CanActivate {
 
     // no session and no code
     if (code == null && token == null) {
-      console.log('no session no code');
       throw new UnauthorizedException('No code provided, redirecting.');
     }
 
@@ -53,7 +52,6 @@ export class AuthenticationGuard implements CanActivate {
           return true;
         } else {
           request.session = null; // this doesn't delete the session in the database but it forces a new session to be created
-          console.log('bad token after refresh');
           throw new UnauthorizedException('Invalid token, redirecting');
         }
       }
@@ -76,7 +74,6 @@ export class AuthenticationGuard implements CanActivate {
       } else {
         // health check is bad (meaning code is bad) so redirect
         request.session = null;
-        console.log('bad code');
         throw new UnauthorizedException('Invalid code, redirecting.');
       }
     }

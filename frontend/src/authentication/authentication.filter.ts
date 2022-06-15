@@ -23,7 +23,6 @@ export class AuthenticationFilter implements ExceptionFilter {
     keycloak_login_params = `?response_type=code&client_id=${process.env.KEYCLOAK_CLIENT_ID}&redirect_uri=${redirect}`;
     keycloak_login_fullurl = keycloak_login_baseurl + keycloak_login_params;
     const status = exception.getStatus();
-    console.log(status);
     response.status(status).redirect(keycloak_login_fullurl);
   }
 }

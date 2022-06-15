@@ -118,8 +118,6 @@ export class AuthenticationService {
     if (decodedToken.name) {
       const currentTime = new Date().getTime() / 1000;
       const refresh_expiry = decodedToken.auth_time + 28800;
-      console.log('current time: ' + currentTime);
-      console.log('token exp: ' + decodedToken.exp);
       // check if token has expired
       if (currentTime < decodedToken.exp) {
         return 'good';
