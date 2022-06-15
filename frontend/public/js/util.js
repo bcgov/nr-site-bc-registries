@@ -112,40 +112,19 @@ function checkAreaSearchInputs() {
   return true;
 }
 
-// ******************************
-// TODO move most of this logic to the backend
 async function requestPdfDownload(siteId) {
   $(':button').prop('disabled', true);
-  const statusCode = await createInvoice();
-  console.log(statusCode);
-  if (statusCode.match(/^(APPROVED|PAID|COMPLETED)$/)) {
-    getPdf(siteId);
-  } else {
-    alert('Not yet paid');
-  }
+  getPdf(siteId);
   await delay(5);
   $(':button').prop('disabled', false);
 }
 
 async function requestPdfEmail(siteId) {
   $(':button').prop('disabled', true);
-  const statusCode = await createInvoice();
-  if (statusCode.match(/^(APPROVED|PAID|COMPLETED)$/)) {
-    emailPdf(siteId);
-  } else {
-    alert('Not yet paid');
-  }
+  emailPdf(siteId);
+  await delay(5);
   $(':button').prop('disabled', false);
 }
-
-async function createInvoice() {
-  const response = await fetch(`/pay/createinvoice/`, {
-    method: 'GET',
-    responseType: 'application/json',
-  }).then((res) => res.json());
-  return response.statusCode;
-}
-// ******************************
 
 // wait for n seconds
 function delay(n) {
@@ -163,7 +142,9 @@ async function getPdf(siteId) {
     req.onreadystatechange = function () {
       if (req.readyState === 4 && req.status === 200) {
         var filename = 'PdfName-' + new Date().getTime() + '.pdf';
-        if (typeof window.chrome !== 'undefined') {
+        if (req.response.size == 0) {
+          alert('Payment error');
+        } else if (typeof window.chrome !== 'undefined') {
           // Chrome version
           var link = document.createElement('a');
           link.href = window.URL.createObjectURL(req.response);
