@@ -409,9 +409,11 @@ export class CronService {
     const client = axios.create();
     let url =
       'https://' + process.env.object_store_host + '/' + process.env.object_store_bucket + `/dbdump/${fileName}`;
-    console.log('Grabbing files from ' + url);
+    console.log('Grabbing file ' + url);
     let object_store_userid = process.env.object_store_userid;
     let object_store_secret = process.env.object_store_secret;
+    console.log(object_store_userid);
+    console.log(object_store_secret);
     const interceptor = aws4Interceptor(
       {
         region: 'us-east-1',
