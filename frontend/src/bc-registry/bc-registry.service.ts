@@ -25,7 +25,7 @@ export class BCRegistryService {
     port = process.env.BACKEND_URL ? 3000 : 3001;
   }
 
-  async getPdf(reportType: string, siteId: string): Promise<any> {
+  async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
     const authorizationToken = await this.getToken();
 
     const requestUrl =
@@ -44,6 +44,8 @@ export class BCRegistryService {
       let data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
+      data['account'] = name;
+
       let documentTemplate: string;
       if (reportType == 'detailed') {
         documentTemplate = this.buildDetailedTemplate(data);
@@ -85,7 +87,7 @@ export class BCRegistryService {
     }
   }
 
-  async emailPdf(reportType: string, email: string, siteId: string): Promise<any> {
+  async emailPdf(reportType: string, email: string, siteId: string, name: string): Promise<any> {
     const authorizationToken = await this.getToken();
 
     const requestUrl =
@@ -106,6 +108,7 @@ export class BCRegistryService {
       let siteData = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
+      siteData['account'] = name;
 
       if (reportType == 'detailed') {
         documentTemplate = this.buildDetailedTemplate(siteData);

@@ -17,7 +17,7 @@ export class BCRegistryController {
   ): Promise<any> {
     const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId));
+      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
     } else {
       return null;
     }
@@ -32,7 +32,7 @@ export class BCRegistryController {
   ): Promise<any> {
     const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.bcRegistryService.emailPdf(reportType, email, siteId);
+      return this.bcRegistryService.emailPdf(reportType, email, siteId, session.data.name);
     } else {
       return 'Payment error';
     }
