@@ -58,10 +58,10 @@ async function searchSiteId() {
 async function searchAddress() {
   var address = document.getElementById('address').value;
   var city = document.getElementById('city').value;
-  city = city == '' ? 'nocity' : city;
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
+  city = city == '' ? 'nocity' : city;
   if (address !== '') {
     const url = `/site-registry/searchAddr/${address}/${city}`;
     await getSearchResults(url);
@@ -154,7 +154,7 @@ async function getPdf(siteId) {
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = 'myreport' + Math.random() * 1000 + '.pdf';
+        a.download = reportType + '-report_siteid-' + parseInt(siteId) + '.pdf';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
