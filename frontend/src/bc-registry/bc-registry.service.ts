@@ -87,7 +87,7 @@ export class BCRegistryService {
     }
   }
 
-  async emailPdf(reportType: string, email: string, siteId: string, name: string): Promise<any> {
+  async emailPdf(reportType: string, email: string, siteId: string, name: string): Promise<string> {
     const authorizationToken = await this.getToken();
 
     const requestUrl =
@@ -152,7 +152,7 @@ export class BCRegistryService {
     };
 
     return axios(config)
-      .then((response) => {
+      .then(() => {
         return 'Email Sent';
       })
       .catch(function (error) {

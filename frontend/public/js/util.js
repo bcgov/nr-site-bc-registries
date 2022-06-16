@@ -112,86 +112,58 @@ function checkAreaSearchInputs() {
   return true;
 }
 
-async function requestPdfDownload(siteId) {
-  $(':button').prop('disabled', true);
-  getPdf(siteId);
-  await delay(5);
-  $(':button').prop('disabled', false);
-}
-
-async function requestPdfEmail(siteId) {
-  $(':button').prop('disabled', true);
-  emailPdf(siteId);
-  await delay(5);
-  $(':button').prop('disabled', false);
-}
-
-// wait for n seconds
-function delay(n) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, n * 1000);
-  });
-}
-
 async function getPdf(siteId) {
+  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
-    var req = new XMLHttpRequest();
-    req.open('GET', `/bc-registry/download-pdf/${reportType}/${siteId}`, true);
-    req.responseType = 'blob';
-    req.onreadystatechange = function () {
-      if (req.readyState === 4 && req.status === 200) {
-        var filename = 'PdfName-' + new Date().getTime() + '.pdf';
-        if (req.response.size == 0) {
-          alert('Payment error');
-        } else if (typeof window.chrome !== 'undefined') {
-          // Chrome version
-          var link = document.createElement('a');
-          link.href = window.URL.createObjectURL(req.response);
-          link.download = 'PdfName-' + new Date().getTime() + '.pdf';
-          link.click();
-        } else if (typeof window.navigator.msSaveBlob !== 'undefined') {
-          // IE version
-          var blob = new Blob([req.response], {
-            type: 'application/pdf',
-          });
-          window.navigator.msSaveBlob(blob, filename);
-        } else {
-          // Firefox version
-          var file = new File([req.response], filename, {
-            type: 'application/force-download',
-          });
-          window.open(URL.createObjectURL(file));
-        }
-      }
-    };
-    req.send();
+    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
+      method: 'GET',
+      // responseType: 'blob',
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'myreport' + Math.random() * 1000 + '.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        $(':button').prop('disabled', false);
+      })
+      .catch(() => alert('Something went wrong'));
   } else {
     alert('Please select a Report Type');
   }
 }
 
-function emailPdf(siteId) {
+async function emailPdf(siteId) {
+  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
-    var url = '/bc-registry/email-pdf';
     let email = prompt('Please enter your Email Address');
-    var params = `/${reportType}/${email}/${siteId}`;
-    var req = new XMLHttpRequest();
-    req.open('GET', url + params, true);
-    req.onreadystatechange = function () {
-      if (req.readyState == 4 && req.status == 200) {
-        alert(req.responseText);
-      }
-    };
-    req.send();
+    email = email !== null ? email : '';
+    if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+      fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
+        method: 'GET',
+        responseType: 'application/json',
+      })
+        .then((res) => res.json())
+        .then((resJson) => {
+          alert(resJson.message);
+          $(':button').prop('disabled', false);
+        })
+        .catch(() => {
+          alert('Something went wrong');
+          $(':button').prop('disabled', false);
+        });
+    } else {
+      alert('Please enter a valid email');
+      $(':button').prop('disabled', false);
+    }
   } else {
     alert('Please select a Report Type');
+    $(':button').prop('disabled', false);
   }
-}
-
-function getAccessCode() {
-  var url = new URL(window.location.href);
-  var accessCode = url.searchParams.get('accessCodeVariableName');
-  // do something with access code
 }

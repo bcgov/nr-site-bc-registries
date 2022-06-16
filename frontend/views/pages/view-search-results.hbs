@@ -119,8 +119,8 @@
             myObj['Site ID'] = parseInt(obj.siteId);
             myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
             myObj['Address/City'] = obj.city;
-            myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="requestPdfDownload('${obj.siteId}')">Download</button>`;
-            myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="requestPdfEmail('${obj.siteId}')">Email</button>`;
+            myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
+            myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
             results.push(myObj);
           });
           $('#sitesTable').DataTable().rows.add(results).draw();
