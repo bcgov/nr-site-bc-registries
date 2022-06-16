@@ -22,3 +22,10 @@ export type TokenObject = {
   refresh_expires_in: number;
   error?: any;
 };
+
+export type SearchResultsObject = {
+  siteId: string;
+  city: string;
+  modifiedDate: string;
+  registeredDate: string;
+};

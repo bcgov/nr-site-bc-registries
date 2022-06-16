@@ -57,8 +57,18 @@ export class SrsitesService {
   }
 
   async searchPid(pid: string): Promise<MinimalSiteData[]> {
-    const srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
-    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    let srpinpid: any;
+    let site: any;
+    try {
+      srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
+    } catch (err) {
+      return [];
+    }
+    try {
+      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+    } catch (err) {
+      return [];
+    }
     return [
       {
         siteId: site.siteId,
@@ -70,8 +80,18 @@ export class SrsitesService {
   }
 
   async searchCrownPin(pin: string): Promise<MinimalSiteData[]> {
-    const srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
-    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    let srpinpid: any;
+    let site: any;
+    try {
+      srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
+    } catch (err) {
+      return [];
+    }
+    try {
+      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+    } catch (err) {
+      return [];
+    }
     return [
       {
         siteId: site.siteId,
@@ -83,8 +103,18 @@ export class SrsitesService {
   }
 
   async searchCrownFile(crownLandsFileNumber: string): Promise<MinimalSiteData[]> {
-    const srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
-    const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
+    let srpinpid: any;
+    let site: any;
+    try {
+      srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
+    } catch (err) {
+      return [];
+    }
+    try {
+      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+    } catch (err) {
+      return [];
+    }
     return [
       {
         siteId: site.siteId,
@@ -100,7 +130,12 @@ export class SrsitesService {
     for (let i = 0; i < 10 - siteId.length; i++) {
       siteIdWithZeroes = '0' + siteIdWithZeroes;
     }
-    const site = await this.srsitesRepository.findOne({ siteId: siteIdWithZeroes });
+    let site: any;
+    try {
+      site = await this.srsitesRepository.findOneOrFail({ siteId: siteIdWithZeroes });
+    } catch (err) {
+      return [];
+    }
     return [
       {
         siteId: site.siteId,
@@ -111,11 +146,16 @@ export class SrsitesService {
     ];
   }
 
-  async searchAddress(address: string): Promise<MinimalSiteData[]> {
-    const site = await this.srsitesRepository
-      .createQueryBuilder()
-      .where('LOWER(address_1) = LOWER(:address)', { address })
-      .getOne();
+  async searchAddress(address: string, city: string): Promise<MinimalSiteData[]> {
+    let site: any;
+    try {
+      site = await this.srsitesRepository
+        .createQueryBuilder()
+        .where('LOWER(address_1) = LOWER(:address)', { address })
+        .getOne();
+    } catch (err) {
+      return [];
+    }
     return [
       {
         siteId: site.siteId,
@@ -126,7 +166,7 @@ export class SrsitesService {
     ];
   }
 
-  async searchArea(lat: string, lng: string, size: string): Promise<Srsite[]> {
+  async searchArea(lat: string, lng: string, size: string): Promise<MinimalSiteData[]> {
     const radius = size == 'Small' ? 564.19 : size == 'Large' ? 5641.89 : 0;
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
@@ -156,7 +196,7 @@ export class SrsitesService {
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
-    const srsite = await this.srsitesRepository.findOne({ siteId: siteId });
+    const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
 
     // construct strings for displaying lat/lon
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
@@ -209,7 +249,7 @@ export class SrsitesService {
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
-    const srsite = await this.srsitesRepository.findOne({ siteId: siteId });
+    const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     // entity relations might be a better solution than this
     // add corresponding participants to each notation
     for (let entry of srevents[0]) {

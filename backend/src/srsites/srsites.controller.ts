@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { SrsitesService } from './srsites.service';
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
-import { Srsite } from './entities/srsite.entity';
 import { MinimalSiteData } from 'utils/constants';
 
 @ApiTags('srsites')
@@ -27,28 +26,28 @@ export class SrsitesController {
   }
 
   @Get('searchPid/:pid')
-  searchPid(@Param('pid') pid: string): Promise<MinimalSiteData[]> {
+  searchPid(@Param('pid') pid: string): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchPid(pid);
   }
 
   @Get('searchCrownPin/:pin')
-  searchCrownPin(@Param('pin') pin: string): Promise<MinimalSiteData[]> {
+  searchCrownPin(@Param('pin') pin: string): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchCrownPin(pin);
   }
 
   @Get('searchCrownFile/:crownLandsFileNumber')
-  searchCrownFile(@Param('crownLandsFileNumber') crownLandsFileNumber: string): Promise<MinimalSiteData[]> {
+  searchCrownFile(@Param('crownLandsFileNumber') crownLandsFileNumber: string): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchCrownFile(crownLandsFileNumber);
   }
 
   @Get('searchSiteId/:siteId')
-  searchSiteId(@Param('siteId') siteId: string): Promise<MinimalSiteData[]> {
+  searchSiteId(@Param('siteId') siteId: string): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchSiteId(siteId);
   }
 
-  @Get('searchAddress/:address')
-  searchAddress(@Param('address') address: string): Promise<MinimalSiteData[]> {
-    return this.srsitesService.searchAddress(address);
+  @Get('searchAddress/:address/:city')
+  searchAddress(@Param('address') address: string, @Param('city') city: string): Promise<MinimalSiteData[]> | [] {
+    return this.srsitesService.searchAddress(address, city);
   }
 
   @Get('searchArea/:lat/:lng/:size')
@@ -56,7 +55,7 @@ export class SrsitesController {
     @Param('lat') lat: string,
     @Param('lng') lng: string,
     @Param('size') size: string
-  ): Promise<MinimalSiteData[]> {
+  ): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchArea(lat, lng, size);
   }
 

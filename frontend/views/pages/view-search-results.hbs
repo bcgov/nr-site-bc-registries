@@ -89,10 +89,27 @@
         }
     </script>
     <script>
+      let data = JSON.parse(localStorage.getItem("searchResults"));
+      var results = [];
+      for (let obj of data) {
+        myObj = {};
+        myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
+        myObj['Site ID'] = parseInt(obj.siteId);
+        myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
+        myObj['Address/City'] = obj.city;
+        myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
+        myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
+        results.push(myObj);
+      };
+
       $(document).ready(function () {
         var tableClient = $('#sitesTable').DataTable({
+          language: {
+            emptyTable: "No sites were found with the given search criteria."
+          },
           paging: false,
 		      searching: false,
+          data: results,
           columns: [
             {data: "Report Type"},
             {data: "Site ID"},
@@ -101,49 +118,49 @@
             {data: " "},
             {data: "  "},
           ],
-          ajax: getData(),
+          //ajax: getData(),
         });
       });
 
-    function getData() {
-      var searchType = localStorage.getItem("searchType");
-      var searchCriteria = localStorage.getItem("searchCriteria");
-      var searchCriteria2 = localStorage.getItem("searchCriteria2");
-      var searchCriteria3 = localStorage.getItem("searchCriteria3");
-      var url = '';
-      if (searchType == 'pid') {
-        url = `/site-registry/searchPid/${searchCriteria}`
-      } else if (searchType == 'clf') {
-        url = `/site-registry/searchCLF/${searchCriteria}`
-      } else if (searchType == 'clp') {
-        url = `/site-registry/searchCLP/${searchCriteria}`
-      } else if (searchType == 'sid') {
-        url = `/site-registry/searchSiteId/${searchCriteria}`
-      } else if (searchType == 'adr') {
-        url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
-      } else if (searchType == 'coords' || searchType == 'postal') {
-        url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
-      }
-      $.ajax({
-        url: url,
-        success: function (data) {
-          var results = [];
-          $.each(data, function (ind, obj) {
-            myObj = {};
-            myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
-            myObj['Site ID'] = parseInt(obj.siteId);
-            myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
-            myObj['Address/City'] = obj.city;
-            myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
-            myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
-            results.push(myObj);
-          });
-          $('#sitesTable').DataTable().rows.add(results).draw();
-          document.getElementById('downloadHeader').innerHTML = '';
-          document.getElementById('emailHeader').innerHTML = '';
-        },
-      });
-    }
+    //function getData() {
+    //  var searchType = localStorage.getItem("searchType");
+    //  var searchCriteria = localStorage.getItem("searchCriteria");
+    //  var searchCriteria2 = localStorage.getItem("searchCriteria2");
+    //  var searchCriteria3 = localStorage.getItem("searchCriteria3");
+    //  var url = '';
+    //  if (searchType == 'pid') {
+    //    url = `/site-registry/searchPid/${searchCriteria}`
+    //  } else if (searchType == 'clf') {
+    //    url = `/site-registry/searchCLF/${searchCriteria}`
+    //  } else if (searchType == 'clp') {
+    //    url = `/site-registry/searchCLP/${searchCriteria}`
+    //  } else if (searchType == 'sid') {
+    //    url = `/site-registry/searchSiteId/${searchCriteria}`
+    //  } else if (searchType == 'adr') {
+    //    url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
+    //  } else if (searchType == 'coords' || searchType == 'postal') {
+    //    url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
+    //  }
+      //$.ajax({
+      //  url: url,
+      //  success: function (data) {
+      //    var results = [];
+      //    $.each(data, function (ind, obj) {
+      //      myObj = {};
+      //      myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
+      //      myObj['Site ID'] = parseInt(obj.siteId);
+      //      myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
+      //      myObj['Address/City'] = obj.city;
+      //      myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
+      //      myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
+      //      results.push(myObj);
+      //    });
+      //    $('#sitesTable').DataTable().rows.add(results).draw();
+      //    document.getElementById('downloadHeader').innerHTML = '';
+      //    document.getElementById('emailHeader').innerHTML = '';
+      //  },
+      //});
+      //  }
     </script>
   {{/inline}}
 {{/template}}

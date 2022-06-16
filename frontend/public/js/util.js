@@ -1,13 +1,4 @@
 // utility functions
-async function testapi() {
-  fetch('/site-registry/test', {
-    method: 'GET',
-    responseType: 'application/json',
-  })
-    .then((res) => res.json())
-    .then((resJson) => console.log(resJson));
-}
-
 function back() {
   window.history.go(-1);
 }
@@ -17,7 +8,12 @@ async function searchPid() {
   localStorage.setItem('searchType', 'pid');
   localStorage.setItem('searchCriteria', parcelId);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (parcelId !== '') {
+    const url = `/site-registry/searchPid/${parcelId}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Parcel ID');
+  }
 }
 
 async function searchCLP() {
@@ -25,7 +21,12 @@ async function searchCLP() {
   localStorage.setItem('searchType', 'clp');
   localStorage.setItem('searchCriteria', crownLandsPin);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (crownLandsPin !== '') {
+    const url = `/site-registry/searchCLP/${crownLandsPin}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Crown Lands PIN');
+  }
 }
 
 async function searchCLF() {
@@ -33,7 +34,12 @@ async function searchCLF() {
   localStorage.setItem('searchType', 'clf');
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (crownLandsFile !== '') {
+    const url = `/site-registry/searchCLF/${crownLandsFile}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Crown Lands File Number');
+  }
 }
 
 async function searchSiteId() {
@@ -41,16 +47,27 @@ async function searchSiteId() {
   localStorage.setItem('searchType', 'sid');
   localStorage.setItem('searchCriteria', siteId);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (siteId !== '') {
+    const url = `/site-registry/searchSiteId/${siteId}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a site Id');
+  }
 }
 
 async function searchAddress() {
   var address = document.getElementById('address').value;
   var city = document.getElementById('city').value;
+  city = city == '' ? 'nocity' : city;
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
-  window.location.href = '/view-search-results';
+  if (address !== '') {
+    const url = `/site-registry/searchAddr/${address}/${city}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter an address');
+  }
 }
 
 async function searchArea() {
@@ -72,12 +89,34 @@ async function searchArea() {
       localStorage.setItem('latDms', dms.latDeg + 'deg ' + dms.latMin + 'min ' + dms.latSec + 'sec');
       localStorage.setItem('lonDms', dms.lonDeg + 'deg ' + dms.lonMin + 'min ' + dms.lonSec + 'sec');
     }
+    const lat = latLon.lat.toFixed(5);
+    const lon = Math.abs(latLon.lon).toFixed(5);
     localStorage.setItem('searchCriteria', latLon.lat.toFixed(5));
     localStorage.setItem('searchCriteria2', Math.abs(latLon.lon).toFixed(5));
     localStorage.setItem('searchCriteria3', size);
 
-    window.location.href = '/view-search-results';
+    const url = `/site-registry/searchArea/${lat}/${lon}/${size}`;
+    await getSearchResults(url);
   }
+}
+
+async function getSearchResults(url) {
+  fetch(url, {
+    method: 'GET',
+    responseType: 'application/json',
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      if (!resJson.error) {
+        localStorage.setItem('searchResults', JSON.stringify(resJson));
+        window.location.href = '/view-search-results';
+      } else {
+        alert('Error with payment: ' + resJson.error);
+      }
+    })
+    .catch(() => {
+      alert('Something went wrong');
+    });
 }
 
 function checkAreaSearchInputs() {
@@ -108,7 +147,6 @@ async function getPdf(siteId) {
   if (reportType == 'synopsis' || reportType == 'detailed') {
     fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
       method: 'GET',
-      // responseType: 'blob',
     })
       .then((res) => res.blob())
       .then((blob) => {

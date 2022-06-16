@@ -71,8 +71,8 @@ export class SiteRegistryService {
     return data;
   }
 
-  async searchAddress(address: string): Promise<any> {
-    const requestUrl = `${hostname}:${port}/srsites/searchAddress/${address}`;
+  async searchAddress(address: string, city: string): Promise<any> {
+    const requestUrl = `${hostname}:${port}/srsites/searchAddress/${address}/${city}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
