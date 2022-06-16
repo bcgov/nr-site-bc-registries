@@ -60,7 +60,12 @@ export class SrsitesService {
     const srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
     return [
-      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+      {
+        siteId: site.siteId,
+        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+        modifiedDate: site.modifiedDate,
+        registeredDate: site.registeredDate,
+      },
     ];
   }
 
@@ -68,7 +73,12 @@ export class SrsitesService {
     const srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
     return [
-      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+      {
+        siteId: site.siteId,
+        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+        modifiedDate: site.modifiedDate,
+        registeredDate: site.registeredDate,
+      },
     ];
   }
 
@@ -76,7 +86,12 @@ export class SrsitesService {
     const srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
     const site = await this.srsitesRepository.findOne({ siteId: srpinpid.siteId });
     return [
-      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+      {
+        siteId: site.siteId,
+        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+        modifiedDate: site.modifiedDate,
+        registeredDate: site.registeredDate,
+      },
     ];
   }
 
@@ -87,7 +102,12 @@ export class SrsitesService {
     }
     const site = await this.srsitesRepository.findOne({ siteId: siteIdWithZeroes });
     return [
-      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+      {
+        siteId: site.siteId,
+        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+        modifiedDate: site.modifiedDate,
+        registeredDate: site.registeredDate,
+      },
     ];
   }
 
@@ -97,7 +117,12 @@ export class SrsitesService {
       .where('LOWER(address_1) = LOWER(:address)', { address })
       .getOne();
     return [
-      { siteId: site.siteId, city: site.city, modifiedDate: site.modifiedDate, registeredDate: site.registeredDate },
+      {
+        siteId: site.siteId,
+        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+        modifiedDate: site.modifiedDate,
+        registeredDate: site.registeredDate,
+      },
     ];
   }
 
@@ -112,7 +137,13 @@ export class SrsitesService {
       const lat = parseFloat([site.lat.slice(0, 3), '.', site.lat.slice(3)].join(''));
       const lng = parseFloat([site.lon.slice(0, 3), '.', site.lon.slice(3)].join(''));
       const latlng = { lat: lat, lng: lng };
-      if (isInsideArea(userLatlng, latlng, radius)) sites.push(site);
+      if (isInsideArea(userLatlng, latlng, radius))
+        sites.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          modifiedDate: site.modifiedDate,
+          registeredDate: site.registeredDate,
+        });
     }
     return sites;
   }
