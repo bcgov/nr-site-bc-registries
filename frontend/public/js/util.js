@@ -12,16 +12,6 @@ function back() {
   window.history.go(-1);
 }
 
-function areaDisplay() {
-  var postalCodeTab = document.getElementById('pills-postalcode');
-  var coordinatesTab = document.getElementById('pills-coordinates');
-  if (postalCodeTab.classList.contains('active')) {
-    postalCodeCircle();
-  } else if (coordinatesTab.classList.contains('active')) {
-    coordinateCircle();
-  }
-}
-
 async function searchPid() {
   var parcelId = document.getElementById('parcelId').value;
   localStorage.setItem('searchType', 'pid');

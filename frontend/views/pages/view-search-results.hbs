@@ -44,33 +44,48 @@
         var searchCriteria2 = localStorage.getItem("searchCriteria2")
         var searchCriteria3 = localStorage.getItem("searchCriteria3")
         document.getElementById("searchCriteria").innerHTML = searchCriteria;
-        if (searchType == "pid") {
-          document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
-        } else if (searchType == "clf") {
-          document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
-        } else if (searchType == "clp") {
-          document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
-        } else if (searchType == "adr") {
-          document.getElementById("searchType").innerHTML = "Address Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
-          document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
-        } else if (searchType == "coords") {
-          document.getElementById("searchType").innerHTML = "Area Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
-          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("latDms");
-          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("lonDms");
-          document.getElementById("searchCriteria3").innerHTML = searchCriteria3;
-        } else if (searchType == "postal") {
-          document.getElementById("searchType").innerHTML = "Area Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
-          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("postalCode");
-          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("searchCriteria3");
-        } else if (searchType == "sid") {
-          document.getElementById("searchType").innerHTML = "Site ID Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Site ID:";
+        switch(searchType) {
+          case "pid": {
+            document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
+            break;
+          }
+          case "clf": {
+            document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
+            break;
+          }
+          case "clp": {
+            document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
+            break;
+          }
+          case "sid": {
+            document.getElementById("searchType").innerHTML = "Site ID Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Site ID:";
+            break;
+          }
+          case "adr": {
+            document.getElementById("searchType").innerHTML = "Address Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
+            document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
+            break;
+          }
+          case "coords": {
+            document.getElementById("searchType").innerHTML = "Area Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+            document.getElementById("searchCriteria").innerHTML = localStorage.getItem("latDms");
+            document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("lonDms");
+            document.getElementById("searchCriteria3").innerHTML = searchCriteria3+' Area';
+            break;
+          }
+          case "postal": {
+            document.getElementById("searchType").innerHTML = "Area Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+            document.getElementById("searchCriteria").innerHTML = localStorage.getItem("postalCode");
+            document.getElementById("searchCriteria2").innerHTML = searchCriteria3+' Area';
+            break;
+          }
         }
     </script>
     <script>

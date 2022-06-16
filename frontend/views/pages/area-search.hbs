@@ -102,11 +102,11 @@
 
         <div class="row">
             <div style="padding:1em">
-            <input type="radio" id="sizeSmall" name="circle" value="small" checked />
+            <input type="radio" id="sizeSmall" name="circle" value="small" onchange="autoDraw()" checked />
             <label for="sizeSmall">Small - $51.00</label>
             </div>
             <div style="padding:1em">
-            <input type="radio" id="sizeLarge" name="circle" value="large" />
+            <input type="radio" id="sizeLarge" name="circle" value="large" onchange="autoDraw()" />
             <label for="sizeLarge">Large - $101.00</label>
             </div>
         </div>
@@ -115,7 +115,6 @@
             <div class="col-sm-1"></div>
             <div class="col-sm">
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-            <button onclick="areaDisplay()" id="displayButton" class="btn btn-primary m-2">Display On Map</button>
             <button onclick="searchArea()" id="searchButton" class="btn btn-primary m-2">View Search Results</button>
             </div>
         </div>
