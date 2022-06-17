@@ -1,4 +1,4 @@
-import { Get, Param, Controller, StreamableFile, Header, Session } from '@nestjs/common';
+import { Get, Param, Controller, Header, Session } from '@nestjs/common';
 import { PayService } from 'src/pay/pay.service';
 import { SessionData } from 'utils/types';
 import { BCRegistryService } from './bc-registry.service';
@@ -15,19 +15,13 @@ export class BCRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<any> {
-    let paymentStatus: string;
-    if (reportType == 'synopsis') {
-      paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
-    } else if (reportType == 'detailed') {
-      paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
-    } else {
-      return null; // report type error, payment api does not get called
-    }
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
-    } else {
-      return null; // payment error
-    }
+    return this.bcRegistryService.requestPdf(
+      reportType,
+      siteId,
+      session.data.name,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 
   @Get('email-pdf/:reportType/:email/:siteId')
@@ -37,20 +31,13 @@ export class BCRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<any> {
-    let paymentStatus: string;
-    if (reportType == 'synopsis') {
-      paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
-    } else if (reportType == 'detailed') {
-      paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
-    } else {
-      return { message: 'Report type error' };
-    }
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return {
-        message: await this.bcRegistryService.emailPdf(reportType, decodeURI(email), siteId, session.data.name),
-      };
-    } else {
-      return { message: 'Payment error' };
-    }
+    return this.bcRegistryService.requestEmail(
+      reportType,
+      decodeURI(email),
+      siteId,
+      session.data.name,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 }

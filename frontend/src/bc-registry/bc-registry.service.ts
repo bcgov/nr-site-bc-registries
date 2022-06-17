@@ -1,11 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import { URLSearchParams } from 'node:url';
 import * as fs from 'fs';
+import { PayService } from 'src/pay/pay.service';
 const HTML5ToPDF = require('html5-to-pdf');
 const axios = require('axios');
 
@@ -16,15 +17,59 @@ let port: number;
 
 @Injectable()
 export class BCRegistryService {
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService, private payService: PayService) {
     synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
     detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
     // docker hostname is the container name, use localhost for local development
-    hostname = process.env.BACKEND_URL ? `http://${process.env.BACKEND_URL}` : `http://localhost`;
+    hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
     port = process.env.BACKEND_URL ? 3000 : 3001;
   }
 
+  // checks pay api before generating pdf and sending it back to the frontend
+  async requestPdf(reportType: string, siteId: string, name: string, token: string, account_id: number): Promise<any> {
+    let paymentStatus: string;
+    if (reportType == 'synopsis') {
+      paymentStatus = await this.payService.createSynopsisInvoice(token, account_id);
+    } else if (reportType == 'detailed') {
+      paymentStatus = await this.payService.createDetailedInvoice(token, account_id);
+    } else {
+      return null; // report type error, payment api does not get called
+    }
+    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
+      return new StreamableFile(await this.getPdf(reportType, siteId, name));
+    } else {
+      return null;
+    }
+  }
+
+  // checks pay api before generating and sending the email
+  async requestEmail(
+    reportType: string,
+    email: string,
+    siteId: string,
+    name: string,
+    token: string,
+    account_id: number
+  ): Promise<any> {
+    let paymentStatus: string;
+    if (reportType == 'synopsis') {
+      paymentStatus = await this.payService.createSynopsisInvoice(token, account_id);
+    } else if (reportType == 'detailed') {
+      paymentStatus = await this.payService.createDetailedInvoice(token, account_id);
+    } else {
+      return { message: 'Report type error' };
+    }
+    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
+      return {
+        message: await this.emailHTML(reportType, email, siteId, name),
+      };
+    } else {
+      return { message: 'Payment Error' };
+    }
+  }
+
+  // builds the pdf report to be sent back to the frontend
   async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
     const authorizationToken = await this.getToken();
 
@@ -87,7 +132,8 @@ export class BCRegistryService {
     }
   }
 
-  async emailPdf(reportType: string, email: string, siteId: string, name: string): Promise<string> {
+  // sends an email formatted with html that has all the report data
+  async emailHTML(reportType: string, email: string, siteId: string, name: string): Promise<string> {
     const authorizationToken = await this.getToken();
 
     const requestUrl =
@@ -246,6 +292,7 @@ export class BCRegistryService {
     return plainTextData;
   }
 
+  // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
   buildDetailedTemplate(data): string {
     let template: string = detailedPartialTemplate;
     template = template.concat('<hr size="3" color="black">');
@@ -314,6 +361,7 @@ export class BCRegistryService {
     return base64.encode(template);
   }
 
+  // uses a package with many formatting options to build the pdf
   async generatePdf(htmlFile: string) {
     const html5ToPDF = new HTML5ToPDF({
       inputBody: htmlFile,
@@ -325,6 +373,7 @@ export class BCRegistryService {
     return buffer;
   }
 
+  // get token for use with CDOGS
   getToken(): Promise<Object> {
     let url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
     let service_client_id = process.env.service_client_id;
