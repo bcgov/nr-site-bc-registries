@@ -1,23 +1,47 @@
-import { Get, Param, Controller, StreamableFile, Header } from '@nestjs/common';
+import { Get, Param, Controller, Header, Session, UseFilters, UseGuards } from '@nestjs/common';
+import { AuthenticationFilter } from 'src/authentication/authentication.filter';
+import { AuthenticationGuard } from 'src/authentication/authentication.guard';
+import { PayService } from 'src/pay/pay.service';
+import { SessionData } from 'utils/types';
 import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')
+@UseFilters(AuthenticationFilter)
+@UseGuards(AuthenticationGuard)
 export class BCRegistryController {
-  constructor(private bcRegistryService: BCRegistryService) {}
+  constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
   @Get('download-pdf/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
-  @Header('Content-Disposition', 'attachment; filename=cool.pdf')
-  async getPdf(@Param('reportType') reportType: string, @Param('siteId') siteId: string): Promise<any> {
-    return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId));
+  @Header('Content-Disposition', 'attachment; filename=report.pdf')
+  async getPdf(
+    @Param('reportType') reportType: string,
+    @Param('siteId') siteId: string,
+    @Session() session: { data?: SessionData }
+  ): Promise<any> {
+    return this.bcRegistryService.requestPdf(
+      reportType,
+      siteId,
+      session.data.name,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 
   @Get('email-pdf/:reportType/:email/:siteId')
-  getTest2(
+  async getEmail(
     @Param('reportType') reportType: string,
     @Param('email') email: string,
-    @Param('siteId') siteId: string
+    @Param('siteId') siteId: string,
+    @Session() session: { data?: SessionData }
   ): Promise<any> {
-    return this.bcRegistryService.emailPdf(reportType, email, siteId);
+    return this.bcRegistryService.requestEmail(
+      reportType,
+      decodeURI(email),
+      siteId,
+      session.data.name,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 }

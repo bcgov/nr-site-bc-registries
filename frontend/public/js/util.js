@@ -1,25 +1,6 @@
 // utility functions
-async function testapi() {
-  fetch('/site-registry/test', {
-    method: 'GET',
-    responseType: 'application/json',
-  })
-    .then((res) => res.json())
-    .then((resJson) => console.log(resJson));
-}
-
 function back() {
   window.history.go(-1);
-}
-
-function areaDisplay() {
-  var postalCodeTab = document.getElementById('pills-postalcode');
-  var coordinatesTab = document.getElementById('pills-coordinates');
-  if (postalCodeTab.classList.contains('active')) {
-    postalCodeCircle();
-  } else if (coordinatesTab.classList.contains('active')) {
-    coordinateCircle();
-  }
 }
 
 async function searchPid() {
@@ -27,7 +8,12 @@ async function searchPid() {
   localStorage.setItem('searchType', 'pid');
   localStorage.setItem('searchCriteria', parcelId);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (parcelId !== '') {
+    const url = `/site-registry/searchPid/${parcelId}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Parcel ID');
+  }
 }
 
 async function searchCLP() {
@@ -35,7 +21,12 @@ async function searchCLP() {
   localStorage.setItem('searchType', 'clp');
   localStorage.setItem('searchCriteria', crownLandsPin);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (crownLandsPin !== '') {
+    const url = `/site-registry/searchCLP/${crownLandsPin}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Crown Lands PIN');
+  }
 }
 
 async function searchCLF() {
@@ -43,7 +34,12 @@ async function searchCLF() {
   localStorage.setItem('searchType', 'clf');
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (crownLandsFile !== '') {
+    const url = `/site-registry/searchCLF/${crownLandsFile}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a Crown Lands File Number');
+  }
 }
 
 async function searchSiteId() {
@@ -51,7 +47,12 @@ async function searchSiteId() {
   localStorage.setItem('searchType', 'sid');
   localStorage.setItem('searchCriteria', siteId);
   localStorage.setItem('searchCriteria2', '');
-  window.location.href = '/view-search-results';
+  if (siteId !== '') {
+    const url = `/site-registry/searchSiteId/${siteId}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter a site Id');
+  }
 }
 
 async function searchAddress() {
@@ -60,7 +61,13 @@ async function searchAddress() {
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
-  window.location.href = '/view-search-results';
+  city = city == '' ? 'nocity' : city;
+  if (address !== '') {
+    const url = `/site-registry/searchAddr/${address}/${city}`;
+    await getSearchResults(url);
+  } else {
+    alert('Please enter an address');
+  }
 }
 
 async function searchArea() {
@@ -82,12 +89,34 @@ async function searchArea() {
       localStorage.setItem('latDms', dms.latDeg + 'deg ' + dms.latMin + 'min ' + dms.latSec + 'sec');
       localStorage.setItem('lonDms', dms.lonDeg + 'deg ' + dms.lonMin + 'min ' + dms.lonSec + 'sec');
     }
+    const lat = latLon.lat.toFixed(5);
+    const lon = Math.abs(latLon.lon).toFixed(5);
     localStorage.setItem('searchCriteria', latLon.lat.toFixed(5));
     localStorage.setItem('searchCriteria2', Math.abs(latLon.lon).toFixed(5));
     localStorage.setItem('searchCriteria3', size);
 
-    window.location.href = '/view-search-results';
+    const url = `/site-registry/searchArea/${lat}/${lon}/${size}`;
+    await getSearchResults(url);
   }
+}
+
+async function getSearchResults(url) {
+  fetch(url, {
+    method: 'GET',
+    responseType: 'application/json',
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      if (!resJson.error) {
+        localStorage.setItem('searchResults', JSON.stringify(resJson));
+        window.location.href = '/view-search-results';
+      } else {
+        alert('Error with payment: ' + resJson.error);
+      }
+    })
+    .catch(() => {
+      alert('Something went wrong');
+    });
 }
 
 function checkAreaSearchInputs() {
@@ -112,95 +141,57 @@ function checkAreaSearchInputs() {
   return true;
 }
 
-async function requestPdfDownload(siteId) {
-  $(':button').prop('disabled', true);
-  const statusCode = await createInvoice();
-  if (statusCode == ('APPROVED' || 'PAID' || 'COMPLETED')) {
-    getPdf(siteId);
-  } else {
-    alert('Not yet paid');
-  }
-  await delay(5);
-  $(':button').prop('disabled', false);
-}
-
-async function requestPdfEmail(siteId) {
-  $(':button').prop('disabled', true);
-  const statusCode = await createInvoice();
-  if (statusCode == ('APPROVED' || 'PAID' || 'COMPLETED')) {
-    emailPdf(siteId);
-  } else {
-    alert('Not yet paid');
-  }
-  $(':button').prop('disabled', false);
-}
-
-// wait for n seconds
-function delay(n) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, n * 1000);
-  });
-}
-
 async function getPdf(siteId) {
+  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
-    var req = new XMLHttpRequest();
-    req.open('GET', `/bc-registry/download-pdf/${reportType}/${siteId}`, true);
-    req.responseType = 'blob';
-    req.onreadystatechange = function () {
-      if (req.readyState === 4 && req.status === 200) {
-        var filename = 'PdfName-' + new Date().getTime() + '.pdf';
-        if (typeof window.chrome !== 'undefined') {
-          // Chrome version
-          var link = document.createElement('a');
-          link.href = window.URL.createObjectURL(req.response);
-          link.download = 'PdfName-' + new Date().getTime() + '.pdf';
-          link.click();
-        } else if (typeof window.navigator.msSaveBlob !== 'undefined') {
-          // IE version
-          var blob = new Blob([req.response], {
-            type: 'application/pdf',
-          });
-          window.navigator.msSaveBlob(blob, filename);
-        } else {
-          // Firefox version
-          var file = new File([req.response], filename, {
-            type: 'application/force-download',
-          });
-          window.open(URL.createObjectURL(file));
-        }
-      }
-    };
-    req.send();
+    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
+      method: 'GET',
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = reportType + '-report_siteid-' + parseInt(siteId) + '.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        $(':button').prop('disabled', false);
+      })
+      .catch(() => alert('Something went wrong'));
   } else {
     alert('Please select a Report Type');
   }
 }
 
-function emailPdf(siteId) {
+async function emailPdf(siteId) {
+  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
-    var url = '/bc-registry/email-pdf';
     let email = prompt('Please enter your Email Address');
-    var params = `/${reportType}/${email}/${siteId}`;
-    var req = new XMLHttpRequest();
-    req.open('GET', url + params, true);
-    req.onreadystatechange = function () {
-      if (req.readyState == 4 && req.status == 200) {
-        alert(req.responseText);
-      }
-    };
-    req.send();
+    email = email !== null ? email : '';
+    if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+      fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
+        method: 'GET',
+        responseType: 'application/json',
+      })
+        .then((res) => res.json())
+        .then((resJson) => {
+          alert(resJson.message);
+          $(':button').prop('disabled', false);
+        })
+        .catch(() => {
+          alert('Something went wrong');
+          $(':button').prop('disabled', false);
+        });
+    } else {
+      alert('Please enter a valid email');
+      $(':button').prop('disabled', false);
+    }
   } else {
     alert('Please select a Report Type');
+    $(':button').prop('disabled', false);
   }
-}
-
-async function createInvoice() {
-  const response = await fetch(`/pay/createinvoice/`, {
-    method: 'GET',
-    responseType: 'application/json',
-  }).then((res) => res.json());
-  return response.statusCode;
 }

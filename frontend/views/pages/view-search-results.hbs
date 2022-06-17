@@ -6,18 +6,14 @@
           <h2 id="searchType">Search</h2>
         </div>
         <div class="row">
-          <div class="col-sm-2">
-            <p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p>
-          </div>
-          <div class="col-sm-2">
-            <table>
-              <tr>
+          <table>
+            <tr>
+              <th><p id="searchCriteriaTitle" style="font-size:120%;font-weight:bold">Search Criteria: </p></th>
               <td><p id="searchCriteria"></p></td>  
               <td><p id="searchCriteria2"></p></td>  
               <td><p id="searchCriteria3"></p></td>  
-              </tr>
-            </table>
-          </div>
+            </tr>
+          </table>
         </div>
         <div class="row">
           <div class="col-sm">
@@ -48,40 +44,72 @@
         var searchCriteria2 = localStorage.getItem("searchCriteria2")
         var searchCriteria3 = localStorage.getItem("searchCriteria3")
         document.getElementById("searchCriteria").innerHTML = searchCriteria;
-        if (searchType == "pid") {
+        switch(searchType) {
+          case "pid": {
             document.getElementById("searchType").innerHTML = "Parcel ID Search Results";
             document.getElementById("searchCriteriaTitle").innerHTML = "Parcel ID:";
-        } else if (searchType == "clf") {
+            break;
+          }
+          case "clf": {
             document.getElementById("searchType").innerHTML = "Crown Lands File Search Results";
             document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands File #:";
-        } else if (searchType == "clp") {
+            break;
+          }
+          case "clp": {
             document.getElementById("searchType").innerHTML = "Crown Lands PIN Search Results";
             document.getElementById("searchCriteriaTitle").innerHTML = "Crown Lands PIN:";
-        } else if (searchType == "adr") {
-          document.getElementById("searchType").innerHTML = "Address Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
-          document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
-        } else if (searchType == "coords") {
-          document.getElementById("searchType").innerHTML = "Area Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
-          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("latDms");
-          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("lonDms");
-          document.getElementById("searchCriteria3").innerHTML = searchCriteria3;
-        } else if (searchType == "postal") {
-          document.getElementById("searchType").innerHTML = "Area Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
-          document.getElementById("searchCriteria").innerHTML = localStorage.getItem("postalCode");
-          document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("searchCriteria3");
-        } else if (searchType == "sid") {
-          document.getElementById("searchType").innerHTML = "Site ID Search Results";
-          document.getElementById("searchCriteriaTitle").innerHTML = "Site ID:";
+            break;
+          }
+          case "sid": {
+            document.getElementById("searchType").innerHTML = "Site ID Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Site ID:";
+            break;
+          }
+          case "adr": {
+            document.getElementById("searchType").innerHTML = "Address Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
+            document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
+            break;
+          }
+          case "coords": {
+            document.getElementById("searchType").innerHTML = "Area Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+            document.getElementById("searchCriteria").innerHTML = localStorage.getItem("latDms");
+            document.getElementById("searchCriteria2").innerHTML = localStorage.getItem("lonDms");
+            document.getElementById("searchCriteria3").innerHTML = searchCriteria3+' Area';
+            break;
+          }
+          case "postal": {
+            document.getElementById("searchType").innerHTML = "Area Search Results";
+            document.getElementById("searchCriteriaTitle").innerHTML = "Coordinates & Area Size:";
+            document.getElementById("searchCriteria").innerHTML = localStorage.getItem("postalCode");
+            document.getElementById("searchCriteria2").innerHTML = searchCriteria3+' Area';
+            break;
+          }
         }
     </script>
     <script>
+      let data = JSON.parse(localStorage.getItem("searchResults"));
+      var results = [];
+      for (let obj of data) {
+        myObj = {};
+        myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
+        myObj['Site ID'] = parseInt(obj.siteId);
+        myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
+        myObj['Address/City'] = obj.city;
+        myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
+        myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
+        results.push(myObj);
+      };
+
       $(document).ready(function () {
         var tableClient = $('#sitesTable').DataTable({
+          language: {
+            emptyTable: "No sites were found with the given search criteria."
+          },
           paging: false,
 		      searching: false,
+          data: results,
           columns: [
             {data: "Report Type"},
             {data: "Site ID"},
@@ -90,49 +118,49 @@
             {data: " "},
             {data: "  "},
           ],
-          ajax: getData(),
+          //ajax: getData(),
         });
       });
 
-    function getData() {
-      var searchType = localStorage.getItem("searchType");
-      var searchCriteria = localStorage.getItem("searchCriteria");
-      var searchCriteria2 = localStorage.getItem("searchCriteria2");
-      var searchCriteria3 = localStorage.getItem("searchCriteria3");
-      var url = '';
-      if (searchType == 'pid') {
-        url = `/site-registry/searchPid/${searchCriteria}`
-      } else if (searchType == 'clf') {
-        url = `/site-registry/searchCLF/${searchCriteria}`
-      } else if (searchType == 'clp') {
-        url = `/site-registry/searchCLP/${searchCriteria}`
-      } else if (searchType == 'sid') {
-        url = `/site-registry/searchSiteId/${searchCriteria}`
-      } else if (searchType == 'adr') {
-        url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
-      } else if (searchType == 'coords' || searchType == 'postal') {
-        url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
-      }
-      $.ajax({
-        url: url,
-        success: function (data) {
-          var results = [];
-          $.each(data, function (ind, obj) {
-            myObj = {};
-            myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
-            myObj['Site ID'] = parseInt(obj.siteId);
-            myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
-            myObj['Address/City'] = obj.city;
-            myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="requestPdfDownload('${obj.siteId}')">Download</button>`;
-            myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="requestPdfEmail('${obj.siteId}')">Email</button>`;
-            results.push(myObj);
-          });
-          $('#sitesTable').DataTable().rows.add(results).draw();
-          document.getElementById('downloadHeader').innerHTML = '';
-          document.getElementById('emailHeader').innerHTML = '';
-        },
-      });
-    }
+    //function getData() {
+    //  var searchType = localStorage.getItem("searchType");
+    //  var searchCriteria = localStorage.getItem("searchCriteria");
+    //  var searchCriteria2 = localStorage.getItem("searchCriteria2");
+    //  var searchCriteria3 = localStorage.getItem("searchCriteria3");
+    //  var url = '';
+    //  if (searchType == 'pid') {
+    //    url = `/site-registry/searchPid/${searchCriteria}`
+    //  } else if (searchType == 'clf') {
+    //    url = `/site-registry/searchCLF/${searchCriteria}`
+    //  } else if (searchType == 'clp') {
+    //    url = `/site-registry/searchCLP/${searchCriteria}`
+    //  } else if (searchType == 'sid') {
+    //    url = `/site-registry/searchSiteId/${searchCriteria}`
+    //  } else if (searchType == 'adr') {
+    //    url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
+    //  } else if (searchType == 'coords' || searchType == 'postal') {
+    //    url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
+    //  }
+      //$.ajax({
+      //  url: url,
+      //  success: function (data) {
+      //    var results = [];
+      //    $.each(data, function (ind, obj) {
+      //      myObj = {};
+      //      myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
+      //      myObj['Site ID'] = parseInt(obj.siteId);
+      //      myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
+      //      myObj['Address/City'] = obj.city;
+      //      myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
+      //      myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
+      //      results.push(myObj);
+      //    });
+      //    $('#sitesTable').DataTable().rows.add(results).draw();
+      //    document.getElementById('downloadHeader').innerHTML = '';
+      //    document.getElementById('emailHeader').innerHTML = '';
+      //  },
+      //});
+      //  }
     </script>
   {{/inline}}
 {{/template}}

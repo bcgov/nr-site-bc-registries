@@ -1,107 +1,152 @@
-import { Get, Controller, Render } from '@nestjs/common';
-import * as dotenv from 'dotenv';
+import { Get, Controller, Render, UseGuards, UseFilters, Req, Res, Session } from '@nestjs/common';
+import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
-import { AppService } from './app.service';
-
-dotenv.config();
+import { AuthenticationFilter } from './authentication/authentication.filter';
+import { SessionData } from 'utils/types';
 
 @Controller()
 export class AppController {
-  constructor(private appService: AppService) {}
-
   @Get()
   @Render('index')
-  root() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async root(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.INDEX,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('parcel-id')
   @Render('parcel-id')
-  getParcelId() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getParcelId(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
-  getCrownLandsPin() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getCrownLandsPin(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('crown-lands-file')
   @Render('crown-lands-file')
-  getCrownLandsFile() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getCrownLandsFile(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('site-id-search')
   @Render('site-id-search')
-  getSiteIdSearch() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getSiteIdSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('address-search')
   @Render('address-search')
-  getAddressSearch() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getAddressSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('area-search')
   @Render('area-search')
-  getAreaSearch() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getAreaSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 
   @Get('view-search-results')
   @Render('view-search-results')
-  getViewSearchResults() {
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
+  async getViewSearchResults(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          username: session.data.name,
+          label: session.data.label,
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          username: session.data.name,
+          label: session.data.label,
         };
   }
 }
