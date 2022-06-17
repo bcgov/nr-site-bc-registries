@@ -16,7 +16,7 @@ export class SiteRegistryController {
     @Param('pid') pid: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchPid(pid);
     } else {
@@ -29,7 +29,7 @@ export class SiteRegistryController {
     @Param('pin') pin: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchCrownPin(pin);
     } else {
@@ -42,7 +42,7 @@ export class SiteRegistryController {
     @Param('crownLandsFileNumber') crownLandsFileNumber: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchCrownFile(crownLandsFileNumber);
     } else {
@@ -55,7 +55,7 @@ export class SiteRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchSiteId(siteId);
     } else {
@@ -69,7 +69,7 @@ export class SiteRegistryController {
     @Param('city') city: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchAddress(address, city);
     } else {
@@ -84,7 +84,7 @@ export class SiteRegistryController {
     @Param('size') size: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return this.siteRegistryService.searchArea(lat, lng, size);
     } else {

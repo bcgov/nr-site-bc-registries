@@ -15,11 +15,18 @@ export class BCRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<any> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    let paymentStatus: string;
+    if (reportType == 'synopsis') {
+      paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+    } else if (reportType == 'detailed') {
+      paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+    } else {
+      return null; // report type error, payment api does not get called
+    }
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
     } else {
-      return null;
+      return null; // payment error
     }
   }
 
@@ -30,7 +37,14 @@ export class BCRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<any> {
-    const paymentStatus = await this.payService.createInvoice(session.data.access_token, session.data.account_id);
+    let paymentStatus: string;
+    if (reportType == 'synopsis') {
+      paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+    } else if (reportType == 'detailed') {
+      paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+    } else {
+      return { message: 'Report type error' };
+    }
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       return {
         message: await this.bcRegistryService.emailPdf(reportType, decodeURI(email), siteId, session.data.name),
