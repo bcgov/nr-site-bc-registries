@@ -1,9 +1,13 @@
-import { Get, Param, Controller, Header, Session } from '@nestjs/common';
+import { Get, Param, Controller, Header, Session, UseFilters, UseGuards } from '@nestjs/common';
+import { AuthenticationFilter } from 'src/authentication/authentication.filter';
+import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
 import { SessionData } from 'utils/types';
 import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')
+@UseFilters(AuthenticationFilter)
+@UseGuards(AuthenticationGuard)
 export class BCRegistryController {
   constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
