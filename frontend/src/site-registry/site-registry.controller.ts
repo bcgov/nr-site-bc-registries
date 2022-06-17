@@ -16,12 +16,7 @@ export class SiteRegistryController {
     @Param('pid') pid: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchPid(pid);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchPid(pid, session.data.access_token, session.data.account_id);
   }
 
   @Get('searchCLP/:pin')
@@ -29,12 +24,7 @@ export class SiteRegistryController {
     @Param('pin') pin: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchCrownPin(pin);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchCrownPin(pin, session.data.access_token, session.data.account_id);
   }
 
   @Get('searchCLF/:crownLandsFileNumber')
@@ -42,12 +32,11 @@ export class SiteRegistryController {
     @Param('crownLandsFileNumber') crownLandsFileNumber: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchCrownFile(crownLandsFileNumber);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchCrownFile(
+      crownLandsFileNumber,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 
   @Get('searchSiteId/:siteId')
@@ -55,12 +44,7 @@ export class SiteRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchSiteId(siteId);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.account_id);
   }
 
   @Get('searchAddr/:address/:city')
@@ -69,12 +53,7 @@ export class SiteRegistryController {
     @Param('city') city: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchAddress(address, city);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchAddress(address, city, session.data.access_token, session.data.account_id);
   }
 
   @Get('searchArea/:lat/:lng/:size')
@@ -84,11 +63,6 @@ export class SiteRegistryController {
     @Param('size') size: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    const paymentStatus = await this.payService.createSearchInvoice(session.data.access_token, session.data.account_id);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return this.siteRegistryService.searchArea(lat, lng, size);
-    } else {
-      return { error: 'Status code = ' + paymentStatus };
-    }
+    return this.siteRegistryService.searchArea(lat, lng, size, session.data.access_token, session.data.account_id);
   }
 }
