@@ -26,6 +26,8 @@ async function bootstrap() {
 
   await client.connect();
   // await client.query(`DROP DATABASE IF EXISTS ${process.env.SESSION_PG_DATABASE}`);
+
+  // this query deletes and remakes the session database on every reload
   await client.query(`DROP TABLE IF EXISTS "session";`);
   await client.query(`
     CREATE TABLE "session" (
@@ -37,6 +39,39 @@ async function bootstrap() {
     ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
     CREATE INDEX "IDX_session_expire" ON "session" ("expire");
   `);
+
+  // this query retains the session database between reloads
+  // await client.query(`
+  //   CREATE OR REPLACE FUNCTION create_if_not_exists (table_name text, create_stmt text)
+  //   RETURNS text AS
+  //   $_$
+  //   BEGIN
+
+  //   IF EXISTS (
+  //       SELECT *
+  //       FROM   pg_catalog.pg_tables
+  //       WHERE    tablename  = table_name
+  //       ) THEN
+  //     RETURN 'TABLE ' || '''' || table_name || '''' || ' ALREADY EXISTS';
+  //   ELSE
+  //     EXECUTE create_stmt;
+  //     RETURN 'CREATED';
+  //   END IF;
+
+  //   END;
+  //   $_$ LANGUAGE plpgsql;
+
+  //   SELECT create_if_not_exists('session', '
+  //       CREATE TABLE  public.session (
+  //       sid varchar NOT NULL COLLATE "default",
+  //       sess json NOT NULL,
+  //       expire timestamp(6) NOT NULL
+  //     )
+  //     WITH (OIDS=FALSE);
+  //     ALTER TABLE session ADD CONSTRAINT session_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE;
+  //     CREATE INDEX IDX_session_expire ON session (expire);'
+  //   );
+  // `);
   await client.end();
 
   const pool = new Pool({
