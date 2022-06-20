@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" class="fill-height-md">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @page {
+        margin: 1cm;
+      }
+      .container {
+        width: 595px;
+        height: auto;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
+      th {
+        text-align: right;
+        padding-right: 20px;
+        font-size: 18px;
+        background-color: white;
+      }
+      td {
+        text-align: left;
+        padding-right: 20px;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      table {
+        width: 100%;
+      }
+      .rightalign {
+        width: 100%;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="rightalign">As of: {d.modifiedDate}</div>
+      <div class="rightalign">{d.todaysDate}</div>
+      <div class="rightalign">{d.currentTime}</div>
+      <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
+      <p style="text-align: center; margin: 0">For: {d.account}</p>
+      <!-- <p>Folio:</p> -->
+
+      <hr size="5" />
+      <h3 style="text-align: center">Address Nil Search</h3>
+      <hr />
+      <br />
+      <div class="row">
+        As of {d.downloadDate}, no records from Site Registry match {d.searchType}:
+        <table>
+          <tr>
+            <td>{d.searchCriteria1}</td>
+          </tr>
+          <tr>
+            <td>{d.searchCriteria2}</td>
+          </tr>
+          <tr>
+            <td>{d.searchCriteria3}</td>
+          </tr>
+        </table>
+      </div>
+      <br />
+      <div class="row">You have been charged for this information.</div>
+      <hr />
+      <br />
+      <div class="row">
+        Sites may be revealed by searching with alternate search methods. For example, a site not revealed in an Area
+        search may be revealed by searching with another piece of information such as PID, PIN, address, or Crown Lands
+        File Number.
+      </div>
+    </div>
+  </body>
+</html>
