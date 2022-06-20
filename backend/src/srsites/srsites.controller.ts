@@ -45,8 +45,8 @@ export class SrsitesController {
     return this.srsitesService.searchSiteId(siteId);
   }
 
-  @Get('searchAddress/:address/:city')
-  searchAddress(@Param('address') address: string, @Param('city') city: string): Promise<MinimalSiteData[]> | [] {
+  @Post('searchAddress')
+  searchAddress(@Body('address') address: string, @Body('city') city: string): Promise<MinimalSiteData[]> | [] {
     return this.srsitesService.searchAddress(address, city);
   }
 
