@@ -3,9 +3,12 @@ import { AuthenticationGuard } from './authentication/authentication.guard';
 import { PAGE_TITLES } from 'utils/constants';
 import { AuthenticationFilter } from './authentication/authentication.filter';
 import { SessionData } from 'utils/types';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
+  constructor(private appService: AppService) {}
+
   @Get()
   @Render('index')
   @UseFilters(AuthenticationFilter)
@@ -16,11 +19,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.INDEX,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -34,11 +39,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -52,11 +59,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -70,11 +79,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -88,11 +99,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -106,11 +119,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -124,11 +139,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 
@@ -142,11 +159,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
           username: session.data.name,
           label: session.data.label,
+          downloaddate: this.appService.getDownloadDate(),
         };
   }
 }

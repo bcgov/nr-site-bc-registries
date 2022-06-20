@@ -8,10 +8,14 @@ import { PayModule } from './pay/pay.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SessionModule } from 'nestjs-session';
+import { HttpModule } from '@nestjs/axios';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+    HttpModule,
     AuthenticationModule,
     BCRegistryModule,
     MapModule,
