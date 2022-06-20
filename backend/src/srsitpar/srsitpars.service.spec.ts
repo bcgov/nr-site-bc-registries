@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SrsitparService } from './srdates.service';
-import { Srsitpar } from './entities/srdate.entity';
+import { SrsitparsService } from './srsitpars.service';
+import { Srsitpar } from './entities/srsitpar.entity';
 
 describe('SrsitparService', () => {
   // let service: SitesService;

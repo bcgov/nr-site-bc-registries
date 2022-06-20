@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SrprfuseService } from './srprfuses.service';
+import { SrprfusesService } from './srprfuses.service';
 import { Srprfuse } from './entities/srprfuse.entity';
 
 describe('SrprfuseService', () => {

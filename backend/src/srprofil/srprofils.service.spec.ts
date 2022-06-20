@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SrprofilService } from './srprofils.service';
+import { SrprofilsService } from './srprofils.service';
 import { Srprofil } from './entities/srprofil.entity';
 
 describe('SrprofilService', () => {
