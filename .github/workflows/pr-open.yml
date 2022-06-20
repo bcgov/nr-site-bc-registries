@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   TRIGGERS: ('frontend/' 'backend/' '.github/openshift' '.github/workflows')
-  NAME: gfp
+  NAME: esra
 
 jobs:
   check:
@@ -264,10 +264,10 @@ jobs:
           oc project ${{ secrets.NAMESPACE }}
 
           # Process and apply deployment templates
-          oc process -f .github/openshift/deploy.database.yml -p ZONE=${{ github.event.number }} | oc apply -f -
-          oc process -f .github/openshift/deploy.backend.yml -p ZONE=${{ github.event.number }} \
+          oc process -f .github/openshift/deploy.database.yml -p ZONE=dev | oc apply -f -
+          oc process -f .github/openshift/deploy.backend.yml -p ZONE=dev \
             -p PROMOTE=${{ github.repository }}:${{ github.event.number }}-backend | oc apply -f -
-          oc process -f .github/openshift/deploy.frontend.yml -p ZONE=${{ github.event.number }} \
+          oc process -f .github/openshift/deploy.frontend.yml -p ZONE=dev \
             -p PROMOTE=${{ github.repository }}:${{ github.event.number }}-frontend | oc apply -f -
 
           # Follow any active rollouts (see deploymentconfigs)
