@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
 import { Pool, Client } from 'pg';
+import { AppService } from './app.service';
 const pgSession = require('connect-pg-simple')(expressSession);
 
 async function bootstrap() {
@@ -108,5 +109,8 @@ async function bootstrap() {
   app.use(expressSession(sessionOptions));
 
   await app.listen(3000);
+
+  const appService = app.get(AppService);
+  await appService.initDownloadDate();
 }
 bootstrap();

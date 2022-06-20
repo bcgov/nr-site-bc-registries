@@ -15,8 +15,13 @@ export class SrdatesController {
   }
 
   @Get()
-  findAll() {
-    return this.srdatesService.findAll();
+  async firstEntry() {
+    const dateObject = await this.srdatesService.findAll();
+    const isoDate = dateObject[0].downloaddate;
+    const date = new Date(isoDate);
+    const month = date.toLocaleString('default', { month: 'long' });
+    const updateString = month + ' ' + date.getUTCDate() + ', ' + date.getUTCFullYear();
+    return updateString;
   }
 
   @Get(':id')
