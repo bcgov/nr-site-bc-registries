@@ -12,7 +12,7 @@ labels:
 parameters:
   - name: NAME
     description: Module name
-    value: gfp
+    value: esra
   - name: COMPONENT
     description: Component name
     value: frontend
@@ -132,7 +132,7 @@ objects:
         app: ${NAME}-${ZONE}
       name: ${NAME}-${ZONE}-${COMPONENT}
     spec:
-      host: ${NAME}-${ZONE}-${COMPONENT}.${DOMAIN}
+      host: esra-b183a5-dev-${COMPONENT}.${DOMAIN}
       port:
         targetPort: 3000-tcp
       to:

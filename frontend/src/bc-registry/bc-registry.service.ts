@@ -4,7 +4,7 @@ import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
-import { URLSearchParams } from 'node:url';
+import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 const HTML5ToPDF = require('html5-to-pdf');
