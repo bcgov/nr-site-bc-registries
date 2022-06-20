@@ -271,9 +271,9 @@ jobs:
             -p PROMOTE=${{ github.repository }}:${{ github.event.number }}-frontend | oc apply -f -
 
           # Follow any active rollouts (see deploymentconfigs)
-          oc rollout status dc/${{ env.NAME }}-${{ github.event.number }}-database -w
-          oc rollout status dc/${{ env.NAME }}-${{ github.event.number }}-backend -w
-          oc rollout status dc/${{ env.NAME }}-${{ github.event.number }}-frontend -w
+          oc rollout status dc/${{ env.NAME }}-dev-database -w
+          oc rollout status dc/${{ env.NAME }}-dev-backend -w
+          oc rollout status dc/${{ env.NAME }}-dev-frontend -w
 
       - name: Deployment update
         uses: mshick/add-pr-comment@v1
