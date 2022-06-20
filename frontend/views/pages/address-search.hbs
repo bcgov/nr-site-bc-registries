@@ -39,12 +39,67 @@
         </div>
         <div class="row">
           <ol>
-            <li>Site Registry address data is received and stored in a variesty of formats. [<a href="">more info</a>]</li>
-            <li>Your search criteria may require input of the specific municipality name vs the city name. [<a href="">more
-                info</a>]</li>
+            <li>Site Registry address data is received and stored in a variety of formats. [<a data-toggle="modal" data-target="#moreinfo1">more info</a>]</li>
+            <li>Your search criteria may require input of the specific municipality name vs the city name. [<a data-toggle="modal" data-target="#moreinfo2">more info</a>]</li>
           </ol>
         </div>
       </div>
+      <!-- Modal -->
+      <div class="modal fade" id="moreinfo1" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-body m-4">
+              Site Registry data is collected from a variety of sources. Address information is not vetted by Registry staff for formatting consistency.
+              <br>
+              Examples of address entries: 
+              <br>
+              <br>
+              <ul>
+                <li>6284 Darnley Street</li>
+                <li>4805 &amp; 4823 East Hastings Street</li>
+                <li>Site 21 Landfill - Deer Lake Park</li>
+                <li>7100 Block Edmonds Street &amp; 7100 Block 18th Avenue</li>
+                <li>6857 - 6891 Royal Oak Avenue</li>
+                <li>Unknown Burns Lake</li>
+                <li>Six Mile Pit Burns Lake</li>
+              </ul>
+            </div>
+            <div class="modal-footer text-left">
+              <button onclick="$('#moreinfo1').modal('hide')" class="btn btn-secondary">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="moreinfo2" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-body m-4">
+              Some site addresses are received and entered using a municipality or local name instead of the name of the 
+              greater urban area in which the municipality or local area is situated.<br>For example, a site may be recorded 
+              with a city name of:
+              <br>
+              <br>
+              <ul>
+                <li>Burnaby, Vancouver, North Vancouver or Richmond, when the site is located in Greater Vancouver</li>
+                <li>Victoria, Saanich, Oak Bay or Langford, when the site is located in Greater Victoria</li>
+              </ul>
+              Thus, entering the name of the greater urban area &lpar;for example 'Vancouver' or 'Victoria'&rpar; may not 
+              always identify a site contained in the Site Registry located within that greater area. Where the name of the 
+              greater urban area is not used in the Site Registry, a query using the local or municipal name could identify 
+              a site.
+            </div>
+            <div class="modal-footer text-left">
+              <button onclick="$('#moreinfo2').modal('hide')" class="btn btn-secondary">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Modal -->
     </main>
+    <script>
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      });
+    </script>
   {{/inline}}
 {{/template}}
