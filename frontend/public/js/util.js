@@ -195,3 +195,37 @@ async function emailPdf(siteId) {
     $(':button').prop('disabled', false);
   }
 }
+
+async function getNilPdf() {
+  $(':button').prop('disabled', true);
+  let searchCriteria1 = document.getElementById('searchCriteria').innerHTML;
+  let searchCriteria2 = document.getElementById('searchCriteria2').innerHTML;
+  searchCriteria2 = searchCriteria2 != '' && searchCriteria2 != undefined ? searchCriteria2 : 'null';
+  let searchCriteria3 = document.getElementById('searchCriteria3').innerhtml;
+  searchCriteria3 = searchCriteria3 != '' && searchCriteria3 != undefined ? searchCriteria3 : 'null';
+  console.log(searchCriteria2);
+  console.log(searchCriteria3);
+
+  fetch(
+    `/bc-registry/nil-pdf/${searchType}/${encodeURI(searchCriteria1)}/${encodeURI(searchCriteria2)}/${encodeURI(
+      searchCriteria3
+    )}`,
+    {
+      method: 'GET',
+    }
+  )
+    .then((res) => res.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = reportType + '-report_siteid-' + parseInt(siteId) + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      $(':button').prop('disabled', false);
+    })
+    .catch(() => alert('Something went wrong'));
+  $(':button').prop('disabled', false);
+}

@@ -44,4 +44,19 @@ export class BCRegistryController {
       session.data.account_id
     );
   }
+
+  @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=report.pdf')
+  async getNilPdf(
+    @Param('searchType') searchType: string,
+    @Param('searchCriteria1') searchCriteria1: string,
+    @Param('searchCriteria2') searchCriteria2: string,
+    @Param('searchCriteria3') searchCriteria3: string
+  ): Promise<any> {
+    console.log(searchCriteria1);
+    console.log(searchCriteria2);
+    console.log(searchCriteria3);
+    return this.bcRegistryService.requestNilPdf(searchType, searchCriteria1, searchCriteria2, searchCriteria3);
+  }
 }

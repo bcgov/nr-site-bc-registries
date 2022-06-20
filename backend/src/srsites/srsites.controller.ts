@@ -69,6 +69,12 @@ export class SrsitesController {
     return this.srsitesService.getDetailedReportData(siteId);
   }
 
+  @Get('nilReport')
+  getNilReportData() {
+    console.log('trying');
+    return this.srsitesService.getNilReportData();
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSrsiteDto: UpdateSrsiteDto) {
     return this.srsitesService.update(+id, updateSrsiteDto);

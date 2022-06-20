@@ -12,6 +12,7 @@ const axios = require('axios');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
+let nilTemplate: string;
 let hostname: string;
 let port: number;
 
@@ -20,6 +21,7 @@ export class BCRegistryService {
   constructor(private httpService: HttpService, private payService: PayService) {
     synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
     detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
+    nilTemplate = fs.readFileSync('./utils/templates/nilTemplate.html', 'utf8');
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
@@ -67,6 +69,106 @@ export class BCRegistryService {
     } else {
       return { message: 'Payment Error' };
     }
+  }
+
+  async requestNilPdf(searchType: string, searchCriteria1: string, searchCriteria2: string, searchCriteria3: string) {
+    const authorizationToken = await this.getToken();
+    const requestUrl = `${hostname}:${port}/srsites/nilReport`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    // grabs download date
+    let data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    console.log(data);
+
+    switch (searchType) {
+      case 'pid': {
+        data['searchType'] = 'Parcel ID';
+        data['searchCriteria1'] = searchCriteria1; // parcel id
+        data['searchCriteria2'] = '';
+        data['searchCriteria3'] = '';
+        break;
+      }
+      case 'clf': {
+        data['searchType'] = 'Crown Lands File Number';
+        data['searchCriteria1'] = searchCriteria1; // crown lands file number
+        data['searchCriteria2'] = '';
+        data['searchCriteria3'] = '';
+        break;
+      }
+      case 'clp': {
+        data['searchType'] = 'Crown Lands PIN';
+        data['searchCriteria1'] = searchCriteria1; // crown lands pin
+        data['searchCriteria2'] = '';
+        data['searchCriteria3'] = '';
+        break;
+      }
+      case 'sid': {
+        data['searchType'] = 'Site ID';
+        data['searchCriteria1'] = searchCriteria1; // siteid
+        data['searchCriteria2'] = '';
+        data['searchCriteria3'] = '';
+        break;
+      }
+      case 'adr': {
+        data['searchType'] = 'Address';
+        data['searchCriteria1'] = searchCriteria1; // address
+        data['searchCriteria2'] = searchCriteria2; // city
+        data['searchCriteria3'] = '';
+        break;
+      }
+      case 'coords': {
+        data['searchType'] = 'Coordinates';
+        data['searchCriteria1'] = searchCriteria1; // lat
+        data['searchCriteria2'] = searchCriteria2; // lon
+        data['searchCriteria3'] = searchCriteria3; // size
+        break;
+      }
+      case 'postal': {
+        data['searchType'] = 'Coordinates';
+        data['searchCriteria1'] = searchCriteria1; // postalcode
+        data['searchCriteria2'] = searchCriteria2; // size
+        data['searchCriteria3'] = '';
+        break;
+      }
+    }
+
+    let documentTemplate = nilTemplate;
+    // const md = JSON.stringify({
+    //   data,
+    //   formatters:
+    //     '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+    //   options: {
+    //     cacheReport: false,
+    //     convertTo: 'html',
+    //     overwrite: true,
+    //     reportName: 'test-report',
+    //   },
+    //   template: {
+    //     content: `${documentTemplate}`,
+    //     encodingType: 'base64',
+    //     fileType: 'html',
+    //   },
+    // });
+
+    // const config = {
+    //   method: 'post',
+    //   url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+    //   headers: {
+    //     Authorization: `Bearer ${authorizationToken}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   responseType: 'string',
+    //   data: md,
+    // };
+
+    // const response = await axios(config);
+    // return this.generatePdf(response.data);
+    return null;
   }
 
   // builds the pdf report to be sent back to the frontend

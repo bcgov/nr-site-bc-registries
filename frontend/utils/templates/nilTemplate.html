@@ -34,15 +34,19 @@
   </head>
   <body>
     <div class="container">
-      <div class="rightalign">As of: {d.modifiedDate}</div>
-      <div class="rightalign">{d.todaysDate}</div>
-      <div class="rightalign">{d.currentTime}</div>
+      <div class="row">
+        <div class="col-sm">As of: {d.downloadDate}</div>
+        <div class="col-sm text-right">{d.todaysDate}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm text-right">{d.currentTime}</div>
+      </div>
       <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
       <p style="text-align: center; margin: 0">For: {d.account}</p>
       <!-- <p>Folio:</p> -->
 
       <hr size="5" />
-      <h3 style="text-align: center">Address Nil Search</h3>
+      <h3 style="text-align: center">{d.searchType} Nil Search</h3>
       <hr />
       <br />
       <div class="row">
