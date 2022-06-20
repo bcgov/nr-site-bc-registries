@@ -234,7 +234,7 @@ export class SrsitesService {
       assocSites: srassocs[1] + srassocs2[1],
       documents: srsitdoc[1],
       suspLandUse: srlands[1],
-      parcelDesc: srpinpid.legalDescription,
+      parcelDesc: srpinpid ? srpinpid.legalDescription : '',
       locationDescription: srsite.locationDescription,
       status: srsite.status,
       classification: srsite.classification,
