@@ -4,6 +4,7 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
+import { AppService } from './app.service';
 const fileSession = require('session-file-store')(expressSession);
 
 async function bootstrap() {
@@ -16,15 +17,19 @@ async function bootstrap() {
   app.setViewEngine('hbs');
 
   let sessionOptions: expressSession.SessionOptions;
-  sessionOptions = { secret: process.env.COOKIE_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: new fileSession,
-  cookie: { maxAge: 3600000,secure: false, httpOnly: true }
-}
+  sessionOptions = {
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new fileSession(),
+    cookie: { maxAge: 3600000, secure: false, httpOnly: true },
+  };
 
   app.use(expressSession(sessionOptions));
 
-  await app.listen(3000); 
+  await app.listen(3000);
+
+  const appService = app.get(AppService);
+  await appService.initDownloadDate();
 }
 bootstrap();

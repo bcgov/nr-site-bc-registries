@@ -15,6 +15,7 @@ import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { MinimalSiteData } from 'utils/constants';
 import { Srevpart } from 'src/srevpart/entities/srevpart.entity';
+import { Srdate } from 'src/srdate/entities/srdate.entity';
 
 @Injectable()
 export class SrsitesService {
@@ -34,7 +35,9 @@ export class SrsitesService {
     @InjectRepository(Srland)
     private srlandsRepository: Repository<Srland>,
     @InjectRepository(Srassoc)
-    private srassocsRepository: Repository<Srassoc>
+    private srassocsRepository: Repository<Srassoc>,
+    @InjectRepository(Srdate)
+    private srdatesRepository: Repository<Srdate>
   ) {}
 
   async create(srsite: CreateSrsiteDto): Promise<Srsite> {
@@ -332,6 +335,15 @@ export class SrsitesService {
       classification: srsite.classification,
       notationsArray: srevents[0],
       participantsArray: srsitpars[0],
+    };
+  }
+
+  async getNilReportData(): Promise<any> {
+    const srdate = await this.srdatesRepository.find();
+    return {
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+      downloaddate: srdate[0].downloaddate,
     };
   }
 

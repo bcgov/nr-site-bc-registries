@@ -217,3 +217,80 @@ async function emailPdf(siteId) {
     $(':button').prop('disabled', false);
   }
 }
+
+async function getNilPdf() {
+  $(':button').prop('disabled', true);
+  let searchType = localStorage.getItem('searchType');
+  let searchCriteria1;
+  let searchCriteria2;
+  let searchCriteria3;
+  switch (searchType) {
+    case 'pid': {
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'null';
+      searchCriteria3 = 'null';
+      break;
+    }
+    case 'clf': {
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'null';
+      searchCriteria3 = 'null';
+      break;
+    }
+    case 'clp': {
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'null';
+      searchCriteria3 = 'null';
+      break;
+    }
+    case 'sid': {
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'null';
+      searchCriteria3 = 'null';
+      break;
+    }
+    case 'adr': {
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = localStorage.getItem('searchCriteria2');
+      searchCriteria3 = 'null';
+      break;
+    }
+    case 'coords': {
+      searchCriteria1 = localStorage.getItem('latDms');
+      searchCriteria2 = localStorage.getItem('lonDms');
+      searchCriteria3 = localStorage.getItem('searchCriteria3') + ' Area';
+      break;
+    }
+    case 'postal': {
+      searchCriteria1 = localStorage.getItem('postalCode');
+      searchCriteria2 = localStorage.getItem('searchCriteria3') + ' Area';
+      searchCriteria3 = 'null';
+      break;
+    }
+  }
+
+  if (searchCriteria1 != undefined) {
+    fetch(
+      `/bc-registry/nil-pdf/${searchType}/${encodeURI(searchCriteria1)}/${encodeURI(searchCriteria2)}/${encodeURI(
+        searchCriteria3
+      )}`,
+      {
+        method: 'GET',
+      }
+    )
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'nil-report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        $(':button').prop('disabled', false);
+      })
+      .catch(() => alert('Something went wrong'));
+  }
+  $(':button').prop('disabled', false);
+}
