@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { SrdatesController } from './srsitdocs.controller';
-import { SrdatesService } from './srsitdocs.service';
-import { Srdate } from './entities/srsitdoc.entity';
+import { SrsitdocsController } from './srsitdocs.controller';
+import { SrsitdocsService } from './srsitdocs.service';
+import { Srsitdoc } from './entities/srsitdoc.entity';
 
 describe('SrdateController', () => {
   // let controller: SrdatesController;

@@ -7,6 +7,7 @@ import * as base64 from 'base-64';
 import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
+import * as path from 'path';
 const HTML5ToPDF = require('html5-to-pdf');
 const axios = require('axios');
 
@@ -18,8 +19,8 @@ let port: number;
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService, private payService: PayService) {
-    synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
-    detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8');
+    synopsisTemplate = base64.encode(fs.readFileSync(path.resolve(__dirname,'../../utils/templates/synopsisTemplate.html'), 'utf8'));
+    detailedPartialTemplate = fs.readFileSync(path.resolve(__dirname,'../../utils/templates/detailedPartialTemplate.html'), 'utf8');
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
