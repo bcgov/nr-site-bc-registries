@@ -233,6 +233,7 @@ export class SrsitesService {
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
+    const srdate = await this.srdatesRepository.find();
 
     // construct strings for displaying lat/lon
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
@@ -249,6 +250,7 @@ export class SrsitesService {
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
       todaysDate: getTodaysDate(),
       currentTime: getCurrentTime(),
       victoriaFileNumber: srsite.victoriaFileNumber,
@@ -286,6 +288,7 @@ export class SrsitesService {
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
+    const srdate = await this.srdatesRepository.find();
     // entity relations might be a better solution than this
     // add corresponding participants to each notation
     for (let entry of srevents[0]) {
@@ -308,6 +311,7 @@ export class SrsitesService {
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
       todaysDate: getTodaysDate(),
       currentTime: getCurrentTime(),
       victoriaFileNumber: srsite.victoriaFileNumber,
