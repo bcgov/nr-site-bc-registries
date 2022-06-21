@@ -14,8 +14,8 @@ import { Srland } from '../srlands/entities/srland.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { MinimalSiteData } from 'utils/constants';
-import { Srevpart } from 'src/srevpart/entities/srevpart.entity';
-import { Srdate } from 'src/srdate/entities/srdate.entity';
+import { Srevpart } from '../srevpart/entities/srevpart.entity';
+import { Srdate } from '../srdate/entities/srdate.entity';
 
 @Injectable()
 export class SrsitesService {

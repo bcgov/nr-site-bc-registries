@@ -30,12 +30,22 @@ export class BCRegistryService {
         'utf8'
       );
       nilTemplate = base64.encode(
-        fs.readFileSync(path.resolve(__dirname, './utils/templates/nilTemplate.html'), 'utf8')
-      );
+        fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 
+        'utf8'
+      ));
     } else {
-      synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
-      detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8'); // remains unencoded as it has to be added to first
-      nilTemplate = base64.encode(fs.readFileSync('./utils/templates/nilTemplate.html', 'utf8'));
+      synopsisTemplate = base64.encode(fs.readFileSync(
+        path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 
+        'utf8'
+      ));
+      detailedPartialTemplate = fs.readFileSync(
+        path.resolve(__dirname, '../../utils//templates/detailedPartialTemplate.html'), 
+        'utf8'
+      ); // remains unencoded as it has to be added to first
+      nilTemplate = base64.encode(fs.readFileSync(
+        path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 
+        'utf8'
+      ));
     }
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
