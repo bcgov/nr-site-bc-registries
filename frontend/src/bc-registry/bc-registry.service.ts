@@ -454,6 +454,13 @@ export class BCRegistryService {
         }
       }
       template = template.concat('<hr size="2" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No notations have been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
+      template = template.concat('<hr size="2" color="black">');
     }
     let participantsLength = data.participantsArray.length;
     counter = 0;
@@ -476,7 +483,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('');
+      template = template.concat('<hr size="5" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No participants have been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
       template = template.concat('<hr size="5" color="black">');
     }
     template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
