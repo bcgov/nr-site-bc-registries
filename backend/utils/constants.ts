@@ -25,6 +25,6 @@ export const CSV_HEADERS = {
 export type MinimalSiteData = {
   siteId: string;
   city: string;
-  modifiedDate: string;
-  registeredDate: string;
+  updatedDate: string;
+  pending: string;
 };

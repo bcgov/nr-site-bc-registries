@@ -94,15 +94,9 @@ export class SiteRegistryService {
   async searchAddress(address: string, city: string, token: string, account_id: number): Promise<any> {
     const paymentStatus = await this.payService.createAddressSearchInvoice(token, account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchAddress/${address}/${city}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
+      const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
       let data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+        this.httpService.post(requestUrl, { city: city, address: address }).pipe(map((response) => response.data))
       );
       return data;
     } else {

@@ -73,8 +73,13 @@ export class SrsitesService {
       {
         siteId: site.siteId,
         city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        modifiedDate: site.modifiedDate,
-        registeredDate: site.registeredDate,
+        updatedDate:
+          site.modifiedDate != ''
+            ? site.modifiedDate
+            : site.registeredDate != ''
+            ? site.registeredDate
+            : site.detailRemovedDate,
+        pending: site.status == 'PENDING' ? 'PENDING' : '',
       },
     ];
   }
@@ -96,8 +101,13 @@ export class SrsitesService {
       {
         siteId: site.siteId,
         city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        modifiedDate: site.modifiedDate,
-        registeredDate: site.registeredDate,
+        updatedDate:
+          site.modifiedDate != ''
+            ? site.modifiedDate
+            : site.registeredDate != ''
+            ? site.registeredDate
+            : site.detailRemovedDate,
+        pending: site.status == 'PENDING' ? 'PENDING' : '',
       },
     ];
   }
@@ -119,8 +129,13 @@ export class SrsitesService {
       {
         siteId: site.siteId,
         city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        modifiedDate: site.modifiedDate,
-        registeredDate: site.registeredDate,
+        updatedDate:
+          site.modifiedDate != ''
+            ? site.modifiedDate
+            : site.registeredDate != ''
+            ? site.registeredDate
+            : site.detailRemovedDate,
+        pending: site.status == 'PENDING' ? 'PENDING' : '',
       },
     ];
   }
@@ -140,30 +155,43 @@ export class SrsitesService {
       {
         siteId: site.siteId,
         city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        modifiedDate: site.modifiedDate,
-        registeredDate: site.registeredDate,
+        updatedDate:
+          site.modifiedDate != ''
+            ? site.modifiedDate
+            : site.registeredDate != ''
+            ? site.registeredDate
+            : site.detailRemovedDate,
+        pending: site.status == 'PENDING' ? 'PENDING' : '',
       },
     ];
   }
 
   async searchAddress(address: string, city: string): Promise<MinimalSiteData[]> {
-    let site: any;
+    const cityPattern = city !== '' ? `[a-zA-Z]*${city.toLowerCase()}[a-zA-Z]*` : `[a-zA-Z]*`;
+    const re = new RegExp(cityPattern);
+    let sites: any;
+    let sitesArray: MinimalSiteData[] = [];
     try {
-      site = await this.srsitesRepository
-        .createQueryBuilder()
-        .where('LOWER(address_1) = LOWER(:address)', { address })
-        .getOne();
+      sites = await this.srsitesRepository.createQueryBuilder().where(`LOWER(address_1) LIKE '%${address}%'`).getMany();
     } catch (err) {
       return [];
     }
-    return [
-      {
-        siteId: site.siteId,
-        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        modifiedDate: site.modifiedDate,
-        registeredDate: site.registeredDate,
-      },
-    ];
+    for (let site of sites) {
+      if (re.test(site.city.toLowerCase())) {
+        sitesArray.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
+        });
+      }
+    }
+    return sitesArray;
   }
 
   async searchArea(lat: string, lng: string, size: string): Promise<MinimalSiteData[]> {
@@ -171,7 +199,7 @@ export class SrsitesService {
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
     const userLatlng = { lat: userLat, lng: userLng };
-    const sites = [];
+    const sites: MinimalSiteData[] = [];
     const allSites = await this.findAll();
     for (let site of allSites) {
       const lat = parseFloat([site.lat.slice(0, 3), '.', site.lat.slice(3)].join(''));
@@ -181,8 +209,13 @@ export class SrsitesService {
         sites.push({
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-          modifiedDate: site.modifiedDate,
-          registeredDate: site.registeredDate,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
         });
     }
     return sites;
