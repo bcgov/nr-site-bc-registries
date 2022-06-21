@@ -20,33 +20,16 @@ let port: number;
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService, private payService: PayService) {
-    // the template directory for local development differs from the template directory in openshift
-    if (process.env.POSTGRESQL_HOST == 'database') {
-      synopsisTemplate = base64.encode(
-        fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8')
-      );
-      detailedPartialTemplate = fs.readFileSync(
-        path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
-        'utf8'
-      );
-      nilTemplate = base64.encode(
-        fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 
-        'utf8'
-      ));
-    } else {
-      synopsisTemplate = base64.encode(fs.readFileSync(
-        path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 
-        'utf8'
-      ));
-      detailedPartialTemplate = fs.readFileSync(
-        path.resolve(__dirname, '../../utils//templates/detailedPartialTemplate.html'), 
-        'utf8'
-      ); // remains unencoded as it has to be added to first
-      nilTemplate = base64.encode(fs.readFileSync(
-        path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 
-        'utf8'
-      ));
-    }
+    synopsisTemplate = base64.encode(
+      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8')
+    );
+    detailedPartialTemplate = fs.readFileSync(
+      path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
+      'utf8'
+    );
+    nilTemplate = base64.encode(
+      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 'utf8')
+    );
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
