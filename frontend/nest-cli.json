@@ -5,17 +5,17 @@
   "compilerOptions": {
     "assets": [
       { 
-        "include": "utils",
+        "include": "../utils",
         "outDir": "dist/utils",
         "watchAssets": true 
       },
       {
-        "include": "views",
+        "include": "../views",
         "outDir": "dist/views",
         "watchAssets": true 
       },
       {
-        "include": "public",
+        "include": "../public",
         "outDir": "dist/public",
         "watchAssets": true 
       },"**/*.hbs"
