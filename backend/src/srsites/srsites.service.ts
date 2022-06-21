@@ -170,6 +170,8 @@ export class SrsitesService {
   }
 
   async searchAddress(address: string, city: string): Promise<MinimalSiteData[]> {
+    address = address.replace('*', '');
+    city = city.replace('*', '');
     const cityPattern = city !== '' ? `[a-zA-Z]*${city.toLowerCase()}[a-zA-Z]*` : `[a-zA-Z]*`;
     const re = new RegExp(cityPattern);
     let sites: any;
