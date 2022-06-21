@@ -69,9 +69,9 @@ export class SrsitesController {
     return this.srsitesService.getDetailedReportData(siteId);
   }
 
-  @Get('nilReport')
+  // id is unused, it's necessary for this route to work though
+  @Get('getNilReportData/:id')
   getNilReportData() {
-    console.log('trying');
     return this.srsitesService.getNilReportData();
   }
 

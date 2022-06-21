@@ -20,14 +20,23 @@ let port: number;
 @Injectable()
 export class BCRegistryService {
   constructor(private httpService: HttpService, private payService: PayService) {
-    synopsisTemplate = base64.encode(
-      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8')
-    );
-    detailedPartialTemplate = fs.readFileSync(
-      path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
-      'utf8'
-    );
-    nilTemplate = fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 'utf8');
+    // the template directory for local development differs from the template directory in openshift
+    if (process.env.POSTGRESQL_HOST == 'database') {
+      synopsisTemplate = base64.encode(
+        fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8')
+      );
+      detailedPartialTemplate = fs.readFileSync(
+        path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
+        'utf8'
+      );
+      nilTemplate = base64.encode(
+        fs.readFileSync(path.resolve(__dirname, './utils/templates/nilTemplate.html'), 'utf8')
+      );
+    } else {
+      synopsisTemplate = base64.encode(fs.readFileSync('./utils/templates/synopsisTemplate.html', 'utf8'));
+      detailedPartialTemplate = fs.readFileSync('./utils/templates/detailedPartialTemplate.html', 'utf8'); // remains unencoded as it has to be added to first
+      nilTemplate = base64.encode(fs.readFileSync('./utils/templates/nilTemplate.html', 'utf8'));
+    }
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
@@ -77,9 +86,16 @@ export class BCRegistryService {
     }
   }
 
-  async requestNilPdf(searchType: string, searchCriteria1: string, searchCriteria2: string, searchCriteria3: string) {
+  async requestNilPdf(
+    searchType: string,
+    searchCriteria1: string,
+    searchCriteria2: string,
+    searchCriteria3: string,
+    name: string
+  ) {
     const authorizationToken = await this.getToken();
-    const requestUrl = `${hostname}:${port}/srsites/nilReport`;
+    let documentTemplate = nilTemplate;
+    const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -89,7 +105,7 @@ export class BCRegistryService {
     let data = await lastValueFrom(
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
-    console.log(data);
+    data['account'] = name;
 
     switch (searchType) {
       case 'pid': {
@@ -128,14 +144,14 @@ export class BCRegistryService {
         break;
       }
       case 'coords': {
-        data['searchType'] = 'Coordinates';
+        data['searchType'] = 'Area';
         data['searchCriteria1'] = searchCriteria1; // lat
         data['searchCriteria2'] = searchCriteria2; // lon
         data['searchCriteria3'] = searchCriteria3; // size
         break;
       }
       case 'postal': {
-        data['searchType'] = 'Coordinates';
+        data['searchType'] = 'Area';
         data['searchCriteria1'] = searchCriteria1; // postalcode
         data['searchCriteria2'] = searchCriteria2; // size
         data['searchCriteria3'] = '';
@@ -143,38 +159,36 @@ export class BCRegistryService {
       }
     }
 
-    let documentTemplate = nilTemplate;
-    // const md = JSON.stringify({
-    //   data,
-    //   formatters:
-    //     '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-    //   options: {
-    //     cacheReport: false,
-    //     convertTo: 'html',
-    //     overwrite: true,
-    //     reportName: 'test-report',
-    //   },
-    //   template: {
-    //     content: `${documentTemplate}`,
-    //     encodingType: 'base64',
-    //     fileType: 'html',
-    //   },
-    // });
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: false,
+        convertTo: 'html',
+        overwrite: true,
+        reportName: 'test-report',
+      },
+      template: {
+        content: `${documentTemplate}`,
+        encodingType: 'base64',
+        fileType: 'html',
+      },
+    });
 
-    // const config = {
-    //   method: 'post',
-    //   url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
-    //   headers: {
-    //     Authorization: `Bearer ${authorizationToken}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   responseType: 'string',
-    //   data: md,
-    // };
+    const config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      responseType: 'string',
+      data: md,
+    };
 
-    // const response = await axios(config);
-    // return this.generatePdf(response.data);
-    return null;
+    const response = await axios(config);
+    return new StreamableFile(await this.generatePdf(response.data));
   }
 
   // builds the pdf report to be sent back to the frontend

@@ -339,10 +339,12 @@ export class SrsitesService {
   }
 
   async getNilReportData(): Promise<any> {
-    console.log('trying to get downloaddate');
     const srdate = await this.srdatesRepository.find();
-    console.log(srdate);
-    return srdate[0];
+    return {
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+      downloaddate: srdate[0].downloaddate,
+    };
   }
 
   async update(id: number, updateSrsiteDto: UpdateSrsiteDto): Promise<Srsite> {

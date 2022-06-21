@@ -32,7 +32,6 @@
             </table>
           </div>
         </div>
-        <button onclick="getNilPdf()">CLICK ME</button>
         <div class="row">
           <div class="col-sm-2">
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
@@ -70,6 +69,7 @@
           case "adr": {
             document.getElementById("searchType").innerHTML = "Address Search Results";
             document.getElementById("searchCriteriaTitle").innerHTML = "Address:";
+            document.getElementById("searchCriteria").innerHTML = searchCriteria;
             document.getElementById("searchCriteria2").innerHTML = searchCriteria2;
             break;
           }
@@ -109,7 +109,7 @@
       $(document).ready(function () {
         var tableClient = $('#sitesTable').DataTable({
           language: {
-            emptyTable: "No sites were found with the given search criteria."
+            emptyTable: `<div class="m-2">No sites were found with the given search criteria.</div><button class='btn btn-primary' id="downloadNilReport" onclick="getNilPdf()">Download Nil Search Report</button>`
           },
           paging: false,
 		      searching: false,
