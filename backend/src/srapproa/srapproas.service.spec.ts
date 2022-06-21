@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SrapproaService } from './srapproas.service';
+import { SrapproasService } from './srapproas.service';
 import { Srapproa } from './entities/srapproa.entity';
 
 describe('SrapproaService', () => {

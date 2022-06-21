@@ -24,6 +24,7 @@
                   <th>Site ID</th>
                   <th>Updated Date</th>
                   <th>Address/City</th>
+                  <th>Pending</th>
                   <th id="downloadHeader"> </th>
                   <th id="emailHeader">  </th>
                 </tr>
@@ -94,14 +95,16 @@
       var results = [];
       for (let obj of data) {
         myObj = {};
-        myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
+        myObj['Report Type'] = obj.pending == 'PENDING' ? `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option></select>` : `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`;
         myObj['Site ID'] = parseInt(obj.siteId);
-        myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
+        myObj['Updated Date'] = obj.updatedDate;
         myObj['Address/City'] = obj.city;
+        myObj['Pending'] = obj.pending;
         myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
         myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
         results.push(myObj);
       };
+      console.log(results)
 
       $(document).ready(function () {
         var tableClient = $('#sitesTable').DataTable({
@@ -116,6 +119,7 @@
             {data: "Site ID"},
             {data: "Updated Date"},
             {data: "Address/City"},
+            {data: "Pending"},
             {data: " "},
             {data: "  "},
           ],

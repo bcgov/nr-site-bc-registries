@@ -61,12 +61,11 @@ async function searchAddress() {
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
-  city = city == '' ? 'nocity' : city;
-  if (address !== '') {
-    const url = `/site-registry/searchAddr/${address}/${city}`;
-    await getSearchResults(url);
+  if (city.length >= 2) {
+    const url = `/site-registry/searchAddr`;
+    await postSearchResults(url, { city: city, address: address });
   } else {
-    alert('Please enter an address');
+    alert('Please provide at least two characters in the City input box');
   }
 }
 
@@ -104,6 +103,29 @@ async function getSearchResults(url) {
   fetch(url, {
     method: 'GET',
     responseType: 'application/json',
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      if (!resJson.error) {
+        localStorage.setItem('searchResults', JSON.stringify(resJson));
+        window.location.href = '/view-search-results';
+      } else {
+        alert('Error with payment: ' + resJson.error);
+      }
+    })
+    .catch(() => {
+      alert('Something went wrong');
+    });
+}
+
+async function postSearchResults(url, data) {
+  fetch(url, {
+    method: 'POST',
+    responseType: 'application/json',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
   })
     .then((res) => res.json())
     .then((resJson) => {

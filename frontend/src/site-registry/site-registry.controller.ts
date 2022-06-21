@@ -1,4 +1,4 @@
-import { Get, Controller, Param, Session, UseFilters, UseGuards } from '@nestjs/common';
+import { Get, Controller, Param, Session, UseFilters, UseGuards, Post, Body } from '@nestjs/common';
 import { AuthenticationFilter } from '../authentication/authentication.filter';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { PayService } from '../pay/pay.service';
@@ -47,10 +47,10 @@ export class SiteRegistryController {
     return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.account_id);
   }
 
-  @Get('searchAddr/:address/:city')
-  async getAddressSearch(
-    @Param('address') address: string,
-    @Param('city') city: string,
+  @Post('searchAddr')
+  async postAddressSearch(
+    @Body('address') address: string,
+    @Body('city') city: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
     return this.siteRegistryService.searchAddress(address, city, session.data.access_token, session.data.account_id);

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SrpinpidService } from './srpinpids.service';
+import { SrpinpidsService } from './srpinpids.service';
 import { Srpinpid } from './entities/srpinpid.entity';
 
 describe('SrpinpidService', () => {
