@@ -69,7 +69,7 @@ describe('SrparrolsService', () => {
     it('should get a single srparrol', () => {
       const repoSpy = jest.spyOn(repo, 'findOneOrFail');
       expect(service.findOne('123')).resolves.toEqual(oneSrparrol);
-      expect(repoSpy).toBeCalledWith(1);
+      expect(repoSpy).toBeCalledWith({ participantId: '123' });
     });
   });
   describe('remove', () => {

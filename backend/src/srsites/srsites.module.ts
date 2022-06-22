@@ -10,7 +10,7 @@ import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srevpart } from '../srevpart/entities/srevpart.entity';
-import { Srdate } from 'src/srdate/entities/srdate.entity';
+import { Srdate } from '../srdate/entities/srdate.entity';
 
 @Module({
   imports: [
