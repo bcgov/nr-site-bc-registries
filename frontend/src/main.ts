@@ -21,7 +21,7 @@ async function bootstrap() {
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new fileSession(),
+    store: new fileSession({ path: process.env.SESSION_PATH }),
     cookie: { maxAge: 3600000, secure: false, httpOnly: true },
   };
 
