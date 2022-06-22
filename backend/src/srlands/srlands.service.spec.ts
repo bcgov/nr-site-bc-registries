@@ -4,96 +4,91 @@ import { Repository } from 'typeorm';
 import { SrlandsService } from './srlands.service';
 import { Srland } from './entities/srland.entity';
 
-describe('SrlandService', () => {
-  // let service: SitesService;
-  // let repo: Repository<Site>;
-  // const oneSiteName = "Test Numone";
-  // const oneSiteEamil = "numone@test.com";
-  // const oneSite = new Site(oneSiteName, oneSiteEamil);
-  // const updateSite = {
-  //   name: oneSiteName,
-  //   email: oneSiteEamil,
-  // };
-  // const twoSite = new Site("Test Numtwo", "numtwo@test.com");
-  // const threeSiteName = "Test Numthree";
-  // const threeSiteEamil = "numthree@test.com";
-  // const newSite = {
-  //   name: threeSiteName,
-  //   email: threeSiteEamil,
-  // };
-  // const threeSite = new Site(threeSiteName, threeSiteEamil);
-  // const siteArray = [oneSite, twoSite];
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     providers: [
-  //       SitesService,
-  //       {
-  //         provide: getRepositoryToken(Sites),
-  //         useValue: {
-  //           // mock repository functions for testing
-  //           find: jest.fn().mockResolvedValue(siteArray),
-  //           findOneOrFail: jest.fn().mockResolvedValue(oneSite),
-  //           create: jest.fn().mockReturnValue(threeSite),
-  //           save: jest.fn(),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           update: jest.fn().mockResolvedValue(true),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           delete: jest.fn().mockResolvedValue(true),
-  //         },
-  //       },
-  //     ],
-  //   }).compile();
-  //   service = module.get<SitesService>(SitesService);
-  //   repo = module.get<Repository<Sites>>(getRepositoryToken(Sites));
-  // });
-  // it("should be defined", () => {
-  //   expect(service).toBeDefined();
-  // });
-  // describe("createOne", () => {
-  //   it("should successfully add a site", () => {
-  //     expect(service.create(newSite)).resolves.toEqual(threeSite);
-  //     expect(repo.create).toBeCalledTimes(1);
-  //     expect(repo.create).toBeCalledWith(newSite);
-  //     expect(repo.save).toBeCalledTimes(1);
-  //   });
-  // });
-  // describe("findAll", () => {
-  //   it("should return an array of sites", async () => {
-  //     const sites = await service.findAll();
-  //     expect(sites).toEqual(siteArray);
-  //   });
-  // });
-  // describe("findOne", () => {
-  //   it("should get a single site", () => {
-  //     const repoSpy = jest.spyOn(repo, "findOneOrFail");
-  //     expect(service.findOne(1)).resolves.toEqual(oneSite);
-  //     expect(repoSpy).toBeCalledWith(1);
-  //   });
-  // });
-  // describe("update", () => {
-  //   it("should call the update method", async () => {
-  //     const site = await service.update(1, updateSite);
-  //     expect(site).toEqual(oneSite);
-  //     expect(repo.update).toBeCalledTimes(1);
-  //     expect(repo.update).toBeCalledWith({ id: 1 }, updateSite);
-  //   });
-  // });
-  // describe("remove", () => {
-  //   it("should return {deleted: true}", () => {
-  //     expect(service.remove(2)).resolves.toEqual({ deleted: true });
-  //   });
-  //   it("should return {deleted: false, message: err.message}", () => {
-  //     const repoSpy = jest
-  //       .spyOn(repo, "delete")
-  //       .mockRejectedValueOnce(new Error("Bad Delete Method."));
-  //     expect(service.remove(-1)).resolves.toEqual({
-  //       deleted: false,
-  //       message: "Bad Delete Method.",
-  //     });
-  //     expect(repoSpy).toBeCalledWith(-1);
-  //     expect(repoSpy).toBeCalledTimes(1);
-  //   });
-  // });
+describe('SrlandsService', () => {
+  let service: SrlandsService;
+  let repo: Repository<Srland>;
+  const oneSrland = new Srland({
+    siteId: '123',
+    landUse: 'land1',
+    noteString: 'note1',
+  });
+  const twoSrland = new Srland({
+    siteId: '321',
+    landUse: 'land2',
+    noteString: 'note2',
+  });
+  const threeSiteId = '987';
+  const threeLandUse = 'land3';
+  const threeNoteString = 'note3';
+  const newSrland = {
+    siteId: threeSiteId,
+    landUse: threeLandUse,
+    noteString: threeNoteString,
+  };
+  const threeSrland = new Srland({
+    siteId: threeSiteId,
+    landUse: threeLandUse,
+    noteString: threeNoteString,
+  });
+  const srlandArray = [oneSrland, twoSrland];
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SrlandsService,
+        {
+          provide: getRepositoryToken(Srland),
+          useValue: {
+            // mock repository functions for testing
+            find: jest.fn().mockResolvedValue(srlandArray),
+            findOneOrFail: jest.fn().mockResolvedValue(oneSrland),
+            create: jest.fn().mockReturnValue(threeSrland),
+            save: jest.fn(),
+            // as these do not actually use their return values in our sample
+            // we just make sure that their resolve is true to not crash
+            delete: jest.fn().mockResolvedValue(true),
+          },
+        },
+      ],
+    }).compile();
+    service = module.get<SrlandsService>(SrlandsService);
+    repo = module.get<Repository<Srland>>(getRepositoryToken(Srland));
+  });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+  describe('createOne', () => {
+    it('should successfully add a srland', () => {
+      expect(service.create(newSrland)).resolves.toEqual(threeSrland);
+      expect(repo.create).toBeCalledTimes(1);
+      expect(repo.create).toBeCalledWith(newSrland);
+      expect(repo.save).toBeCalledTimes(1);
+    });
+  });
+  describe('findAll', () => {
+    it('should return an array of srlands', async () => {
+      const srlands = await service.findAll();
+      expect(srlands).toEqual(srlandArray);
+    });
+  });
+  describe('findOne', () => {
+    it('should get a single srland', () => {
+      const repoSpy = jest.spyOn(repo, 'findOneOrFail');
+      expect(service.findOne(1)).resolves.toEqual(oneSrland);
+      expect(repoSpy).toBeCalledWith(1);
+    });
+  });
+  describe('remove', () => {
+    it('should return {deleted: true}', () => {
+      expect(service.remove(2)).resolves.toEqual({ deleted: true });
+    });
+    it('should return {deleted: false, message: err.message}', () => {
+      const repoSpy = jest.spyOn(repo, 'delete').mockRejectedValueOnce(new Error('Bad Delete Method.'));
+      expect(service.remove(-1)).resolves.toEqual({
+        deleted: false,
+        message: 'Bad Delete Method.',
+      });
+      expect(repoSpy).toBeCalledWith(-1);
+      expect(repoSpy).toBeCalledTimes(1);
+    });
+  });
 });

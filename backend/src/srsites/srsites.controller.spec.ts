@@ -4,22 +4,22 @@ import { SrsitesController } from './srsites.controller';
 import { SrsitesService } from './srsites.service';
 import { Srsite } from './entities/srsite.entity';
 
-describe('SrsiteController', () => {
-  // let controller: SrsitesController;
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     controllers: [SrsitesController],
-  //     providers: [
-  //       SrsitesService,
-  //       {
-  //         provide: getRepositoryToken(Srsite),
-  //         useValue: {},
-  //       },
-  //     ],
-  //   }).compile();
-  //   controller = module.get<SrsitesController>(SrsitesController);
-  // });
-  // it("should be defined", () => {
-  //   expect(controller).toBeDefined();
-  // });
+describe('SrsitesController', () => {
+  let controller: SrsitesController;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [SrsitesController],
+      providers: [
+        SrsitesService,
+        {
+          provide: getRepositoryToken(Srsite),
+          useValue: {},
+        },
+      ],
+    }).compile();
+    controller = module.get<SrsitesController>(SrsitesController);
+  });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 });

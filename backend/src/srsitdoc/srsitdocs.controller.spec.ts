@@ -4,22 +4,22 @@ import { SrsitdocsController } from './srsitdocs.controller';
 import { SrsitdocsService } from './srsitdocs.service';
 import { Srsitdoc } from './entities/srsitdoc.entity';
 
-describe('SrdateController', () => {
-  // let controller: SrdatesController;
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     controllers: [SrdatesController],
-  //     providers: [
-  //       SrdatesService,
-  //       {
-  //         provide: getRepositoryToken(Srdate),
-  //         useValue: {},
-  //       },
-  //     ],
-  //   }).compile();
-  //   controller = module.get<SrdatesController>(SrdatesController);
-  // });
-  // it("should be defined", () => {
-  //   expect(controller).toBeDefined();
-  // });
+describe('SrsitdocsController', () => {
+  let controller: SrsitdocsController;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [SrsitdocsController],
+      providers: [
+        SrsitdocsService,
+        {
+          provide: getRepositoryToken(Srsitdoc),
+          useValue: {},
+        },
+      ],
+    }).compile();
+    controller = module.get<SrsitdocsController>(SrsitdocsController);
+  });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 });

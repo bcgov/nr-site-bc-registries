@@ -4,96 +4,91 @@ import { Repository } from 'typeorm';
 import { SrevpartsService } from './srevparts.service';
 import { Srevpart } from './entities/srevpart.entity';
 
-describe('SrevpartService', () => {
-  // let service: SitesService;
-  // let repo: Repository<Site>;
-  // const oneSiteName = "Test Numone";
-  // const oneSiteEamil = "numone@test.com";
-  // const oneSite = new Site(oneSiteName, oneSiteEamil);
-  // const updateSite = {
-  //   name: oneSiteName,
-  //   email: oneSiteEamil,
-  // };
-  // const twoSite = new Site("Test Numtwo", "numtwo@test.com");
-  // const threeSiteName = "Test Numthree";
-  // const threeSiteEamil = "numthree@test.com";
-  // const newSite = {
-  //   name: threeSiteName,
-  //   email: threeSiteEamil,
-  // };
-  // const threeSite = new Site(threeSiteName, threeSiteEamil);
-  // const siteArray = [oneSite, twoSite];
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     providers: [
-  //       SitesService,
-  //       {
-  //         provide: getRepositoryToken(Sites),
-  //         useValue: {
-  //           // mock repository functions for testing
-  //           find: jest.fn().mockResolvedValue(siteArray),
-  //           findOneOrFail: jest.fn().mockResolvedValue(oneSite),
-  //           create: jest.fn().mockReturnValue(threeSite),
-  //           save: jest.fn(),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           update: jest.fn().mockResolvedValue(true),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           delete: jest.fn().mockResolvedValue(true),
-  //         },
-  //       },
-  //     ],
-  //   }).compile();
-  //   service = module.get<SitesService>(SitesService);
-  //   repo = module.get<Repository<Sites>>(getRepositoryToken(Sites));
-  // });
-  // it("should be defined", () => {
-  //   expect(service).toBeDefined();
-  // });
-  // describe("createOne", () => {
-  //   it("should successfully add a site", () => {
-  //     expect(service.create(newSite)).resolves.toEqual(threeSite);
-  //     expect(repo.create).toBeCalledTimes(1);
-  //     expect(repo.create).toBeCalledWith(newSite);
-  //     expect(repo.save).toBeCalledTimes(1);
-  //   });
-  // });
-  // describe("findAll", () => {
-  //   it("should return an array of sites", async () => {
-  //     const sites = await service.findAll();
-  //     expect(sites).toEqual(siteArray);
-  //   });
-  // });
-  // describe("findOne", () => {
-  //   it("should get a single site", () => {
-  //     const repoSpy = jest.spyOn(repo, "findOneOrFail");
-  //     expect(service.findOne(1)).resolves.toEqual(oneSite);
-  //     expect(repoSpy).toBeCalledWith(1);
-  //   });
-  // });
-  // describe("update", () => {
-  //   it("should call the update method", async () => {
-  //     const site = await service.update(1, updateSite);
-  //     expect(site).toEqual(oneSite);
-  //     expect(repo.update).toBeCalledTimes(1);
-  //     expect(repo.update).toBeCalledWith({ id: 1 }, updateSite);
-  //   });
-  // });
-  // describe("remove", () => {
-  //   it("should return {deleted: true}", () => {
-  //     expect(service.remove(2)).resolves.toEqual({ deleted: true });
-  //   });
-  //   it("should return {deleted: false, message: err.message}", () => {
-  //     const repoSpy = jest
-  //       .spyOn(repo, "delete")
-  //       .mockRejectedValueOnce(new Error("Bad Delete Method."));
-  //     expect(service.remove(-1)).resolves.toEqual({
-  //       deleted: false,
-  //       message: "Bad Delete Method.",
-  //     });
-  //     expect(repoSpy).toBeCalledWith(-1);
-  //     expect(repoSpy).toBeCalledTimes(1);
-  //   });
-  // });
+describe('SrevpartsService', () => {
+  let service: SrevpartsService;
+  let repo: Repository<Srevpart>;
+  const oneSrevpart = new Srevpart({
+    eventId: '123',
+    nameString: 'name1',
+    roleString: 'role1',
+  });
+  const twoSrevpart = new Srevpart({
+    eventId: '321',
+    nameString: 'name2',
+    roleString: 'role2',
+  });
+  const threeEventId = '987';
+  const threeNameString = 'name3';
+  const threeRoleString = 'role3';
+  const newSrevpart = {
+    eventId: threeEventId,
+    nameString: threeNameString,
+    roleString: threeRoleString,
+  };
+  const threeSrevpart = new Srevpart({
+    eventId: threeEventId,
+    nameString: threeNameString,
+    roleString: threeRoleString,
+  });
+  const srevpartArray = [oneSrevpart, twoSrevpart];
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SrevpartsService,
+        {
+          provide: getRepositoryToken(Srevpart),
+          useValue: {
+            // mock repository functions for testing
+            find: jest.fn().mockResolvedValue(srevpartArray),
+            findOneOrFail: jest.fn().mockResolvedValue(oneSrevpart),
+            create: jest.fn().mockReturnValue(threeSrevpart),
+            save: jest.fn(),
+            // as these do not actually use their return values in our sample
+            // we just make sure that their resolve is true to not crash
+            delete: jest.fn().mockResolvedValue(true),
+          },
+        },
+      ],
+    }).compile();
+    service = module.get<SrevpartsService>(SrevpartsService);
+    repo = module.get<Repository<Srevpart>>(getRepositoryToken(Srevpart));
+  });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+  describe('createOne', () => {
+    it('should successfully add a srevpart', () => {
+      expect(service.create(newSrevpart)).resolves.toEqual(threeSrevpart);
+      expect(repo.create).toBeCalledTimes(1);
+      expect(repo.create).toBeCalledWith(newSrevpart);
+      expect(repo.save).toBeCalledTimes(1);
+    });
+  });
+  describe('findAll', () => {
+    it('should return an array of srevparts', async () => {
+      const srevparts = await service.findAll();
+      expect(srevparts).toEqual(srevpartArray);
+    });
+  });
+  describe('findOne', () => {
+    it('should get a single srevpart', () => {
+      const repoSpy = jest.spyOn(repo, 'findOneOrFail');
+      expect(service.findOne(1)).resolves.toEqual(oneSrevpart);
+      expect(repoSpy).toBeCalledWith(1);
+    });
+  });
+  describe('remove', () => {
+    it('should return {deleted: true}', () => {
+      expect(service.remove(2)).resolves.toEqual({ deleted: true });
+    });
+    it('should return {deleted: false, message: err.message}', () => {
+      const repoSpy = jest.spyOn(repo, 'delete').mockRejectedValueOnce(new Error('Bad Delete Method.'));
+      expect(service.remove(-1)).resolves.toEqual({
+        deleted: false,
+        message: 'Bad Delete Method.',
+      });
+      expect(repoSpy).toBeCalledWith(-1);
+      expect(repoSpy).toBeCalledTimes(1);
+    });
+  });
 });
