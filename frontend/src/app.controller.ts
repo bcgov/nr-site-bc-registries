@@ -1,13 +1,18 @@
 import { Get, Controller, Render, UseGuards, UseFilters, Req, Res, Session } from '@nestjs/common';
 import { AuthenticationGuard } from './authentication/authentication.guard';
-import { PAGE_TITLES } from 'utils/constants';
+// import { page_titles } from 'utils/constants';
 import { AuthenticationFilter } from './authentication/authentication.filter';
-import { SessionData } from 'utils/types';
+import { SessionData } from '../util-files/types';
 import { AppService } from './app.service';
+import { UtilsService } from './utils/utils.service';
+
+let page_titles: any;
 
 @Controller()
 export class AppController {
-  constructor(private appService: AppService) {}
+  constructor(private appService: AppService, private utilsService: UtilsService) {
+    page_titles = this.utilsService.getPageTitles();
+  }
 
   @Get()
   @Render('index')
@@ -16,13 +21,13 @@ export class AppController {
   async root(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
+          title: 'DEVELOPMENT - ' + page_titles.INDEX,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.INDEX,
+          title: page_titles.INDEX,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -36,13 +41,13 @@ export class AppController {
   async getParcelId(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
+          title: 'DEVELOPMENT - ' + page_titles.PARCEL_ID,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.PARCEL_ID,
+          title: page_titles.PARCEL_ID,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -56,13 +61,13 @@ export class AppController {
   async getCrownLandsPin(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
+          title: 'DEVELOPMENT - ' + page_titles.CROWN_PIN,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.CROWN_PIN,
+          title: page_titles.CROWN_PIN,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -76,13 +81,13 @@ export class AppController {
   async getCrownLandsFile(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
+          title: 'DEVELOPMENT - ' + page_titles.CROWN_FILE,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.CROWN_FILE,
+          title: page_titles.CROWN_FILE,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -96,13 +101,13 @@ export class AppController {
   async getSiteIdSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
+          title: 'DEVELOPMENT - ' + page_titles.SITE_ID_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.SITE_ID_SEARCH,
+          title: page_titles.SITE_ID_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -116,13 +121,13 @@ export class AppController {
   async getAddressSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
+          title: 'DEVELOPMENT - ' + page_titles.ADDRESS_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.ADDRESS_SEARCH,
+          title: page_titles.ADDRESS_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -136,13 +141,13 @@ export class AppController {
   async getAreaSearch(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
+          title: 'DEVELOPMENT - ' + page_titles.AREA_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.AREA_SEARCH,
+          title: page_titles.AREA_SEARCH,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
@@ -156,13 +161,13 @@ export class AppController {
   async getViewSearchResults(@Session() session: { data?: SessionData }) {
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
-          title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          title: 'DEVELOPMENT - ' + page_titles.VIEW_SEARCH_RESULTS,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),
         }
       : {
-          title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
+          title: page_titles.VIEW_SEARCH_RESULTS,
           username: session.data.name,
           label: session.data.label,
           downloaddate: this.appService.getDownloadDate(),

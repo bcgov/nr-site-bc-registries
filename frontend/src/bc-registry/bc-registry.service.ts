@@ -2,12 +2,12 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
+import { UtilsService } from '../utils/utils.service';
 const HTML5ToPDF = require('html5-to-pdf');
 const axios = require('axios');
 
@@ -19,17 +19,10 @@ let port: number;
 
 @Injectable()
 export class BCRegistryService {
-  constructor(private httpService: HttpService, private payService: PayService) {
-    synopsisTemplate = base64.encode(
-      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8')
-    );
-    detailedPartialTemplate = fs.readFileSync(
-      path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
-      'utf8'
-    );
-    nilTemplate = base64.encode(
-      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 'utf8')
-    );
+  constructor(private httpService: HttpService, private payService: PayService, private utilsService: UtilsService) {
+    synopsisTemplate = this.utilsService.getSynopsisTemplate();
+    detailedPartialTemplate = this.utilsService.getDetailedPartialTemplate();
+    nilTemplate = this.utilsService.getNilTemplate();
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
@@ -362,49 +355,6 @@ export class BCRegistryService {
       });
 
     return htmlData;
-  }
-
-  async getPlainText(token?: string): Promise<string> {
-    const authorizationToken = token != null ? token : await this.getToken();
-    let plainTextData: string;
-    var data = '';
-
-    const md = JSON.stringify({
-      data,
-      formatters:
-        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-      options: {
-        cacheReport: true,
-        convertTo: 'txt',
-        overwrite: true,
-        reportName: 'test-report.txt',
-      },
-      template: {
-        encodingType: 'base64',
-        fileType: 'html',
-        content: `${plainTextTemplate}`,
-      },
-    });
-
-    var config = {
-      method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
-      headers: {
-        Authorization: `Bearer ${authorizationToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: md,
-    };
-
-    await axios(config)
-      .then(function (response) {
-        plainTextData = response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    return plainTextData;
   }
 
   // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()

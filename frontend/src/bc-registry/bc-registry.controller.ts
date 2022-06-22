@@ -2,7 +2,7 @@ import { Get, Param, Controller, Header, Session, UseFilters, UseGuards } from '
 import { AuthenticationFilter } from 'src/authentication/authentication.filter';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
-import { SessionData } from 'utils/types';
+import { SessionData } from '../../util-files/types';
 import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')

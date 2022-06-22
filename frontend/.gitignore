@@ -104,6 +104,6 @@ dist
 .tern-port
 
 # postal codes file
-utils/postalCodes.json
+util-files/postalCodes.json
 
 sessions/*

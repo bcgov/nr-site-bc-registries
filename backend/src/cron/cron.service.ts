@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { CSV_HEADERS } from '../../utils/constants';
 import * as csv from 'csvtojson';
 import axios from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
@@ -37,6 +36,9 @@ import { SrsitdocDto } from '../srsitdoc/dto/srsitdoc.dto';
 import { SrsitparDto } from '../srsitpar/dto/srsitpar.dto';
 import { SrsiteDto } from '../srsites/dto/srsite.dto';
 import { SrdocparDto } from '../srdocpar/dto/srdocpar.dto';
+import { UtilsService } from '../utils/utils.service';
+
+let csv_headers: any;
 
 @Injectable()
 export class CronService {
@@ -56,8 +58,11 @@ export class CronService {
     private srprofilsService: SrprofilsService,
     private srsitdocsService: SrsitdocsService,
     private srsitesService: SrsitesService,
-    private srsitparsService: SrsitparsService
-  ) {}
+    private srsitparsService: SrsitparsService,
+    private utilsService: UtilsService
+  ) {
+    csv_headers = this.utilsService.getCsvHeaders();
+  }
 
   // called on app startup - check the srsites table for data, if none then clean the db and get new data
   async initTablesData() {
@@ -147,22 +152,22 @@ export class CronService {
       srprfcat.push(newEntry);
     }
     const parsedData = {
-      srassocs: await csv().fromString(CSV_HEADERS.SRASSOCS + rawData.srassocs),
-      srdate: await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate),
-      srdocpar: await csv().fromString(CSV_HEADERS.SRDOCPAR + rawData.srdocpar),
-      srevents: await csv().fromString(CSV_HEADERS.SREVENTS + rawData.srevents),
-      srevpart: await csv().fromString(CSV_HEADERS.SREVPART + rawData.srevpart),
-      srlands: await csv().fromString(CSV_HEADERS.SRLANDS + rawData.srlands),
-      srparrol: await csv().fromString(CSV_HEADERS.SRPARROL + rawData.srparrol),
-      srpinpid: await csv().fromString(CSV_HEADERS.SRPINPID + rawData.srpinpid),
-      srprfans: await csv().fromString(CSV_HEADERS.SRPRFANS + rawData.srprfans),
+      srassocs: await csv().fromString(csv_headers.SRASSOCS + rawData.srassocs),
+      srdate: await csv().fromString(csv_headers.SRDATE + rawData.srdate),
+      srdocpar: await csv().fromString(csv_headers.SRDOCPAR + rawData.srdocpar),
+      srevents: await csv().fromString(csv_headers.SREVENTS + rawData.srevents),
+      srevpart: await csv().fromString(csv_headers.SREVPART + rawData.srevpart),
+      srlands: await csv().fromString(csv_headers.SRLANDS + rawData.srlands),
+      srparrol: await csv().fromString(csv_headers.SRPARROL + rawData.srparrol),
+      srpinpid: await csv().fromString(csv_headers.SRPINPID + rawData.srpinpid),
+      srprfans: await csv().fromString(csv_headers.SRPRFANS + rawData.srprfans),
       srprfcat: srprfcat,
-      srprfque: await csv().fromString(CSV_HEADERS.SRPRFQUE + rawData.srprfque),
-      srprfuse: await csv().fromString(CSV_HEADERS.SRPRFUSE + rawData.srprfuse),
-      srprofil: await csv().fromString(CSV_HEADERS.SRPROFIL + rawData.srprofil),
-      srsitdoc: await csv().fromString(CSV_HEADERS.SRSITDOC + rawData.srsitdoc),
-      srsites: await csv().fromString(CSV_HEADERS.SRSITES + rawData.srsites),
-      srsitpar: await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar),
+      srprfque: await csv().fromString(csv_headers.SRPRFQUE + rawData.srprfque),
+      srprfuse: await csv().fromString(csv_headers.SRPRFUSE + rawData.srprfuse),
+      srprofil: await csv().fromString(csv_headers.SRPROFIL + rawData.srprofil),
+      srsitdoc: await csv().fromString(csv_headers.SRSITDOC + rawData.srsitdoc),
+      srsites: await csv().fromString(csv_headers.SRSITES + rawData.srsites),
+      srsitpar: await csv().fromString(csv_headers.SRSITPAR + rawData.srsitpar),
     };
 
     // have to parse each item in the array

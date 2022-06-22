@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
-import { postalCodeJSON } from 'utils/types';
-import { getPostalCodes } from 'utils/util';
+import { UtilsService } from 'src/utils/utils.service';
+import { postalCodeJSON } from '../../util-files/types';
+// import { getPostalCodes } from '../utils/util';
 
 var postalCodes: [postalCodeJSON];
 
 @Injectable()
 export class MapService {
-  constructor() {
-    postalCodes = getPostalCodes();
+  constructor(private utilsService: UtilsService) {
+    postalCodes = this.utilsService.getPostalCodes();
   }
   async getLatLngByPostalCode(postalCode: string): Promise<{
     lat: number;

@@ -3,7 +3,7 @@ import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
 import jwt_decode from 'jwt-decode';
-import { TokenObject } from 'utils/types';
+import { TokenObject } from '../../util-files/types';
 
 export class AuthenticationError extends Error {}
 

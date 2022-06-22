@@ -2,7 +2,7 @@ import { Get, Controller, Param, Session, UseFilters, UseGuards, Post, Body } fr
 import { AuthenticationFilter } from '../authentication/authentication.filter';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { PayService } from '../pay/pay.service';
-import { SearchResultsObject, SessionData } from 'utils/types';
+import { SearchResultsObject, SessionData } from '../../util-files/types';
 import { SiteRegistryService } from './site-registry.service';
 
 @Controller('site-registry')

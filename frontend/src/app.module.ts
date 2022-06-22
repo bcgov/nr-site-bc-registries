@@ -10,6 +10,8 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { SessionModule } from 'nestjs-session';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UtilsModule } from './utils/utils.module';
+import { UtilsService } from './utils/utils.service';
 
 @Module({
   imports: [
@@ -24,8 +26,9 @@ import { ScheduleModule } from '@nestjs/schedule';
     SessionModule.forRoot({
       session: { secret: process.env.SESSION_SECRET },
     }),
+    UtilsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UtilsService],
 })
 export class AppModule {}

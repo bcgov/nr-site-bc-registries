@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { PayService } from 'src/pay/pay.service';
+import { PayService } from '../pay/pay.service';
 
 let hostname: string;
 let port: number;

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { SrsitesService } from './srsites.service';
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
-import { MinimalSiteData } from 'utils/constants';
+import { MinimalSiteData } from '../../util-files/types';
 
 @ApiTags('srsites')
 @Controller('srsites')

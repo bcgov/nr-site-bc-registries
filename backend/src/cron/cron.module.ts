@@ -33,6 +33,7 @@ import { SrsitparsModule } from '../srsitpar/srsitpars.module';
 import { SrsitparsService } from '../srsitpar/srsitpars.service';
 import { SrsitesModule } from '../srsites/srsites.module';
 import { SrsitesService } from '../srsites/srsites.service';
+import { UtilsService } from '../utils/utils.service';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { SrsitesService } from '../srsites/srsites.service';
     SrsitdocsService,
     SrsitparsService,
     SrsitesService,
+    UtilsService,
   ],
 })
 export class CronModule {}

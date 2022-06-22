@@ -24,6 +24,7 @@ import { SrprofilsModule } from './srprofil/srprofils.module';
 import { SrsitdocsModule } from './srsitdoc/srsitdocs.module';
 import { SrsitparsModule } from './srsitpar/srsitpars.module';
 import { SrsitesModule } from './srsites/srsites.module';
+import { UtilsModule } from './utils/utils.module';
 
 console.log('Var check - POSTGRESQL_HOST', process.env.POSTGRESQL_HOST);
 console.log('Var check - POSTGRESQL_DATABASE', process.env.POSTGRESQL_DATABASE);
@@ -66,6 +67,7 @@ if (process.env.POSTGRESQL_PASSWORD != null) {
     SrsitdocsModule,
     SrsitparsModule,
     SrsitesModule,
+    UtilsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CronService],

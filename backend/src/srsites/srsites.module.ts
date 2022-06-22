@@ -11,6 +11,7 @@ import { Srland } from '../srlands/entities/srland.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
+import { UtilsService } from '../utils/utils.service';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { Srdate } from '../srdate/entities/srdate.entity';
     TypeOrmModule.forFeature([Srdate]),
   ],
   controllers: [SrsitesController],
-  providers: [SrsitesService],
+  providers: [SrsitesService, UtilsService],
   exports: [SrsitesService, TypeOrmModule.forFeature([Srsite])],
 })
 export class SrsitesModule {}

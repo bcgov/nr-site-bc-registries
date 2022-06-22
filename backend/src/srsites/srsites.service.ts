@@ -2,24 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Srsite } from './entities/srsite.entity';
+import { UtilsService } from '../utils/utils.service';
 
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { getCurrentTime, getTodaysDate, isInsideArea } from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
-import { MinimalSiteData } from 'utils/constants';
+import { MinimalSiteData } from '../../util-files/types';
 import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
 
 @Injectable()
 export class SrsitesService {
   constructor(
+    private utilsService: UtilsService,
     @InjectRepository(Srsite)
     private srsitesRepository: Repository<Srsite>,
     @InjectRepository(Srpinpid)
@@ -210,7 +211,7 @@ export class SrsitesService {
       const lat = parseFloat([site.lat.slice(0, 3), '.', site.lat.slice(3)].join(''));
       const lng = parseFloat([site.lon.slice(0, 3), '.', site.lon.slice(3)].join(''));
       const latlng = { lat: lat, lng: lng };
-      if (isInsideArea(userLatlng, latlng, radius))
+      if (this.utilsService.isInsideArea(userLatlng, latlng, radius))
         sites.push({
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
@@ -253,8 +254,8 @@ export class SrsitesService {
       siteId: parseInt(siteId),
       account: 'user_account',
       downloaddate: srdate[0].downloaddate,
-      todaysDate: getTodaysDate(),
-      currentTime: getCurrentTime(),
+      todaysDate: this.utilsService.getTodaysDate(),
+      currentTime: this.utilsService.getCurrentTime(),
       victoriaFileNumber: srsite.victoriaFileNumber,
       regionalFileNumber: srsite.regionalFileNumber,
       region: srsite.region,
@@ -314,8 +315,8 @@ export class SrsitesService {
       siteId: parseInt(siteId),
       account: 'user_account',
       downloaddate: srdate[0].downloaddate,
-      todaysDate: getTodaysDate(),
-      currentTime: getCurrentTime(),
+      todaysDate: this.utilsService.getTodaysDate(),
+      currentTime: this.utilsService.getCurrentTime(),
       victoriaFileNumber: srsite.victoriaFileNumber,
       regionalFileNumber: srsite.regionalFileNumber,
       region: srsite.region,
@@ -347,8 +348,8 @@ export class SrsitesService {
   async getNilReportData(): Promise<any> {
     const srdate = await this.srdatesRepository.find();
     return {
-      todaysDate: getTodaysDate(),
-      currentTime: getCurrentTime(),
+      todaysDate: this.utilsService.getTodaysDate(),
+      currentTime: this.utilsService.getCurrentTime(),
       downloaddate: srdate[0].downloaddate,
     };
   }
