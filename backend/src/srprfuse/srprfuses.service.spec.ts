@@ -4,96 +4,96 @@ import { Repository } from 'typeorm';
 import { SrprfusesService } from './srprfuses.service';
 import { Srprfuse } from './entities/srprfuse.entity';
 
-describe('SrprfuseService', () => {
-  // let service: SitesService;
-  // let repo: Repository<Site>;
-  // const oneSiteName = "Test Numone";
-  // const oneSiteEamil = "numone@test.com";
-  // const oneSite = new Site(oneSiteName, oneSiteEamil);
-  // const updateSite = {
-  //   name: oneSiteName,
-  //   email: oneSiteEamil,
-  // };
-  // const twoSite = new Site("Test Numtwo", "numtwo@test.com");
-  // const threeSiteName = "Test Numthree";
-  // const threeSiteEamil = "numthree@test.com";
-  // const newSite = {
-  //   name: threeSiteName,
-  //   email: threeSiteEamil,
-  // };
-  // const threeSite = new Site(threeSiteName, threeSiteEamil);
-  // const siteArray = [oneSite, twoSite];
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     providers: [
-  //       SitesService,
-  //       {
-  //         provide: getRepositoryToken(Sites),
-  //         useValue: {
-  //           // mock repository functions for testing
-  //           find: jest.fn().mockResolvedValue(siteArray),
-  //           findOneOrFail: jest.fn().mockResolvedValue(oneSite),
-  //           create: jest.fn().mockReturnValue(threeSite),
-  //           save: jest.fn(),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           update: jest.fn().mockResolvedValue(true),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           delete: jest.fn().mockResolvedValue(true),
-  //         },
-  //       },
-  //     ],
-  //   }).compile();
-  //   service = module.get<SitesService>(SitesService);
-  //   repo = module.get<Repository<Sites>>(getRepositoryToken(Sites));
-  // });
-  // it("should be defined", () => {
-  //   expect(service).toBeDefined();
-  // });
-  // describe("createOne", () => {
-  //   it("should successfully add a site", () => {
-  //     expect(service.create(newSite)).resolves.toEqual(threeSite);
-  //     expect(repo.create).toBeCalledTimes(1);
-  //     expect(repo.create).toBeCalledWith(newSite);
-  //     expect(repo.save).toBeCalledTimes(1);
-  //   });
-  // });
-  // describe("findAll", () => {
-  //   it("should return an array of sites", async () => {
-  //     const sites = await service.findAll();
-  //     expect(sites).toEqual(siteArray);
-  //   });
-  // });
-  // describe("findOne", () => {
-  //   it("should get a single site", () => {
-  //     const repoSpy = jest.spyOn(repo, "findOneOrFail");
-  //     expect(service.findOne(1)).resolves.toEqual(oneSite);
-  //     expect(repoSpy).toBeCalledWith(1);
-  //   });
-  // });
-  // describe("update", () => {
-  //   it("should call the update method", async () => {
-  //     const site = await service.update(1, updateSite);
-  //     expect(site).toEqual(oneSite);
-  //     expect(repo.update).toBeCalledTimes(1);
-  //     expect(repo.update).toBeCalledWith({ id: 1 }, updateSite);
-  //   });
-  // });
-  // describe("remove", () => {
-  //   it("should return {deleted: true}", () => {
-  //     expect(service.remove(2)).resolves.toEqual({ deleted: true });
-  //   });
-  //   it("should return {deleted: false, message: err.message}", () => {
-  //     const repoSpy = jest
-  //       .spyOn(repo, "delete")
-  //       .mockRejectedValueOnce(new Error("Bad Delete Method."));
-  //     expect(service.remove(-1)).resolves.toEqual({
-  //       deleted: false,
-  //       message: "Bad Delete Method.",
-  //     });
-  //     expect(repoSpy).toBeCalledWith(-1);
-  //     expect(repoSpy).toBeCalledTimes(1);
-  //   });
-  // });
+describe('SrprfusesService', () => {
+  let service: SrprfusesService;
+  let repo: Repository<Srprfuse>;
+  const oneSrprfuse = new Srprfuse({
+    siteId: '123',
+    dateCompleted: '2020-01-01',
+    landUseCode: '123',
+    landUseString: 'land1',
+  });
+  const twoSrprfuse = new Srprfuse({
+    siteId: '321',
+    dateCompleted: '2020-01-02',
+    landUseCode: '321',
+    landUseString: 'land2',
+  });
+  const threeSiteId = '987';
+  const threeDateCompleted = '2020-01-03';
+  const threeLandUseCode = '987';
+  const threeLandUseString = 'land3';
+  const newSrprfuse = {
+    siteId: threeSiteId,
+    dateCompleted: threeDateCompleted,
+    landUseCode: threeLandUseCode,
+    landUseString: threeLandUseString,
+  };
+  const threeSrprfuse = new Srprfuse({
+    siteId: threeSiteId,
+    dateCompleted: threeDateCompleted,
+    landUseCode: threeLandUseCode,
+    landUseString: threeLandUseString,
+  });
+  const srprfuseArray = [oneSrprfuse, twoSrprfuse];
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SrprfusesService,
+        {
+          provide: getRepositoryToken(Srprfuse),
+          useValue: {
+            // mock repository functions for testing
+            find: jest.fn().mockResolvedValue(srprfuseArray),
+            findOneOrFail: jest.fn().mockResolvedValue(oneSrprfuse),
+            create: jest.fn().mockReturnValue(threeSrprfuse),
+            save: jest.fn(),
+            // as these do not actually use their return values in our sample
+            // we just make sure that their resolve is true to not crash
+            delete: jest.fn().mockResolvedValue(true),
+          },
+        },
+      ],
+    }).compile();
+    service = module.get<SrprfusesService>(SrprfusesService);
+    repo = module.get<Repository<Srprfuse>>(getRepositoryToken(Srprfuse));
+  });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+  describe('createOne', () => {
+    it('should successfully add a srprfuse', () => {
+      expect(service.create(newSrprfuse)).resolves.toEqual(threeSrprfuse);
+      expect(repo.create).toBeCalledTimes(1);
+      expect(repo.create).toBeCalledWith(newSrprfuse);
+      expect(repo.save).toBeCalledTimes(1);
+    });
+  });
+  describe('findAll', () => {
+    it('should return an array of srprfuses', async () => {
+      const srprfuses = await service.findAll();
+      expect(srprfuses).toEqual(srprfuseArray);
+    });
+  });
+  describe('findOne', () => {
+    it('should get a single srprfuse', () => {
+      const repoSpy = jest.spyOn(repo, 'findOneOrFail');
+      expect(service.findOne(1)).resolves.toEqual(oneSrprfuse);
+      expect(repoSpy).toBeCalledWith(1);
+    });
+  });
+  describe('remove', () => {
+    it('should return {deleted: true}', () => {
+      expect(service.remove(2)).resolves.toEqual({ deleted: true });
+    });
+    it('should return {deleted: false, message: err.message}', () => {
+      const repoSpy = jest.spyOn(repo, 'delete').mockRejectedValueOnce(new Error('Bad Delete Method.'));
+      expect(service.remove(-1)).resolves.toEqual({
+        deleted: false,
+        message: 'Bad Delete Method.',
+      });
+      expect(repoSpy).toBeCalledWith(-1);
+      expect(repoSpy).toBeCalledTimes(1);
+    });
+  });
 });

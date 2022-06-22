@@ -22,21 +22,21 @@ import { SrsitdocsService } from '../srsitdoc/srsitdocs.service';
 import { SrsitparsService } from '../srsitpar/srsitpars.service';
 import { SrsitesService } from '../srsites/srsites.service';
 import { SrassocDto } from '../srassocs/dto/srassoc.dto';
-import { SrdateDto } from 'src/srdate/dto/srdate.dto';
-import { SreventDto } from 'src/srevents/dto/srevent.dto';
-import { SrevpartDto } from 'src/srevpart/dto/srevpart.dto';
-import { SrlandDto } from 'src/srlands/dto/srland.dto';
-import { SrparrolDto } from 'src/srparrol/dto/srparrol.dto';
-import { SrpinpidDto } from 'src/srpinpid/dto/srpinpid.dto';
-import { SrprfanDto } from 'src/srprfans/dto/srprfan.dto';
-import { SrprfcatDto } from 'src/srprfcat/dto/srprfcat.dto';
-import { SrprfqueDto } from 'src/srprfque/dto/srprfque.dto';
-import { SrprfuseDto } from 'src/srprfuse/dto/srprfuse.dto';
-import { SrprofilDto } from 'src/srprofil/dto/srprofil.dto';
-import { SrsitdocDto } from 'src/srsitdoc/dto/srsitdoc.dto';
-import { SrsitparDto } from 'src/srsitpar/dto/srsitpar.dto';
-import { SrsiteDto } from 'src/srsites/dto/srsite.dto';
-import { SrdocparDto } from 'src/srdocpar/dto/srdocpar.dto';
+import { SrdateDto } from '../srdate/dto/srdate.dto';
+import { SreventDto } from '../srevents/dto/srevent.dto';
+import { SrevpartDto } from '../srevpart/dto/srevpart.dto';
+import { SrlandDto } from '../srlands/dto/srland.dto';
+import { SrparrolDto } from '../srparrol/dto/srparrol.dto';
+import { SrpinpidDto } from '../srpinpid/dto/srpinpid.dto';
+import { SrprfanDto } from '../srprfans/dto/srprfan.dto';
+import { SrprfcatDto } from '../srprfcat/dto/srprfcat.dto';
+import { SrprfqueDto } from '../srprfque/dto/srprfque.dto';
+import { SrprfuseDto } from '../srprfuse/dto/srprfuse.dto';
+import { SrprofilDto } from '../srprofil/dto/srprofil.dto';
+import { SrsitdocDto } from '../srsitdoc/dto/srsitdoc.dto';
+import { SrsitparDto } from '../srsitpar/dto/srsitpar.dto';
+import { SrsiteDto } from '../srsites/dto/srsite.dto';
+import { SrdocparDto } from '../srdocpar/dto/srdocpar.dto';
 
 @Injectable()
 export class CronService {

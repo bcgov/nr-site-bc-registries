@@ -4,96 +4,111 @@ import { Repository } from 'typeorm';
 import { SrsitparsService } from './srsitpars.service';
 import { Srsitpar } from './entities/srsitpar.entity';
 
-describe('SrsitparService', () => {
-  // let service: SitesService;
-  // let repo: Repository<Site>;
-  // const oneSiteName = "Test Numone";
-  // const oneSiteEamil = "numone@test.com";
-  // const oneSite = new Site(oneSiteName, oneSiteEamil);
-  // const updateSite = {
-  //   name: oneSiteName,
-  //   email: oneSiteEamil,
-  // };
-  // const twoSite = new Site("Test Numtwo", "numtwo@test.com");
-  // const threeSiteName = "Test Numthree";
-  // const threeSiteEamil = "numthree@test.com";
-  // const newSite = {
-  //   name: threeSiteName,
-  //   email: threeSiteEamil,
-  // };
-  // const threeSite = new Site(threeSiteName, threeSiteEamil);
-  // const siteArray = [oneSite, twoSite];
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     providers: [
-  //       SitesService,
-  //       {
-  //         provide: getRepositoryToken(Sites),
-  //         useValue: {
-  //           // mock repository functions for testing
-  //           find: jest.fn().mockResolvedValue(siteArray),
-  //           findOneOrFail: jest.fn().mockResolvedValue(oneSite),
-  //           create: jest.fn().mockReturnValue(threeSite),
-  //           save: jest.fn(),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           update: jest.fn().mockResolvedValue(true),
-  //           // as these do not actually use their return values in our sample
-  //           // we just make sure that their resolve is true to not crash
-  //           delete: jest.fn().mockResolvedValue(true),
-  //         },
-  //       },
-  //     ],
-  //   }).compile();
-  //   service = module.get<SitesService>(SitesService);
-  //   repo = module.get<Repository<Sites>>(getRepositoryToken(Sites));
-  // });
-  // it("should be defined", () => {
-  //   expect(service).toBeDefined();
-  // });
-  // describe("createOne", () => {
-  //   it("should successfully add a site", () => {
-  //     expect(service.create(newSite)).resolves.toEqual(threeSite);
-  //     expect(repo.create).toBeCalledTimes(1);
-  //     expect(repo.create).toBeCalledWith(newSite);
-  //     expect(repo.save).toBeCalledTimes(1);
-  //   });
-  // });
-  // describe("findAll", () => {
-  //   it("should return an array of sites", async () => {
-  //     const sites = await service.findAll();
-  //     expect(sites).toEqual(siteArray);
-  //   });
-  // });
-  // describe("findOne", () => {
-  //   it("should get a single site", () => {
-  //     const repoSpy = jest.spyOn(repo, "findOneOrFail");
-  //     expect(service.findOne(1)).resolves.toEqual(oneSite);
-  //     expect(repoSpy).toBeCalledWith(1);
-  //   });
-  // });
-  // describe("update", () => {
-  //   it("should call the update method", async () => {
-  //     const site = await service.update(1, updateSite);
-  //     expect(site).toEqual(oneSite);
-  //     expect(repo.update).toBeCalledTimes(1);
-  //     expect(repo.update).toBeCalledWith({ id: 1 }, updateSite);
-  //   });
-  // });
-  // describe("remove", () => {
-  //   it("should return {deleted: true}", () => {
-  //     expect(service.remove(2)).resolves.toEqual({ deleted: true });
-  //   });
-  //   it("should return {deleted: false, message: err.message}", () => {
-  //     const repoSpy = jest
-  //       .spyOn(repo, "delete")
-  //       .mockRejectedValueOnce(new Error("Bad Delete Method."));
-  //     expect(service.remove(-1)).resolves.toEqual({
-  //       deleted: false,
-  //       message: "Bad Delete Method.",
-  //     });
-  //     expect(repoSpy).toBeCalledWith(-1);
-  //     expect(repoSpy).toBeCalledTimes(1);
-  //   });
-  // });
+describe('SrsitparsService', () => {
+  let service: SrsitparsService;
+  let repo: Repository<Srsitpar>;
+  const oneSrsitpar = new Srsitpar({
+    siteId: '123',
+    participantId: '123',
+    nameString: 'name1',
+    effectiveDate: '2020-01-01',
+    endDate: '2020-01-01',
+    noteString: 'note1',
+    participantType: 'type1',
+  });
+  const twoSrsitpar = new Srsitpar({
+    siteId: '321',
+    participantId: '321',
+    nameString: 'name2',
+    effectiveDate: '2020-01-02',
+    endDate: '2020-01-02',
+    noteString: 'note2',
+    participantType: 'type2',
+  });
+  const threeSiteId = '987';
+  const threeParticipantId = '987';
+  const threeNameString = 'name3';
+  const threeEffectiveDate = '2020-01-03';
+  const threeEndDate = '2020-01-03';
+  const threeNoteString = 'note3';
+  const threeParticipantType = 'type3';
+  const newSrsitpar = {
+    siteId: threeSiteId,
+    participantId: threeParticipantId,
+    nameString: threeNameString,
+    effectiveDate: threeEffectiveDate,
+    endDate: threeEndDate,
+    noteString: threeNoteString,
+    participantType: threeParticipantType,
+  };
+  const threeSrsitpar = new Srsitpar({
+    siteId: threeSiteId,
+    participantId: threeParticipantId,
+    nameString: threeNameString,
+    effectiveDate: threeEffectiveDate,
+    endDate: threeEndDate,
+    noteString: threeNoteString,
+    participantType: threeParticipantType,
+  });
+  const srsitparArray = [oneSrsitpar, twoSrsitpar];
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SrsitparsService,
+        {
+          provide: getRepositoryToken(Srsitpar),
+          useValue: {
+            // mock repository functions for testing
+            find: jest.fn().mockResolvedValue(srsitparArray),
+            findOneOrFail: jest.fn().mockResolvedValue(oneSrsitpar),
+            create: jest.fn().mockReturnValue(threeSrsitpar),
+            save: jest.fn(),
+            // as these do not actually use their return values in our sample
+            // we just make sure that their resolve is true to not crash
+            delete: jest.fn().mockResolvedValue(true),
+          },
+        },
+      ],
+    }).compile();
+    service = module.get<SrsitparsService>(SrsitparsService);
+    repo = module.get<Repository<Srsitpar>>(getRepositoryToken(Srsitpar));
+  });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+  describe('createOne', () => {
+    it('should successfully add a srsitpar', () => {
+      expect(service.create(newSrsitpar)).resolves.toEqual(threeSrsitpar);
+      expect(repo.create).toBeCalledTimes(1);
+      expect(repo.create).toBeCalledWith(newSrsitpar);
+      expect(repo.save).toBeCalledTimes(1);
+    });
+  });
+  describe('findAll', () => {
+    it('should return an array of srsitpars', async () => {
+      const srsitpars = await service.findAll();
+      expect(srsitpars).toEqual(srsitparArray);
+    });
+  });
+  describe('findOne', () => {
+    it('should get a single srsitpar', () => {
+      const repoSpy = jest.spyOn(repo, 'findOneOrFail');
+      expect(service.findOne(1)).resolves.toEqual(oneSrsitpar);
+      expect(repoSpy).toBeCalledWith(1);
+    });
+  });
+  describe('remove', () => {
+    it('should return {deleted: true}', () => {
+      expect(service.remove(2)).resolves.toEqual({ deleted: true });
+    });
+    it('should return {deleted: false, message: err.message}', () => {
+      const repoSpy = jest.spyOn(repo, 'delete').mockRejectedValueOnce(new Error('Bad Delete Method.'));
+      expect(service.remove(-1)).resolves.toEqual({
+        deleted: false,
+        message: 'Bad Delete Method.',
+      });
+      expect(repoSpy).toBeCalledWith(-1);
+      expect(repoSpy).toBeCalledTimes(1);
+    });
+  });
 });
