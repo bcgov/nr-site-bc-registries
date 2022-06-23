@@ -41,7 +41,6 @@ export class AuthenticationService {
         Connection: 'keep-alive',
       },
     };
-
     return axios(config)
       .then((res) => {
         return res.data;
