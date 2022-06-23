@@ -35,7 +35,8 @@ async function searchCLF() {
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsFile !== '') {
-    const url = `/site-registry/searchCLF/${crownLandsFile}`;
+    console.log(encodeURIComponent(crownLandsFile));
+    const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
     await getSearchResults(url);
   } else {
     alert('Please enter a Crown Lands File Number');
@@ -94,8 +95,8 @@ async function searchArea() {
     localStorage.setItem('searchCriteria2', Math.abs(latLon.lon).toFixed(5));
     localStorage.setItem('searchCriteria3', size);
 
-    const url = `/site-registry/searchArea/${lat}/${lon}/${size}`;
-    await getSearchResults(url);
+    const url = `/site-registry/searchArea`;
+    await postSearchResults(url, { lat: lat, lng: lon, size: size });
   }
 }
 

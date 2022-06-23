@@ -1,12 +1,26 @@
-import { Get, Controller, Param, Session, UseFilters, UseGuards, Post, Body } from '@nestjs/common';
+import {
+  Get,
+  Controller,
+  Param,
+  Session,
+  UseFilters,
+  UseGuards,
+  Post,
+  Body,
+  ParseIntPipe,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthenticationFilter } from '../authentication/authentication.filter';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
 import { PayService } from '../pay/pay.service';
 import { SearchResultsObject, SessionData } from 'utils/types';
 import { SiteRegistryService } from './site-registry.service';
 import { AddressSearchPipe } from './pipe/address-search.pipe';
+import { AreaSearchPipe } from './pipe/area-search.pipe';
+import { CrownLandsFileSearchPipe } from './pipe/crown-lands-file-search.pipe';
 
 type AddressSearchObject = { address: string; city: string };
+type AreaSearchObject = { lat: string; lng: string; size: string };
 
 @Controller('site-registry')
 @UseFilters(AuthenticationFilter)
@@ -16,7 +30,7 @@ export class SiteRegistryController {
 
   @Get('searchPid/:pid')
   async getPidSearch(
-    @Param('pid') pid: string,
+    @Param('pid', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pid: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
     return this.siteRegistryService.searchPid(pid, session.data.access_token, session.data.account_id);
@@ -24,7 +38,7 @@ export class SiteRegistryController {
 
   @Get('searchCLP/:pin')
   async getCLPSearch(
-    @Param('pin') pin: string,
+    @Param('pin', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pin: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
     return this.siteRegistryService.searchCrownPin(pin, session.data.access_token, session.data.account_id);
@@ -32,7 +46,7 @@ export class SiteRegistryController {
 
   @Get('searchCLF/:crownLandsFileNumber')
   async getCLFSearch(
-    @Param('crownLandsFileNumber') crownLandsFileNumber: string,
+    @Param('crownLandsFileNumber', CrownLandsFileSearchPipe) crownLandsFileNumber: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
     return this.siteRegistryService.searchCrownFile(
@@ -44,9 +58,10 @@ export class SiteRegistryController {
 
   @Get('searchSiteId/:siteId')
   async getSiteIdSearch(
-    @Param('siteId') siteId: string,
+    @Param('siteId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
+    console.log(siteId);
     return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.account_id);
   }
 
@@ -63,13 +78,18 @@ export class SiteRegistryController {
     );
   }
 
-  @Get('searchArea/:lat/:lng/:size')
-  async getSearchArea(
-    @Param('lat') lat: string,
-    @Param('lng') lng: string,
-    @Param('size') size: string,
+  @Post('searchArea')
+  async postAreaSearch(
+    @Body(AreaSearchPipe) searchObject: AreaSearchObject,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchArea(lat, lng, size, session.data.access_token, session.data.account_id);
+    console.log('correct route');
+    return this.siteRegistryService.searchArea(
+      searchObject.lat,
+      searchObject.lng,
+      searchObject.size,
+      session.data.access_token,
+      session.data.account_id
+    );
   }
 }
