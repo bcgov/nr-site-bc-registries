@@ -36,47 +36,13 @@ export class BCRegistryService {
     port = process.env.BACKEND_URL ? 3000 : 3001;
   }
 
-  // checks pay api before generating pdf and sending it back to the frontend
-  async requestPdf(reportType: string, siteId: string, name: string, token: string, account_id: number): Promise<any> {
-    let paymentStatus: string;
-    if (reportType == 'synopsis') {
-      paymentStatus = await this.payService.createSynopsisInvoice(token, account_id);
-    } else if (reportType == 'detailed') {
-      paymentStatus = await this.payService.createDetailedInvoice(token, account_id);
-    } else {
-      return null; // report type error, payment api does not get called
+  isReportSaved(siteId: string, reportType: string, savedReports: [string, string][]): boolean {
+    for (let entry of savedReports) {
+      if (entry[0] == siteId && entry[1] == reportType) {
+        return true;
+      }
     }
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return new StreamableFile(await this.getPdf(reportType, siteId, name));
-    } else {
-      return null;
-    }
-  }
-
-  // checks pay api before generating and sending the email
-  async requestEmail(
-    reportType: string,
-    email: string,
-    siteId: string,
-    name: string,
-    token: string,
-    account_id: number
-  ): Promise<any> {
-    let paymentStatus: string;
-    if (reportType == 'synopsis') {
-      paymentStatus = await this.payService.createSynopsisInvoice(token, account_id);
-    } else if (reportType == 'detailed') {
-      paymentStatus = await this.payService.createDetailedInvoice(token, account_id);
-    } else {
-      return { message: 'Report type error' };
-    }
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      return {
-        message: await this.emailHTML(reportType, email, siteId, name),
-      };
-    } else {
-      return { message: 'Payment Error' };
-    }
+    return false;
   }
 
   async requestNilPdf(
@@ -181,7 +147,7 @@ export class BCRegistryService {
     };
 
     const response = await axios(config);
-    return new StreamableFile(await this.generatePdf(response.data));
+    return this.generatePdf(response.data);
   }
 
   // builds the pdf report to be sent back to the frontend

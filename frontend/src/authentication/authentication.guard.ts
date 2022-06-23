@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, Session, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AuthenticationService } from './authentication.service';
 import { Request } from 'express';
@@ -48,6 +48,7 @@ export class AuthenticationGuard implements CanActivate {
             name: tokenDetails.name,
             label: tokenDetails.label,
             account_id: tokenDetails.account_id,
+            savedReports: [],
           };
           return true;
         } else {
@@ -69,6 +70,7 @@ export class AuthenticationGuard implements CanActivate {
           name: tokenDetails.name,
           label: tokenDetails.label,
           account_id: tokenDetails.account_id,
+          savedReports: [],
         };
         return true;
       } else {

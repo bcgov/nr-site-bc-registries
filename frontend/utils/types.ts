@@ -13,7 +13,10 @@ export type SessionData = {
   name: string;
   label: string;
   account_id: number;
+  savedReports: savedReport[];
 };
+
+type savedReport = [string, string];
 
 export type TokenObject = {
   access_token: string;
