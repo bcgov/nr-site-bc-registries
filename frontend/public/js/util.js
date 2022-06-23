@@ -35,7 +35,8 @@ async function searchCLF() {
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsFile !== '') {
-    const url = `/site-registry/searchCLF/${crownLandsFile}`;
+    console.log(encodeURIComponent(crownLandsFile));
+    const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
     await getSearchResults(url);
   } else {
     alert('Please enter a Crown Lands File Number');
@@ -94,8 +95,8 @@ async function searchArea() {
     localStorage.setItem('searchCriteria2', Math.abs(latLon.lon).toFixed(5));
     localStorage.setItem('searchCriteria3', size);
 
-    const url = `/site-registry/searchArea/${lat}/${lon}/${size}`;
-    await getSearchResults(url);
+    const url = `/site-registry/searchArea`;
+    await postSearchResults(url, { lat: lat, lng: lon, size: size });
   }
 }
 
@@ -164,9 +165,10 @@ function checkAreaSearchInputs() {
 }
 
 async function getPdf(siteId) {
-  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
+    $(':button').prop('disabled', true);
+    displayDownloadSpinner(siteId);
     fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
       method: 'GET',
     })
@@ -180,18 +182,24 @@ async function getPdf(siteId) {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
+        hideDownloadSpinner(siteId);
         $(':button').prop('disabled', false);
       })
-      .catch(() => alert('Something went wrong'));
+      .catch(() => {
+        alert('Something went wrong');
+        hideDownloadSpinner(siteId);
+        $(':button').prop('disabled', false);
+      });
   } else {
     alert('Please select a Report Type');
   }
 }
 
 async function emailPdf(siteId) {
-  $(':button').prop('disabled', true);
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
+    $(':button').prop('disabled', true);
+    displayEmailSpinner(siteId);
     let email = prompt('Please enter your Email Address');
     email = email !== null ? email : '';
     if (email.match(/^\S+@\S+\.\S+$/) !== null) {
@@ -202,24 +210,25 @@ async function emailPdf(siteId) {
         .then((res) => res.json())
         .then((resJson) => {
           alert(resJson.message);
+          hideEmailSpinner(siteId);
           $(':button').prop('disabled', false);
         })
         .catch(() => {
           alert('Something went wrong');
+          hideEmailSpinner(siteId);
           $(':button').prop('disabled', false);
         });
     } else {
       alert('Please enter a valid email');
+      hideEmailSpinner(siteId);
       $(':button').prop('disabled', false);
     }
   } else {
     alert('Please select a Report Type');
-    $(':button').prop('disabled', false);
   }
 }
 
 async function getNilPdf() {
-  $(':button').prop('disabled', true);
   let searchType = localStorage.getItem('searchType');
   let searchCriteria1;
   let searchCriteria2;
@@ -270,6 +279,8 @@ async function getNilPdf() {
   }
 
   if (searchCriteria1 != undefined) {
+    $(':button').prop('disabled', true);
+    displayNilSpinner();
     fetch(
       `/bc-registry/nil-pdf/${searchType}/${encodeURI(searchCriteria1)}/${encodeURI(searchCriteria2)}/${encodeURI(
         searchCriteria3
@@ -288,9 +299,61 @@ async function getNilPdf() {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
+        hideNilSpinner();
         $(':button').prop('disabled', false);
       })
-      .catch(() => alert('Something went wrong'));
+      .catch(() => {
+        alert('Something went wrong');
+        hideNilSpinner();
+        $(':button').prop('disabled', false);
+      });
   }
-  $(':button').prop('disabled', false);
+}
+
+function displayDownloadSpinner(siteId) {
+  var buttonText = document.getElementById('btnText' + siteId);
+  var spinner = document.getElementById('spinner' + siteId);
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideDownloadSpinner(siteId) {
+  var buttonText = document.getElementById('btnText' + siteId);
+  var spinner = document.getElementById('spinner' + siteId);
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Download';
+}
+
+function displayEmailSpinner(siteId) {
+  var buttonText = document.getElementById('btnText' + siteId);
+  var spinner = document.getElementById('spinner' + siteId);
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideEmailSpinner(siteId) {
+  var buttonText = document.getElementById('btnText' + siteId);
+  var spinner = document.getElementById('spinner' + siteId);
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Email';
+}
+
+function displayNilSpinner() {
+  var buttonText = document.getElementById('nilBtnText');
+  var spinner = document.getElementById('nilSpinner');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideNilSpinner() {
+  var buttonText = document.getElementById('nilBtnText');
+  var spinner = document.getElementById('nilSpinner');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Download Nil Search Report';
 }

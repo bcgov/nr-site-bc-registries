@@ -56,7 +56,7 @@ export class SiteRegistryService {
   async searchCrownFile(crownLandsFileNumber: string, token: string, account_id: number): Promise<any> {
     const paymentStatus = await this.payService.createFileSearchInvoice(token, account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${crownLandsFileNumber}`;
+      const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
       const requestConfig: AxiosRequestConfig = {
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export class SiteRegistryService {
     } else if (size == 'Large') {
       paymentStatus = await this.payService.createLargeAreaSearchInvoice(token, account_id);
     } else {
-      return { error: 'Area Size Error' };
+      return { error: 'Area Size Error' }; // should never reach here
     }
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchArea/${lat}/${lng}/${size}`;

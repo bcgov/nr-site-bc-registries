@@ -8,9 +8,11 @@ export class AddressSearchPipe implements PipeTransform {
       throw new BadRequestException('City String too short');
     }
     city = city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escape any characters that could break regex
+    city = city.toLowerCase();
     let address = value.address.replace(/\*/g, '');
     address = address.replace(/\\'/g, "'"); // replace \' with '
     address = address.replace(/'/g, "''"); // replace ' with ''
+    address = address.toLowerCase();
 
     return { address: address, city: city };
   }

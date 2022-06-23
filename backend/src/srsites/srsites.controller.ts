@@ -37,7 +37,7 @@ export class SrsitesController {
 
   @Get('searchCrownFile/:crownLandsFileNumber')
   searchCrownFile(@Param('crownLandsFileNumber') crownLandsFileNumber: string): Promise<MinimalSiteData[]> | [] {
-    return this.srsitesService.searchCrownFile(crownLandsFileNumber);
+    return this.srsitesService.searchCrownFile(decodeURIComponent(crownLandsFileNumber));
   }
 
   @Get('searchSiteId/:siteId')
