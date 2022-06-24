@@ -54,8 +54,8 @@ var circleOptions = {
   fillColor: '#3f0',
   fillOpacity: 0.25,
 };
-var radiusSmall = 564.19; // 1 sq km area
-var radiusLarge = 5641.89; // 100 sq km area
+var radiusSmall = 500; // 500m area
+var radiusLarge = 5000; // 5 km
 var latlng = [48.428, -123.365]; // victoria - these coords arent actually used when drawing though
 // circles have to be instantiated here and not inside a function or you'll get a cryptic error
 // other objects like markers and rectangles can be created anywhere though
@@ -67,6 +67,10 @@ var largeCircle = L.circle(latlng, radiusLarge, circleOptions);
 smallCircle.on({
   mousedown: function () {
     map.dragging.disable();
+    if (!document.getElementById('pills-coordinates-tab').classList.contains('active')) {
+      document.getElementById('pills-coordinates-tab').click();
+      document.getElementById('postalCodeInput').value = '';
+    }
     map.on('mousemove', function (e) {
       if (checkCoords(e.latlng.lat, e.latlng.lng)) {
         smallCircle.setLatLng(e.latlng);

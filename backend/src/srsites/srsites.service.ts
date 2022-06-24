@@ -198,7 +198,7 @@ export class SrsitesService {
   }
 
   async searchArea(lat: string, lng: string, size: string): Promise<MinimalSiteData[]> {
-    const radius = size == 'Small' ? 564.19 : size == 'Large' ? 5641.89 : 0;
+    const radius = size == 'Small' ? 500 : size == 'Large' ? 5000 : 0;
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
     const userLatlng = { lat: userLat, lng: userLng };

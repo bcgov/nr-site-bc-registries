@@ -62,7 +62,7 @@ async function searchAddress() {
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
-  if (city.length >= 2) {
+  if (city.length >= 2 && city.replace(/\*/g, '').length >= 2) {
     const url = `/site-registry/searchAddr`;
     await postSearchResults(url, { city: city, address: address });
   } else {
