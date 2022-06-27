@@ -61,7 +61,6 @@ export class SiteRegistryController {
     @Param('siteId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    console.log(siteId);
     return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.account_id);
   }
 
@@ -83,7 +82,6 @@ export class SiteRegistryController {
     @Body(AreaSearchPipe) searchObject: AreaSearchObject,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    console.log('correct route');
     return this.siteRegistryService.searchArea(
       searchObject.lat,
       searchObject.lng,
