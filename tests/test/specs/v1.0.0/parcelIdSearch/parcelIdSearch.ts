@@ -1,23 +1,24 @@
 /**
- * Name: siteIdSearch
+ * Name: parcelIdSearch
  * Ticket: N/A
  * Browser: Either
- * Purpose: This script tests the flow for searching by site ID.
+ * Purpose: This script tests the flow for searching by parcel ID.
  * 1. Login on the bc service website.
- * 2. Navigate to site id search.
- * 3. Search with a known site id.
+ * 2. Navigate to parcel id search.
+ * 3. Search with a known parcel id.
  * 4. Verify that the search returned results.
  */
 
 import assert from 'assert';
 import indexPage from '../../../pageobjects/index.page';
 import { login } from '../../../../util/util';
-import siteIdSearchPage from '../../../pageobjects/siteIdSearch.page';
+import parcelIdSearchPage from '../../../pageobjects/parcelIdSearch.page';
 import viewSearchResultsPage from '../../../pageobjects/viewSearchResults.page';
 
-const siteId = '2401';
+const parcelId = '4831934';
+const expectedSiteID = '2401';
 
-describe('Synopsis Report Test', () => {
+describe('Parcel ID Search Test', () => {
   before(async () => {
     await indexPage.open();
   });
@@ -28,36 +29,36 @@ describe('Synopsis Report Test', () => {
     });
 
     it('Check index title', async () => {
-      await indexPage.siteIdSearchLink.waitForDisplayed();
+      await indexPage.parcelIdSearchLink.waitForDisplayed();
       const expectedTitle = 'DEVELOPMENT - BC Site Registry';
       const actualTitle = await browser.getTitle();
       assert.equal(expectedTitle, actualTitle);
     });
 
-    it('Click site id search link', async () => {
-      await indexPage.siteIdSearchLink.click();
+    it('Click parcel id search link', async () => {
+      await indexPage.parcelIdSearchLink.click();
     });
 
-    it('Check site id search title', async () => {
-      await siteIdSearchPage.siteIdInput.waitForDisplayed();
-      const expectedTitle = 'DEVELOPMENT - Site ID Search';
+    it('Check parcel id search title', async () => {
+      await parcelIdSearchPage.parcelIdInput.waitForDisplayed();
+      const expectedTitle = 'DEVELOPMENT - Parcel ID Search';
       const actualTitle = await browser.getTitle();
       assert.equal(expectedTitle, actualTitle);
     });
 
-    it('Input a site id and attempt to search', async () => {
-      await siteIdSearchPage.siteIdInput.setValue(siteId);
-      await siteIdSearchPage.siteIdSelectionListButton.click();
+    it('Input a parcel id and attempt to search', async () => {
+      await parcelIdSearchPage.parcelIdInput.setValue(parcelId);
+      await parcelIdSearchPage.parcelIdSearchButton.click();
     });
 
     it('Check the page title', async () => {
-      const expected = 'Site ID Search Results';
+      const expected = 'Parcel ID Search Results';
       const actual = await viewSearchResultsPage.pageTitle.getText();
       assert.equal(actual, expected);
     });
 
     it('Check the search criteria', async () => {
-      const expected = '2401';
+      const expected = parcelId;
       const actual = await viewSearchResultsPage.searchCriteriaLabel.getText();
       assert.equal(actual, expected);
     });
@@ -75,7 +76,7 @@ describe('Synopsis Report Test', () => {
     });
 
     it('Verify site id', async () => {
-      const expected = siteId;
+      const expected = expectedSiteID;
       const actual = await viewSearchResultsPage.sitesTableFirstRowSiteId.getText();
       assert.equal(actual, expected);
     });

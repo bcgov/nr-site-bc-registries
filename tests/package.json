@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "wdio wdio.edge.conf.ts && wdio wdio.chrome.conf.ts",
-    "test:one": "wdio wdio.chrome.conf.ts --spec .\\test\\specs\\v1.0.0\\detailedReport\\detailedReport.ts",
+    "test:one": "wdio wdio.chrome.conf.ts --spec .\\test\\specs\\v1.0.0\\parcelIdSearch\\parcelIdSearch.ts",
     "test:edge": "wdio wdio.edge.conf.ts --suite v100",
     "test:chrome": "wdio wdio.chrome.conf.ts --suite v100"
   },

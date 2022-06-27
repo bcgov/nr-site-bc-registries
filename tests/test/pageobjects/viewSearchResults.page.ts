@@ -1,7 +1,7 @@
 // viewSearchResults.page.ts
 import Page from './page';
 
-class ViewSearchResults extends Page {
+class ViewSearchResultsPage extends Page {
   get pageTitle() {
     return $('#searchType');
   }
@@ -56,4 +56,4 @@ class ViewSearchResults extends Page {
   }
 }
 
-export default new ViewSearchResults();
+export default new ViewSearchResultsPage();

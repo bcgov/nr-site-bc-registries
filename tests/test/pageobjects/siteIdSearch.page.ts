@@ -1,7 +1,7 @@
 // siteIdSearch.page.ts
 import Page from './page';
 
-class SiteIdSearch extends Page {
+class SiteIdSearchPage extends Page {
   get siteIdInput() {
     return $('#siteId');
   }
@@ -14,4 +14,4 @@ class SiteIdSearch extends Page {
   }
 }
 
-export default new SiteIdSearch();
+export default new SiteIdSearchPage();
