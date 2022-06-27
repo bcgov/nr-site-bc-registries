@@ -20,9 +20,17 @@ export const config: WebdriverIO.Config = {
       },
     ],
   },
-  specs: ['./test/specs/v1.0.0/siteIdSearch/*.ts'],
+  specs: [
+    './test/specs/v1.0.0/siteIdSearch/*.ts',
+    './test/specs/v1.0.0/synopsisReport/*.ts',
+    './test/specs/v1.0.0/detailedReport/*.ts',
+  ],
   suites: {
-    v100: ['./test/specs/v1.0.0/siteIdSearch/*.ts'],
+    v100: [
+      './test/specs/v1.0.0/siteIdSearch/*.ts',
+      './test/specs/v1.0.0/synopsisReport/*.ts',
+      './test/specs/v1.0.0/detailedReport/*.ts',
+    ],
   },
   specFileRetries: 0,
   mochaOpts: { bail: true, timeout: 2000000 },

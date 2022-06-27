@@ -1,7 +1,7 @@
 /**
  * Name: siteIdSearch
  * Ticket: N/A
- * Browser: Chrome
+ * Browser: Either
  * Purpose: This script tests the flow for searching by site ID.
  * 1. Login on the bc service website.
  * 2. Navigate to site id search.
@@ -15,22 +15,12 @@ import { login } from '../../../../util/util';
 import siteIdSearchPage from '../../../pageobjects/siteIdSearch.page';
 import viewSearchResultsPage from '../../../pageobjects/viewSearchResults.page';
 
-let siteId = '2401';
+const siteId = '2401';
 
 describe('Synopsis Report Test', () => {
   before(async () => {
     await indexPage.open();
   });
-
-  // delete file after
-  //   after(async () => {
-  //     try {
-  //       fs.unlinkSync(synopsisFile);
-  //       console.log('File removed:', synopsisFile);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   });
 
   describe('Login and check the index page', () => {
     it('Login', async () => {

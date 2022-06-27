@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import loginPage from '../test/pageobjects/login.page';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -33,29 +34,29 @@ export async function login() {
   await loginPage.continueButton2.click();
 }
 
-// used by waitForFileDownload to periodically check for a file's existence
-const checkPermissions = (file: string) => {
-  fs.access(file, fs.constants.F_OK, (err) => {
-    return false;
-  });
-  return true;
-};
+export function checkExistsWithTimeout(filePath: string, timeout: number) {
+  return new Promise<void>(function (resolve, reject) {
+    var timer = setTimeout(function () {
+      watcher.close();
+      reject(new Error('File did not exists and was not created during the timeout.'));
+    }, timeout);
 
-// checks once per second for the existence of a file
-// the pause after the file is found is to let the file finish downloading before continuing
-export async function waitForFileDownload(file: string) {
-  let exists: boolean = false;
-  let counter: number = 0;
-  while (!exists && counter < 30) {
-    // this is synchronous and probably never gets to the else statement
-    if (checkPermissions(file)) {
-      console.log('File found');
-      exists = true;
-      await browser.pause(3000);
-    } else {
-      console.log('Waiting for file download: ' + counter + 's');
-      counter++;
-      await browser.pause(1000);
-    }
-  }
+    fs.access(filePath, fs.constants.R_OK, function (err) {
+      if (!err) {
+        clearTimeout(timer);
+        watcher.close();
+        resolve();
+      }
+    });
+
+    var dir = path.dirname(filePath);
+    var basename = path.basename(filePath);
+    var watcher = fs.watch(dir, function (eventType, filename) {
+      if (eventType === 'rename' && filename === basename) {
+        clearTimeout(timer);
+        watcher.close();
+        resolve();
+      }
+    });
+  });
 }
