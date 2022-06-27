@@ -101,7 +101,7 @@
         myObj['Address/City'] = obj.city;
         myObj['Pending'] = obj.pending;
         {{!-- myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')"></button>`; --}}
-        myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')" style="width:100%"><span id="spinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="btnText${obj.siteId}">Download</span></button>`;
+        myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')" style="width:100%"><span id="spinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="downloadButton${obj.siteId}">Download</span></button>`;
         myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
         results.push(myObj);
       };
