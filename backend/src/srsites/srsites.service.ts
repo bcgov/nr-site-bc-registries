@@ -16,6 +16,8 @@ import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { MinimalSiteData } from 'utils/constants';
 import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
+import { Srdocpar } from 'src/srdocpar/entities/srdocpar.entity';
+import { Srprofil } from 'src/srprofil/entities/srprofil.entity';
 
 @Injectable()
 export class SrsitesService {
@@ -32,12 +34,16 @@ export class SrsitesService {
     private srsitdocsRepository: Repository<Srsitdoc>,
     @InjectRepository(Srsitpar)
     private srsitparsRepository: Repository<Srsitpar>,
+    @InjectRepository(Srdocpar)
+    private srdocparsRepository: Repository<Srdocpar>,
     @InjectRepository(Srland)
     private srlandsRepository: Repository<Srland>,
     @InjectRepository(Srassoc)
     private srassocsRepository: Repository<Srassoc>,
     @InjectRepository(Srdate)
-    private srdatesRepository: Repository<Srdate>
+    private srdatesRepository: Repository<Srdate>,
+    @InjectRepository(Srprofil)
+    private srprofilsRepository: Repository<Srprofil>
   ) {}
 
   async create(srsite: CreateSrsiteDto): Promise<Srsite> {
@@ -241,9 +247,26 @@ export class SrsitesService {
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
-    const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
+    const srpinpids = await this.srpinpidsRepository.findAndCount({ siteId: siteId });
+    const srprofil = await this.srprofilsRepository.find({ siteId: siteId });
+    const siteProfileString =
+      srprofil.length == 0 ? 'No Site Profile has been submitted for this site' : 'Site Profile Received';
+    let numAssocs = srassocs[1] + srassocs2[1];
+    let numParcelDescs = 0;
+
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '') {
+        numAssocs++;
+      }
+    }
+
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
+        numParcelDescs++;
+      }
+    }
 
     // construct strings for displaying lat/lon
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
@@ -279,13 +302,14 @@ export class SrsitesService {
       detailRemovedDate: srsite.detailRemovedDate,
       notations: srevents[1],
       participants: srsitpars[1],
-      assocSites: srassocs[1] + srassocs2[1],
+      assocSites: numAssocs,
       documents: srsitdoc[1],
       suspLandUse: srlands[1],
-      parcelDesc: srpinpid ? srpinpid.legalDescription : '',
+      parcelDesc: numParcelDescs,
       locationDescription: srsite.locationDescription,
       status: srsite.status,
       classification: srsite.classification,
+      siteProfileString: siteProfileString,
     };
   }
 
@@ -296,15 +320,35 @@ export class SrsitesService {
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
-    const srpinpid = await this.srpinpidsRepository.findOne({ siteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
-    // entity relations might be a better solution than this
+    const srpinpids = await this.srpinpidsRepository.findAndCount({ siteId: siteId });
+    let numAssocs = srassocs[1] + srassocs2[1];
+    let numParcelDescs = 0;
+
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '') {
+        numAssocs++;
+      }
+    }
+
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
+        numParcelDescs++;
+      }
+    }
+
     // add corresponding participants to each notation
     for (let entry of srevents[0]) {
       const eventId = entry.eventId;
-      const srevparts = this.srevpartsRepository.find({ eventId });
+      const srevparts = await this.srevpartsRepository.find({ eventId });
       entry['participantsArray'] = srevparts;
+    }
+    // add corresponding participants to each document
+    for (let entry of srsitdoc[0]) {
+      const docId = entry.docId;
+      const srdocpar = await this.srdocparsRepository.find({ docId: docId });
+      entry['participantsArray'] = srdocpar;
     }
     // construct strings for displaying lat/lon
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
@@ -318,6 +362,7 @@ export class SrsitesService {
     if (lonSec.length == 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
+    console.log(srevents[0]);
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
@@ -340,15 +385,16 @@ export class SrsitesService {
       detailRemovedDate: srsite.detailRemovedDate,
       notations: srevents[1],
       participants: srsitpars[1],
-      assocSites: srassocs[1] + srassocs2[1],
+      assocSites: numAssocs,
       documents: srsitdoc[1],
       suspLandUse: srlands[1],
-      parcelDesc: srpinpid.legalDescription,
+      parcelDesc: numParcelDescs,
       locationDescription: srsite.locationDescription,
       status: srsite.status,
       classification: srsite.classification,
       notationsArray: srevents[0],
       participantsArray: srsitpars[0],
+      documentsArray: srsitdoc[0],
     };
   }
 
