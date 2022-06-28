@@ -13,7 +13,7 @@ export const CSV_HEADERS = {
   SRPRFQUE: 'questionId,sequenceNumber,categoryId,parentQuestionId,effectiveDate,expiryDate,questionDescription\n',
   SRPRFUSE: 'siteId,dateCompleted,landUseCode,landUseString\n',
   SRPROFIL:
-    'siteId,dateCompleted,ownerParticipantId,contactParticipantId,completorParticipantId,dateLocalAuthority,dateRegistrar,dateDecision,comments\n',
+    'siteId,dateReceived,ownerParticipantId,contactParticipantId,completorParticipantId,dateCompleted,dateLocalAuthority,dateRegistrar,dateDecision,dateEntered,decisionText,commentString,plannedActivityComment,siteDisclosureComment,govDocumentsComment,localAuthEmail\n',
   SRSITDOC: 'siteId,docId,titleString,submissionDate,documentDate,noteString\n',
   SRSITES:
     'siteId,region,status,commonName,address_1,address_2,city,provState,postalCode,lat,latDeg,latMin,latSec,lon,lonDeg,lonMin,lonSec,victoriaFileNumber,regionalFileNumber,classification,locationDescription,registeredDate,modifiedDate,detailRemovedDate\n',
