@@ -13,6 +13,7 @@ import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
 import { Srdocpar } from '../srdocpar/entities/srdocpar.entity';
 import { Srprofil } from '../srprofil/entities/srprofil.entity';
+import { Srprfuse } from '../srprfuse/entities/srprfuse.entity';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Srprofil } from '../srprofil/entities/srprofil.entity';
     TypeOrmModule.forFeature([Srsitpar]),
     TypeOrmModule.forFeature([Srdocpar]),
     TypeOrmModule.forFeature([Srland]),
+    TypeOrmModule.forFeature([Srprfuse]),
     TypeOrmModule.forFeature([Srassoc]),
     TypeOrmModule.forFeature([Srdate]),
     TypeOrmModule.forFeature([Srprofil]),

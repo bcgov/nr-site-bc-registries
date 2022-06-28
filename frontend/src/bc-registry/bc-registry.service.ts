@@ -459,8 +459,7 @@ export class BCRegistryService {
       template = template.concat('</div>');
       template = template.concat('<hr size="2" color="black">');
     }
-
-    // // documents
+    // documents
     let documentsLength = data.documentsArray.length;
     counter = 0;
     if (documentsLength > 0) {
@@ -499,6 +498,106 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No documents have been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
+      template = template.concat('<hr size="2" color="black">');
+    }
+
+    // associated sites
+    let assocSitesLength = data.associatedSitesArray.length;
+    counter = 0;
+    if (assocSitesLength > 0) {
+      // sort associated sites chronologically
+      data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
+      for (let associatedSite of data.associatedSitesArray) {
+        if (counter > 0) {
+          template = template.concat('<div style="page-break-inside: avoid">\n');
+        }
+        template = template.concat('<table>\n');
+        template = template.concat(`<tr><th>Site ID:</th><td>${associatedSite.siteId}</td></tr>`);
+        template = template.concat(`<tr><th>Effect Date:</th><td>${associatedSite.effectDate}</td></tr>`);
+        template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('</div>');
+        counter++;
+        if (counter < assocSitesLength) {
+          template = template.concat('<hr>');
+        }
+      }
+      template = template.concat('<hr size="2" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No associated sites have been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
+      template = template.concat('<hr size="2" color="black">');
+    }
+
+    // suspect land uses
+    let suspectLandUsesLength = data.suspectLandUsesArray.length;
+    counter = 0;
+    if (suspectLandUsesLength > 0) {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
+      for (let suspectLandUse of data.suspectLandUsesArray) {
+        if (counter > 0) {
+          template = template.concat('<div style="page-break-inside: avoid">\n');
+        }
+        template = template.concat('<table>\n');
+        template = template.concat(`<tr><th>Land Use:</th><td>${suspectLandUse.landUse}</td></tr>`);
+        template = template.concat(`<tr><th>Notes:</th><td>${suspectLandUse.noteString}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('</div>');
+        counter++;
+        if (counter < suspectLandUsesLength) {
+          template = template.concat('<hr>');
+        }
+      }
+      template = template.concat('<hr size="2" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No suspect land uses have been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
+      template = template.concat('<hr size="2" color="black">');
+    }
+
+    // parcel descriptions
+    let parcelDescriptionsLength = data.parcelDescriptionsArray.length;
+    counter = 0;
+    if (parcelDescriptionsLength > 0) {
+      // sort parcel descriptions chronologically
+      data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
+      for (let parcelDescription of data.parcelDescriptionsArray) {
+        if (counter > 0) {
+          template = template.concat('<div style="page-break-inside: avoid">\n');
+        }
+        template = template.concat('<table>\n');
+        template = template.concat(`<tr><th>Date Noted:</th><td>${parcelDescription.dateNoted}</td></tr>`);
+        template = template.concat(`<tr><th>Crown Lands PIN:</th><td>${parcelDescription.pin}</td></tr>`);
+        template = template.concat(`<tr><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`);
+        template = template.concat(
+          `<tr><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+        );
+        template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('</div>');
+        counter++;
+        if (counter < parcelDescriptionsLength) {
+          template = template.concat('<hr>');
+        }
+      }
+      template = template.concat('<hr size="2" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No parcel descriptions have been submitted for this site</div></div>'
       );
       template = template.concat('</div>');
       template = template.concat('<hr size="2" color="black">');

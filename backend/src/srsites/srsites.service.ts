@@ -18,6 +18,7 @@ import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
 import { Srdocpar } from 'src/srdocpar/entities/srdocpar.entity';
 import { Srprofil } from 'src/srprofil/entities/srprofil.entity';
+import { Srprfuse } from 'src/srprfuse/entities/srprfuse.entity';
 
 @Injectable()
 export class SrsitesService {
@@ -38,6 +39,8 @@ export class SrsitesService {
     private srdocparsRepository: Repository<Srdocpar>,
     @InjectRepository(Srland)
     private srlandsRepository: Repository<Srland>,
+    @InjectRepository(Srprfuse)
+    private srprfusesRepository: Repository<Srprfuse>,
     @InjectRepository(Srassoc)
     private srassocsRepository: Repository<Srassoc>,
     @InjectRepository(Srdate)
@@ -318,6 +321,7 @@ export class SrsitesService {
     const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
+    // const srprfuse = await this.srprfusesRepository.find({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
@@ -350,6 +354,61 @@ export class SrsitesService {
       const srdocpar = await this.srdocparsRepository.find({ docId: docId });
       entry['participantsArray'] = srdocpar;
     }
+
+    // site associations array grabs from srassocs table & other sites with the same pid
+    let associatedSitesArray = [];
+    for (let entry of srassocs[0]) {
+      let assocObject = {};
+      assocObject['siteId'] = entry.associatedSiteId;
+      assocObject['effectDate'] = entry.effectDate;
+      assocObject['noteString'] = entry.noteString;
+      associatedSitesArray.push(assocObject);
+    }
+    for (let entry of srassocs2[0]) {
+      let assocObject = {};
+      assocObject['siteId'] = entry.siteId;
+      assocObject['effectDate'] = entry.effectDate;
+      assocObject['noteString'] = entry.noteString;
+      associatedSitesArray.push(assocObject);
+    }
+    let addedAssocSites: string[] = [];
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '') {
+        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
+        for (let pinpid of sameParcelId) {
+          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
+            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
+            let assocObject = {};
+            assocObject['siteId'] = pinpid.siteId;
+            assocObject['effectDate'] = pinpid.dateNoted;
+            assocObject['noteString'] = 'Same Parcel ID';
+            associatedSitesArray.push(assocObject);
+          }
+        }
+      }
+    }
+
+    // suspect land uses array
+    let suspectLandUsesArray = [];
+    for (let entry of srlands[0]) {
+      let suspectLandUseObj = {};
+      suspectLandUseObj['landUse'] = entry.landUse;
+      suspectLandUseObj['noteString'] = entry.noteString;
+      suspectLandUsesArray.push(suspectLandUseObj);
+    }
+
+    // parcel descriptions array
+    let parcelDescriptionsArray = [];
+    for (let entry of srpinpids[0]) {
+      let parcelDescriptionObject = {};
+      parcelDescriptionObject['dateNoted'] = entry.dateNoted;
+      parcelDescriptionObject['pin'] = entry.pin;
+      parcelDescriptionObject['pid'] = entry.pid;
+      parcelDescriptionObject['crownLandsFileNumber'] = entry.crownLandsFileNumber;
+      parcelDescriptionObject['legalDescription'] = entry.legalDescription;
+      parcelDescriptionsArray.push(parcelDescriptionObject);
+    }
+
     // construct strings for displaying lat/lon
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
       .toFixed(1)
@@ -394,6 +453,10 @@ export class SrsitesService {
       notationsArray: srevents[0],
       participantsArray: srsitpars[0],
       documentsArray: srsitdoc[0],
+      associatedSitesArray: associatedSitesArray, // for now, just sites with the same parcel-id & those included in srassocs (there's only 1 entry)
+      suspectLandUsesArray: suspectLandUsesArray, // description+notes array
+      parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
+      siteProfileData: null, // site profile information
     };
   }
 
