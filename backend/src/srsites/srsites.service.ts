@@ -60,10 +60,15 @@ export class SrsitesService {
   }
 
   async searchPid(pid: string): Promise<MinimalSiteData[]> {
+    // add zeroes to the front of the string
+    let pidWithZeroes = pid;
+    for (let i = 0; i < 9 - pid.length; i++) {
+      pidWithZeroes = '0' + pidWithZeroes;
+    }
     let srpinpid: any;
     let site: any;
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ pid: pid });
+      srpinpid = await this.srpinpidsRepository.findOne({ pid: pidWithZeroes });
     } catch (err) {
       return [];
     }
@@ -88,10 +93,15 @@ export class SrsitesService {
   }
 
   async searchCrownPin(pin: string): Promise<MinimalSiteData[]> {
+    // add zeroes to the front of the string
+    let pinWithZeroes = pin;
+    for (let i = 0; i < 9 - pin.length; i++) {
+      pinWithZeroes = '0' + pinWithZeroes;
+    }
     let srpinpid: any;
     let site: any;
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ pin: pin });
+      srpinpid = await this.srpinpidsRepository.findOne({ pin: pinWithZeroes });
     } catch (err) {
       return [];
     }

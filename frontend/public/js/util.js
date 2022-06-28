@@ -311,15 +311,15 @@ async function getNilPdf() {
 }
 
 function displayDownloadSpinner(siteId) {
-  var buttonText = document.getElementById('btnText' + siteId);
-  var spinner = document.getElementById('spinner' + siteId);
+  var buttonText = document.getElementById('downloadBtnTxt' + siteId);
+  var spinner = document.getElementById('downloadSpinner' + siteId);
   spinner.classList.remove('d-none');
   buttonText.innerText = '';
 }
 
 function hideDownloadSpinner(siteId) {
-  var buttonText = document.getElementById('btnText' + siteId);
-  var spinner = document.getElementById('spinner' + siteId);
+  var buttonText = document.getElementById('downloadBtnTxt' + siteId);
+  var spinner = document.getElementById('downloadSpinner' + siteId);
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
@@ -327,15 +327,15 @@ function hideDownloadSpinner(siteId) {
 }
 
 function displayEmailSpinner(siteId) {
-  var buttonText = document.getElementById('btnText' + siteId);
-  var spinner = document.getElementById('spinner' + siteId);
+  var buttonText = document.getElementById('emailBtnTxt' + siteId);
+  var spinner = document.getElementById('emailSpinner' + siteId);
   spinner.classList.remove('d-none');
   buttonText.innerText = '';
 }
 
 function hideEmailSpinner(siteId) {
-  var buttonText = document.getElementById('btnText' + siteId);
-  var spinner = document.getElementById('spinner' + siteId);
+  var buttonText = document.getElementById('emailBtnTxt' + siteId);
+  var spinner = document.getElementById('emailSpinner' + siteId);
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
