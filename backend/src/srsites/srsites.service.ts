@@ -362,7 +362,6 @@ export class SrsitesService {
     if (lonSec.length == 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
-    console.log(srevents[0]);
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
