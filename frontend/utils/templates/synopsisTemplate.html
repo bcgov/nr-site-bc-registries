@@ -120,6 +120,8 @@
           <td>{d.documents}</td>
           <th>Susp. Land Use:</th>
           <td>{d.suspLandUse}</td>
+          <th>Parcel Descriptions:</th>
+          <td>{d.parcelDesc}</td>
         </tr>
       </table>
 
@@ -127,12 +129,8 @@
 
       <table>
         <tr>
-          <th>Parcel Descriptions:</th>
-          <td style="min-width: 70vw">{d.parcelDesc}</td>
-        </tr>
-        <tr>
-          <th>Location Description:</th>
-          <td>{d.locationDescription}</td>
+          <th style="min-width: 22vw">Location Description:</th>
+          <td style="min-width: 65vw">{d.locationDescription}</td>
         </tr>
         <tr>
           <th>Status:</th>
@@ -147,7 +145,7 @@
       <hr />
 
       <div class="row">
-        <div class="col-sm text-center">No Site Profile has been submitted for this site</div>
+        <div class="col-sm text-center">{d.siteProfileString}</div>
       </div>
 
       <hr />
