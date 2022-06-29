@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import path, { join, resolve } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
@@ -21,7 +21,7 @@ async function bootstrap() {
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new fileSession({ path: process.env.SESSION_PATH }),
+    store: new fileSession({ path: resolve("./", process.env.SESSION_PATH) }),
     cookie: { maxAge: 3600000, secure: false, httpOnly: true },
   };
 
