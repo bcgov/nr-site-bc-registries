@@ -334,16 +334,16 @@ export class SrsitesService {
     const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
-    // const srprfuse = await this.srprfusesRepository.find({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
     const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
-    const srpinpids = await this.srpinpidsRepository.findAndCount({ siteId: siteId });
+    const srpinpids = await this.srpinpidsRepository.find({ siteId: siteId });
+    const srprofil = await this.srprofilsRepository.findOne({ siteId: siteId });
     let numAssocs = srassocs[1] + srassocs2[1];
     let numParcelDescs = 0;
 
-    for (let entry of srpinpids[0]) {
+    for (let entry of srpinpids) {
       if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
         numParcelDescs++;
       }
@@ -381,7 +381,7 @@ export class SrsitesService {
       associatedSitesArray.push(assocObject);
     }
     let addedAssocSites: string[] = [];
-    for (let entry of srpinpids[0]) {
+    for (let entry of srpinpids) {
       if (entry.pid != '') {
         let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
         for (let pinpid of sameParcelId) {
@@ -409,7 +409,7 @@ export class SrsitesService {
 
     // parcel descriptions array
     let parcelDescriptionsArray = [];
-    for (let entry of srpinpids[0]) {
+    for (let entry of srpinpids) {
       let parcelDescriptionObject = {};
       parcelDescriptionObject['dateNoted'] = entry.dateNoted;
       parcelDescriptionObject['pin'] = entry.pin;
@@ -466,7 +466,7 @@ export class SrsitesService {
       associatedSitesArray: associatedSitesArray, // for now, just sites with the same parcel-id & those included in srassocs (there's only 1 entry)
       suspectLandUsesArray: suspectLandUsesArray, // description+notes array
       parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
-      siteProfileData: null, // site profile information
+      siteProfileData: srprofil, // site profile information
     };
   }
 

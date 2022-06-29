@@ -603,6 +603,34 @@ export class BCRegistryService {
       template = template.concat('<hr size="2" color="black">');
     }
 
+    // site profile
+    if (data.siteProfileData != undefined) {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat('<h4>SITE PROFILE</h4>\n');
+      template = template.concat('<table>\n');
+      template = template.concat(`<tr><th>Date Received:</th><td>${data.siteProfileData.dateReceived}</td></tr>`);
+      template = template.concat(`<tr><th>Date Completed:</th><td>${data.siteProfileData.dateCompleted}</td></tr>`);
+      template = template.concat(
+        `<tr><th>Date Local Authority:</th><td>${data.siteProfileData.dateLocalAuthority}</td></tr>`
+      );
+      template = template.concat(`<tr><th>Date Registrar:</th><td>${data.siteProfileData.dateRegistrar}</td></tr>`);
+      template = template.concat(`<tr><th>Date Decision:</th><td>${data.siteProfileData.dateDecision}</td></tr>`);
+      template = template.concat(`<tr><th>Date Entered:</th><td>${data.siteProfileData.dateEntered}</td></tr>`);
+      template = template.concat(`<tr><th>Decision:</th><td>${data.siteProfileData.decisionText}</td></tr>`);
+      template = template.concat(`<tr><th>Comments:</th><td>${data.siteProfileData.commentString}</td></tr>`);
+      template = template.concat(`</table>`);
+      template = template.concat('</div>');
+      counter++;
+      template = template.concat('<hr size="2" color="black">');
+    } else {
+      template = template.concat('<div style="page-break-inside: avoid">');
+      template = template.concat(
+        '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
+      );
+      template = template.concat('</div>');
+      template = template.concat('<hr size="2" color="black">');
+    }
+
     template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
 
     return base64.encode(template);
