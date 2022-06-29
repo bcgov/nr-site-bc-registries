@@ -260,14 +260,27 @@ export class SrsitesService {
     let numParcelDescs = 0;
 
     for (let entry of srpinpids[0]) {
-      if (entry.pid != '') {
-        numAssocs++;
-      }
-    }
-
-    for (let entry of srpinpids[0]) {
       if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
         numParcelDescs++;
+      }
+    }
+    // calculate the number of associated sites
+    srassocs[0].forEach(() => {
+      numAssocs++;
+    });
+    srassocs2[0].forEach(() => {
+      numAssocs++;
+    });
+    let addedAssocSites: string[] = [];
+    for (let entry of srpinpids[0]) {
+      if (entry.pid != '') {
+        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
+        for (let pinpid of sameParcelId) {
+          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
+            numAssocs++;
+            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
+          }
+        }
       }
     }
 
@@ -331,12 +344,6 @@ export class SrsitesService {
     let numParcelDescs = 0;
 
     for (let entry of srpinpids[0]) {
-      if (entry.pid != '') {
-        numAssocs++;
-      }
-    }
-
-    for (let entry of srpinpids[0]) {
       if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
         numParcelDescs++;
       }
@@ -358,6 +365,7 @@ export class SrsitesService {
     // site associations array grabs from srassocs table & other sites with the same pid
     let associatedSitesArray = [];
     for (let entry of srassocs[0]) {
+      numAssocs++;
       let assocObject = {};
       assocObject['siteId'] = entry.associatedSiteId;
       assocObject['effectDate'] = entry.effectDate;
@@ -365,6 +373,7 @@ export class SrsitesService {
       associatedSitesArray.push(assocObject);
     }
     for (let entry of srassocs2[0]) {
+      numAssocs++;
       let assocObject = {};
       assocObject['siteId'] = entry.siteId;
       assocObject['effectDate'] = entry.effectDate;
@@ -377,6 +386,7 @@ export class SrsitesService {
         let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
         for (let pinpid of sameParcelId) {
           if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
+            numAssocs++;
             addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
             let assocObject = {};
             assocObject['siteId'] = pinpid.siteId;
