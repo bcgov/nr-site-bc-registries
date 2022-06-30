@@ -196,7 +196,6 @@ export class CronService {
     const srassocs: [SrassocDto] = parsedData.srassocs;
     for (const entry of srassocs) {
       counter += 1;
-      process.stdout.write(`\rAdding srassocs entry ${counter}/${srassocs.length}`);
       await this.srassocsService.create(entry);
     }
     const srdate: [SrdateDto] = parsedData.srdate;
@@ -205,7 +204,6 @@ export class CronService {
     process.stdout.write(`Adding srdate   entry `);
     for (const entry of srdate) {
       counter += 1;
-      process.stdout.write(`\rAdding srdate   entry ${counter}/${srdate.length}`);
       await this.srdatesService.create(entry);
     }
     const srdocpar: [SrdocparDto] = parsedData.srdocpar;
@@ -214,7 +212,6 @@ export class CronService {
     process.stdout.write(`Adding srdocpar entry `);
     for (const entry of srdocpar) {
       counter += 1;
-      process.stdout.write(`\rAdding srdocpar entry ${counter}/${srdocpar.length}`);
       await this.srdocparsService.create(entry);
     }
     const srevents: [SreventDto] = parsedData.srevents;
@@ -223,7 +220,6 @@ export class CronService {
     process.stdout.write(`Adding srevents entry `);
     for (const entry of srevents) {
       counter += 1;
-      process.stdout.write(`\rAdding srevents entry ${counter}/${srevents.length}`);
       await this.sreventsService.create(entry);
     }
     const srevpart: [SrevpartDto] = parsedData.srevpart;
@@ -232,7 +228,6 @@ export class CronService {
     process.stdout.write(`Adding srevpart entry `);
     for (const entry of srevpart) {
       counter += 1;
-      process.stdout.write(`\rAdding srevpart entry ${counter}/${srevpart.length}`);
       await this.srevpartsService.create(entry);
     }
     const srlands: [SrlandDto] = parsedData.srlands;
@@ -241,7 +236,6 @@ export class CronService {
     process.stdout.write(`Adding srlands entry `);
     for (const entry of srlands) {
       counter += 1;
-      process.stdout.write(`\rAdding srlands  entry ${counter}/${srlands.length}`);
       await this.srlandsService.create(entry);
     }
     const srparrol: [SrparrolDto] = parsedData.srparrol;
@@ -249,7 +243,6 @@ export class CronService {
     console.log('');
     for (const entry of srparrol) {
       counter += 1;
-      process.stdout.write(`\rAdding srparrol entry ${counter}/${srparrol.length}`);
       await this.srparrolsService.create(entry);
     }
     const srpinpid: [SrpinpidDto] = parsedData.srpinpid;
@@ -258,7 +251,6 @@ export class CronService {
     process.stdout.write(`Adding srpinpid entry `);
     for (const entry of srpinpid) {
       counter += 1;
-      process.stdout.write(`\rAdding srpinpid entry ${counter}/${srpinpid.length}`);
       await this.srpinpidsService.create(entry);
     }
     const srprfans: [SrprfanDto] = parsedData.srprfans;
@@ -267,7 +259,6 @@ export class CronService {
     process.stdout.write(`Adding srprfans entry `);
     for (const entry of srprfans) {
       counter += 1;
-      process.stdout.write(`\rAdding srprfans entry ${counter}/${srprfans.length}`);
       await this.srprfansService.create(entry);
     }
     const srprfcat: [SrprfcatDto] = parsedData.srprfcat;
@@ -276,7 +267,6 @@ export class CronService {
     process.stdout.write(`Adding srprfcat entry `);
     for (const entry of srprfcat) {
       counter += 1;
-      process.stdout.write(`\rAdding srprfcat entry ${counter}/${srprfcat.length}`);
       await this.srprfcatsService.create(entry);
     }
     const srprfque: [SrprfqueDto] = parsedData.srprfque;
@@ -285,7 +275,6 @@ export class CronService {
     process.stdout.write(`Adding srprfque entry `);
     for (const entry of srprfque) {
       counter += 1;
-      process.stdout.write(`\rAdding srprfque entry ${counter}/${srprfque.length}`);
       await this.srprfquesService.create(entry);
     }
     const srprfuse: [SrprfuseDto] = parsedData.srprfuse;
@@ -294,7 +283,6 @@ export class CronService {
     process.stdout.write(`Adding srprfuse entry `);
     for (const entry of srprfuse) {
       counter += 1;
-      process.stdout.write(`\rAdding srprfuse entry ${counter}/${srprfuse.length}`);
       await this.srprfusesService.create(entry);
     }
     const srprofil: [SrprofilDto] = parsedData.srprofil;
@@ -303,7 +291,6 @@ export class CronService {
     process.stdout.write(`Adding srprofil entry `);
     for (const entry of srprofil) {
       counter += 1;
-      process.stdout.write(`\rAdding srprofil entry ${counter}/${srprofil.length}`);
       await this.srprofilsService.create(entry);
     }
     const srsitdoc: [SrsitdocDto] = parsedData.srsitdoc;
@@ -312,7 +299,6 @@ export class CronService {
     process.stdout.write(`Adding srsitdoc entry `);
     for (const entry of srsitdoc) {
       counter += 1;
-      process.stdout.write(`\rAdding srsitdoc entry ${counter}/${srsitdoc.length}`);
       await this.srsitdocsService.create(entry);
     }
     const srsitpar: [SrsitparDto] = parsedData.srsitpar;
@@ -321,7 +307,6 @@ export class CronService {
     process.stdout.write(`Adding srsitpar entry `);
     for (const entry of srsitpar) {
       counter += 1;
-      process.stdout.write(`\rAdding srsitpar entry ${counter}/${srsitpar.length}`);
       await this.srsitparsService.create(entry);
     }
     const srsites: [SrsiteDto] = parsedData.srsites;
@@ -330,7 +315,6 @@ export class CronService {
     process.stdout.write(`Adding srsite   entry `);
     for (const entry of srsites) {
       counter += 1;
-      process.stdout.write(`\rAdding srsite   entry ${counter}/${srsites.length}`);
       await this.srsitesService.create(entry);
     }
     console.log('\nadded data to tables');
