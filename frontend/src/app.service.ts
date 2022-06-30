@@ -13,7 +13,7 @@ export class AppService {
   constructor(private httpService: HttpService) {
     const hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     const port = process.env.BACKEND_URL ? 3000 : 3001;
-    requestUrl = `${hostname}:${port}/srdates/`;
+    requestUrl = `${hostname}/srdates/`;
     requestConfig = {
       headers: {
         'Content-Type': 'application/json',
