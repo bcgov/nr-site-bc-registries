@@ -84,6 +84,8 @@ objects:
               imagePullPolicy: Always
               name: ${NAME}
               env:
+                - name: NODE_TLS_REJECT_UNAUTHORIZED 
+                  value: 0
                 - name: POSTGRESQL_HOST
                   value: ${NAME}-${ZONE}-database
                 - name: POSTGRESQL_DATABASE
@@ -133,7 +135,7 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 600
+                initialDelaySeconds: 180
                 periodSeconds: 15
                 timeoutSeconds: 1
               livenessProbe:
@@ -143,7 +145,7 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 600
+                initialDelaySeconds: 180
                 periodSeconds: 30
                 timeoutSeconds: 5
   - apiVersion: v1
