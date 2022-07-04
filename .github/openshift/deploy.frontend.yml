@@ -107,12 +107,14 @@ objects:
                   value: '/mnt/sessions'
                 - name: COOKIE_SECRET
                   valueFrom:
-                    secretKeyRef: esra-sessions
-                    key: COOKIE_SECRET
+                    secretKeyRef:
+                      name: esra-sessions
+                      key: COOKIE_SECRET
                 - name: SESSION_SECRET
                   valueFrom:
-                    secretKeyRef: esra-sessions
-                    key: SESSION_SECRET
+                    secretKeyRef: 
+                      name: esra-sessions
+                      key: SESSION_SECRET
               ports:
                 - containerPort: 3000
                   protocol: TCP
