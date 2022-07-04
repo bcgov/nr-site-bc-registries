@@ -102,9 +102,17 @@ objects:
               name: ${NAME}
               env:
                 - name: BACKEND_URL
-                  value: ${NAME}-${ZONE}-backend
+                  value: http://${NAME}-${ZONE}-backend
                 - name: SESSION_PATH
                   value: '/mnt/sessions'
+                - name: COOKIE_SECRET
+                  valueFrom:
+                    secretKeyRef: esra-sessions
+                    key: COOKIE_SECRET
+                - name: SESSION_SECRET
+                  valueFrom:
+                    secretKeyRef: esra-sessions
+                    key: SESSION_SECRET
               ports:
                 - containerPort: 3000
                   protocol: TCP
