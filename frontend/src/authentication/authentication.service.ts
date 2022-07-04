@@ -96,13 +96,20 @@ export class AuthenticationService {
         Authorization: `Basic ${authorization}`,
       },
     };
+    console.log('-------- get token');
+    console.log(url);
+    console.log(code);
+    console.log(this.grant_type);
+    console.log(this.client_id);
+    console.log(this.redirect_uri);
+    
     return axios
       .post(url, params, config)
       .then((res) => {
         return res.data;
       })
       .catch((err) => {
-        console.log(err.response.data);
+        console.log(err.response);
         return err.response.data;
       });
   }

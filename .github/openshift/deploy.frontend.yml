@@ -173,17 +173,17 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 30
                 periodSeconds: 30
                 timeoutSeconds: 1
               livenessProbe:
                 successThreshold: 1
-                failureThreshold: 3
+                failureThreshold: 5
                 httpGet:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 30
                 periodSeconds: 30
                 timeoutSeconds: 5
               volumeMounts:
