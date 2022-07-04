@@ -11,7 +11,7 @@ export class AuthenticationGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request & { session? } = context.switchToHttp().getRequest();
-    const url = new URL('http://' + request.headers.host + request.originalUrl);
+    const url = new URL('https://' + request.headers.host + request.originalUrl);
     const urlPath = url.pathname == '/' ? '' : url.pathname;
     const redirect = url.origin + urlPath;
 
