@@ -78,7 +78,7 @@ export class CronService {
     // call removeall route on each Service
     await this.removePreviousData();
     // call create on each json array entry
-    process.env.POSTGRESQL_HOST == 'database'
+    process.env.POSTGRESQL_HOST.includes('database')
       ? await this.sendDataToTablesQuietly(data)
       : await this.sendDataToTables(data);
     console.log('update tables job complete');
