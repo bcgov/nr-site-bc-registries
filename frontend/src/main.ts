@@ -10,10 +10,10 @@ const fileSession = require('session-file-store')(expressSession);
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 
-  app.useStaticAssets(join(__dirname, '..', '../public'));
-  app.setBaseViewsDir(join(__dirname, '..', '../views/pages'));
-  hbs.registerPartials(join(__dirname, '..', '../views/partials'));
-  hbs.registerPartials(join(__dirname, '..', '../views/layout'));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views/pages'));
+  hbs.registerPartials(join(__dirname, '..', 'views/partials'));
+  hbs.registerPartials(join(__dirname, '..', 'views/layout'));
   app.setViewEngine('hbs');
 
   let sessionOptions: expressSession.SessionOptions;
