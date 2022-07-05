@@ -1,13 +1,15 @@
 # RedHat UBI 8 with nodejs 16
 FROM registry.access.redhat.com/ubi8/ubi as builder
 RUN dnf module install -y nodejs:16
-RUN dnf install -y libglib2.0-0
+RUN dnf install -y glib2-devel
 
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
 RUN npm ci --only=prod && \
     npm run build
+
+
 
 # Deployment container
 FROM registry.access.redhat.com/ubi8/ubi-micro
