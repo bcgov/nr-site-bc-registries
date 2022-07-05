@@ -17,7 +17,8 @@ export class AuthenticationFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    const url = new URL('http://' + request.headers.host + response.req.url);
+    const protocol = process.env.site_environment == 'DEVELOPMENT' ? 'http://' : 'https://'
+    const url = new URL(protocol + request.headers.host + response.req.url);
     const urlPath = url.pathname == '/' ? '' : url.pathname;
     const redirect = encodeURI(url.origin + urlPath);
     keycloak_login_params = `?response_type=code&client_id=${process.env.KEYCLOAK_CLIENT_ID}&redirect_uri=${redirect}`;

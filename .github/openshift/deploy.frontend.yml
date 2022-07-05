@@ -105,7 +105,7 @@ objects:
                   value: http://${NAME}-${ZONE}-backend
                 - name: BC_REGISTRY_BASE_URL
                   value: https://bcregistry-test.apigee.net
-                - name: baseURL
+                - name: baseUrl
                   value: https://bcregistry-test.apigee.net/pay/api/v1/payment-requests
                 - name: site_environment
                   value: TEST
