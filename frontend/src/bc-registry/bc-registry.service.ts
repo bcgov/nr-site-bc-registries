@@ -8,7 +8,6 @@ import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
-const HTML5ToPDF = require('html5-to-pdf');
 const axios = require('axios');
 
 let synopsisTemplate: string;
@@ -124,7 +123,7 @@ export class BCRegistryService {
         '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
       options: {
         cacheReport: false,
-        convertTo: 'html',
+        convertTo: 'pdf',
         overwrite: true,
         reportName: 'test-report',
       },
@@ -142,12 +141,14 @@ export class BCRegistryService {
         Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
       },
-      responseType: 'string',
+      responseType: 'arraybuffer',
       data: md,
     };
 
-    const response = await axios(config);
-    return this.generatePdf(response.data);
+    return await axios(config).then(response => {console.log('Generated File'); return response.data})
+    .catch(error => {
+        console.log(error.response)
+    });
   }
 
   // builds the pdf report to be sent back to the frontend
@@ -184,9 +185,9 @@ export class BCRegistryService {
           '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
         options: {
           cacheReport: false,
-          convertTo: 'html',
+          convertTo: 'pdf',
           overwrite: true,
-          reportName: 'test-report',
+          reportName: 'test-report.pdf',
         },
         template: {
           content: `${documentTemplate}`,
@@ -202,12 +203,15 @@ export class BCRegistryService {
           Authorization: `Bearer ${authorizationToken}`,
           'Content-Type': 'application/json',
         },
-        responseType: 'string',
+        responseType: 'arraybuffer',
         data: md,
       };
 
-      const response = await axios(config);
-      return this.generatePdf(response.data);
+      const response = await axios(config).then(response => {console.log('Generated File'); return response.data})
+      .catch(error => {
+          console.log(error.response)
+      });
+      return response;
     } else {
       return Error('No report type selected');
     }
@@ -655,27 +659,14 @@ export class BCRegistryService {
     return base64.encode(template);
   }
 
-  // uses a package with many formatting options to build the pdf
-  async generatePdf(htmlFile: string) {
-    const html5ToPDF = new HTML5ToPDF({
-      inputBody: htmlFile,
-      include: ['./utils/templates/css/bootstrap.min.css'],
-    });
-    await html5ToPDF.start();
-    const buffer = await html5ToPDF.build();
-    await html5ToPDF.close();
-    return buffer;
-  }
-
   sortByProperty(property) {
     return function (a, b) {
       if (a[property] > b[property]) return 1;
       else if (a[property] < b[property]) return -1;
-
       return 0;
     };
   }
-
+  
   // get token for use with CDOGS
   getToken(): Promise<Object> {
     let url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
