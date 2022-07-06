@@ -55,7 +55,7 @@ services:
       - "npm i && npm run start"
     environment:
       NODE_ENV: development
-      BACKEND_URL: backend
+      BACKEND_URL: http://backend
       COOKIE_SECRET: ${COOKIE_SECRET}
       SESSION_SECRET: ${SESSION_SECRET}
     healthcheck:
