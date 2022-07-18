@@ -33,8 +33,11 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-2">
+          <div class="col-sm-1">
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+          </div>
+          <div class="col-sm-3">
+            <button onclick="emailSearchResults()" id="emailSearchResults" class="btn btn-primary m-2 text-right">Email Search Results</button>
           </div>
         </div>
       </div>
@@ -100,12 +103,10 @@
         myObj['Updated Date'] = obj.updatedDate;
         myObj['Address/City'] = obj.city;
         myObj['Pending'] = obj.pending;
-        {{!-- myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')"></button>`; --}}
         myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')" style="width:100%"><span id="downloadSpinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="downloadBtnTxt${obj.siteId}">Download</span></button>`;
         myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')"><span id="emailSpinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="emailBtnTxt${obj.siteId}">Email</span></button>`;
         results.push(myObj);
       };
-      console.log(results)
 
       $(document).ready(function () {
         var tableClient = $('#sitesTable').DataTable({

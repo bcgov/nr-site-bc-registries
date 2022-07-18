@@ -75,6 +75,12 @@ export class SrsitesController {
     return this.srsitesService.getNilReportData();
   }
 
+  // only queries the db for the downloaddate, id is unused
+  @Get('getSearchResultsData/:id')
+  getSearchResultsData() {
+    return this.srsitesService.getSearchResultsData();
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSrsiteDto: UpdateSrsiteDto) {
     return this.srsitesService.update(+id, updateSrsiteDto);

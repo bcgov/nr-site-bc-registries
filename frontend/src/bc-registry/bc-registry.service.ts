@@ -2,12 +2,12 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { plainTextTemplate } from 'utils/constants';
 import * as base64 from 'base-64';
 import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
+import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios');
 
@@ -15,6 +15,7 @@ let synopsisTemplate: string;
 let detailedPartialTemplate: string;
 let nilTemplate: string;
 let nilTemplate2: string;
+let searchResultsTemplate: string;
 let hostname: string;
 let port: number;
 
@@ -33,6 +34,10 @@ export class BCRegistryService {
     );
     nilTemplate2 = base64.encode(
       fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilPdfTemplate.html'), 'utf8')
+    );
+    searchResultsTemplate = fs.readFileSync(
+      path.resolve(__dirname, '../../utils/templates/searchResultsPartialTemplate.html'),
+      'utf8'
     );
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
@@ -394,17 +399,15 @@ export class BCRegistryService {
       htmlFile = await this.getHtml(siteData, documentTemplate, authorizationToken.toString());
     }
 
+    const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
     const data = JSON.stringify({
       bodyType: 'html',
       body: `${htmlFile}`,
       contexts: [
         {
           context: {
-            something: {
-              greeting: 'Hello',
-              target: 'World',
-            },
-            someone: 'user',
+            reportType: `${rt}`,
+            siteId: `${siteId}`,
           },
           delayTS: 0,
           tag: 'tag',
@@ -414,7 +417,7 @@ export class BCRegistryService {
       encoding: 'utf-8',
       from: 'BCOLHELP@gov.bc.ca',
       priority: 'normal',
-      subject: 'Hello {{ someone }}',
+      subject: `Site Registry {{ reportType }} Report for Site {{ siteId }}`,
     });
 
     const config = {
@@ -468,7 +471,7 @@ export class BCRegistryService {
         cacheReport: true,
         convertTo: 'html',
         overwrite: true,
-        reportName: 'test-report.html',
+        reportName: 'sr-report.html',
       },
       template: {
         encodingType: 'base64',
@@ -498,10 +501,94 @@ export class BCRegistryService {
     return htmlData;
   }
 
-  async getPlainText(token?: string): Promise<string> {
+  // sends an email formatted with html that has search results data
+  async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string): Promise<string> {
+    const authorizationToken = await this.getToken();
+
+    const requestUrl = `${hostname}:${port}/srsites/getSearchResultsData/1`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const documentTemplate = this.buildSearchResultsTemplate(searchResultsJson.searchData);
+    let htmlFile: string;
+    if (requestUrl !== '') {
+      // construct the template data object
+      const searchData = await lastValueFrom(
+        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+      );
+      searchData['account'] = name;
+      searchData['searchType'] = 'Parcel ID';
+      searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
+      searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
+      searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
+      // merge the template date with the template
+      htmlFile = await this.getSearchResultsHtml(searchData, documentTemplate, authorizationToken.toString());
+    }
+
+    // build the email object
+    const data = JSON.stringify({
+      bodyType: 'html',
+      body: `${htmlFile}`,
+      contexts: [
+        {
+          context: {},
+          delayTS: 0,
+          tag: 'tag',
+          to: [`${searchResultsJson.email}`],
+        },
+      ],
+      encoding: 'utf-8',
+      from: 'BCOLHELP@gov.bc.ca',
+      priority: 'normal',
+      subject: `Site Registry Search Results`,
+    });
+
+    const config = {
+      method: 'post',
+      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authorizationToken}`,
+      },
+      data: data,
+    };
+
+    // send the email
+    return axios(config)
+      .then(() => {
+        return 'Email Sent';
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log('Response:');
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log('Request:');
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+        console.log('Error config:');
+        console.log(error.config);
+        console.log(error);
+      });
+  }
+
+  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  async getSearchResultsHtml(data: any, template: string, token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getToken();
-    let plainTextData: string;
-    const data = '';
+    let htmlData: string;
 
     const md = JSON.stringify({
       data,
@@ -509,14 +596,14 @@ export class BCRegistryService {
         '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
       options: {
         cacheReport: true,
-        convertTo: 'txt',
+        convertTo: 'html',
         overwrite: true,
-        reportName: 'test-report.txt',
+        reportName: 'sr-search-results.html',
       },
       template: {
         encodingType: 'base64',
         fileType: 'html',
-        content: `${plainTextTemplate}`,
+        content: `${template}`,
       },
     });
 
@@ -532,14 +619,57 @@ export class BCRegistryService {
 
     await axios(config)
       .then(function (response) {
-        plainTextData = response.data;
+        htmlData = response.data;
       })
       .catch(function (error) {
         console.log(error);
       });
 
-    return plainTextData;
+    return htmlData;
   }
+
+  // async getPlainText(token?: string): Promise<string> {
+  //   const authorizationToken = token != null ? token : await this.getToken();
+  //   let plainTextData: string;
+  //   const data = '';
+
+  //   const md = JSON.stringify({
+  //     data,
+  //     formatters:
+  //       '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+  //     options: {
+  //       cacheReport: true,
+  //       convertTo: 'txt',
+  //       overwrite: true,
+  //       reportName: 'test-report.txt',
+  //     },
+  //     template: {
+  //       encodingType: 'base64',
+  //       fileType: 'html',
+  //       content: `${plainTextTemplate}`,
+  //     },
+  //   });
+
+  //   const config = {
+  //     method: 'post',
+  //     url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+  //     headers: {
+  //       Authorization: `Bearer ${authorizationToken}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //     data: md,
+  //   };
+
+  //   await axios(config)
+  //     .then(function (response) {
+  //       plainTextData = response.data;
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+
+  //   return plainTextData;
+  // }
 
   // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
   buildDetailedTemplate(data): string {
@@ -810,6 +940,28 @@ export class BCRegistryService {
       else if (a[property] < b[property]) return -1;
       return 0;
     };
+  }
+
+  buildSearchResultsTemplate(data: [SearchResultsJsonObject]): string {
+    let template: string = searchResultsTemplate;
+    template = template.concat('<hr size="3" color="black">');
+    // search results
+    const searchResultsLength = data.length;
+    if (searchResultsLength > 0) {
+      // sort notations chronologically
+      data.sort(this.sortByProperty('siteId'));
+      for (const entry of data) {
+        template = template.concat(`<tr><td>${entry.siteId}</td>`);
+        template = template.concat(`<td>${entry.city}</td>`);
+        template = template.concat(`<td>${entry.updatedDate}</td></tr>`);
+      }
+    }
+    template = template.concat(`</tr></table>`);
+    template = template.concat('<hr />');
+    template = template.concat('<div style="text-align: center">End of Search Results</div>');
+    template = template.concat('</div></body></html>');
+
+    return base64.encode(template);
   }
 
   // get token for use with CDOGS

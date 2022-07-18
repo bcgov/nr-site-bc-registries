@@ -32,3 +32,20 @@ export type SearchResultsObject = {
   modifiedDate: string;
   registeredDate: string;
 };
+
+export type SearchResultsJson = {
+  email: string;
+  searchInfo: {
+    searchType: string;
+    searchCriteria1: string;
+    searchCriteria2: string;
+    searchCriteria3: string;
+  };
+  searchData: [SearchResultsJsonObject];
+};
+
+export type SearchResultsJsonObject = {
+  siteId: string;
+  city: string;
+  updatedDate: string;
+};
