@@ -25,7 +25,7 @@ export class SiteRegistryService {
           'Content-Type': 'application/json',
         },
       };
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       return data;
@@ -44,7 +44,7 @@ export class SiteRegistryService {
         },
       };
 
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       return data;
@@ -63,7 +63,7 @@ export class SiteRegistryService {
         },
       };
 
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       return data;
@@ -82,7 +82,7 @@ export class SiteRegistryService {
         },
       };
 
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       return data;
@@ -95,7 +95,7 @@ export class SiteRegistryService {
     const paymentStatus = await this.payService.createAddressSearchInvoice(token, account_id);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.post(requestUrl, { city: city, address: address }).pipe(map((response) => response.data))
       );
       return data;
@@ -121,7 +121,7 @@ export class SiteRegistryService {
         },
       };
 
-      let data = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       return data;

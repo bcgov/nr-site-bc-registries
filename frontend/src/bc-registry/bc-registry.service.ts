@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, StreamableFile } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { plainTextTemplate } from 'utils/constants';
@@ -8,11 +8,13 @@ import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
 let nilTemplate: string;
+let nilTemplate2: string;
 let hostname: string;
 let port: number;
 
@@ -29,6 +31,9 @@ export class BCRegistryService {
     nilTemplate = base64.encode(
       fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilTemplate.html'), 'utf8')
     );
+    nilTemplate2 = base64.encode(
+      fs.readFileSync(path.resolve(__dirname, '../../utils/templates/nilPdfTemplate.html'), 'utf8')
+    );
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
@@ -36,7 +41,7 @@ export class BCRegistryService {
   }
 
   isReportSaved(siteId: string, reportType: string, savedReports: [string, string][]): boolean {
-    for (let entry of savedReports) {
+    for (const entry of savedReports) {
       if (entry[0] == siteId && entry[1] == reportType) {
         return true;
       }
@@ -52,7 +57,7 @@ export class BCRegistryService {
     name: string
   ) {
     const authorizationToken = await this.getToken();
-    let documentTemplate = nilTemplate;
+    const documentTemplate = nilTemplate;
     const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -60,7 +65,7 @@ export class BCRegistryService {
       },
     };
     // grabs download date
-    let data = await lastValueFrom(
+    const data = await lastValueFrom(
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
@@ -145,10 +150,69 @@ export class BCRegistryService {
       data: md,
     };
 
-    return await axios(config).then(response => {console.log('Generated File'); return response.data})
-    .catch(error => {
-        console.log(error.response)
+    return await axios(config)
+      .then((response) => {
+        console.log('Generated File');
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  }
+
+  async requestNilSiteIdPdf(siteId: string, name: string) {
+    const authorizationToken = await this.getToken();
+    const documentTemplate = nilTemplate2;
+    const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    // grabs download date
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    data['account'] = name;
+    data['searchType'] = 'Site ID';
+    data['siteId'] = siteId; // siteid
+
+    const md = JSON.stringify({
+      data,
+      formatters:
+        '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+      options: {
+        cacheReport: false,
+        convertTo: 'pdf',
+        overwrite: true,
+        reportName: 'test-report',
+      },
+      template: {
+        content: `${documentTemplate}`,
+        encodingType: 'base64',
+        fileType: 'html',
+      },
     });
+
+    const config = {
+      method: 'post',
+      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      headers: {
+        Authorization: `Bearer ${authorizationToken}`,
+        'Content-Type': 'application/json',
+      },
+      responseType: 'arraybuffer',
+      data: md,
+    };
+
+    return await axios(config)
+      .then((response) => {
+        console.log('Generated File');
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   }
 
   // builds the pdf report to be sent back to the frontend
@@ -168,7 +232,9 @@ export class BCRegistryService {
     };
 
     if (requestUrl !== '') {
-      let data = await lastValueFrom(
+      // try to set the data, if no data found then return the nil pdf
+      // this should only ever occur on direct download requests on the siteId search page
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
@@ -207,10 +273,89 @@ export class BCRegistryService {
         data: md,
       };
 
-      const response = await axios(config).then(response => {console.log('Generated File'); return response.data})
-      .catch(error => {
-          console.log(error.response)
+      const response = await axios(config)
+        .then((response) => {
+          console.log('Generated File');
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+      return response;
+    } else {
+      return Error('No report type selected');
+    }
+  }
+
+  async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
+    const authorizationToken = await this.getToken();
+
+    const requestUrl =
+      reportType == 'synopsis'
+        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        : reportType == 'detailed'
+        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : '';
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (requestUrl !== '') {
+      let data: any;
+      try {
+        data = await lastValueFrom(
+          this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+        );
+      } catch (err) {
+        console.log('caught error');
+        return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
+      }
+      data['account'] = name;
+
+      let documentTemplate: string;
+      if (reportType == 'detailed') {
+        documentTemplate = this.buildDetailedTemplate(data);
+      } else {
+        documentTemplate = synopsisTemplate;
+      }
+      const md = JSON.stringify({
+        data,
+        formatters:
+          '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
+        options: {
+          cacheReport: false,
+          convertTo: 'pdf',
+          overwrite: true,
+          reportName: 'test-report.pdf',
+        },
+        template: {
+          content: `${documentTemplate}`,
+          encodingType: 'base64',
+          fileType: 'html',
+        },
       });
+
+      const config = {
+        method: 'post',
+        url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+        headers: {
+          Authorization: `Bearer ${authorizationToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'arraybuffer',
+        data: md,
+      };
+
+      const response = await axios(config)
+        .then((response) => {
+          console.log('Generated File');
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
       return response;
     } else {
       return Error('No report type selected');
@@ -236,7 +381,7 @@ export class BCRegistryService {
     let documentTemplate: string;
     let htmlFile: string;
     if (requestUrl !== '') {
-      let siteData = await lastValueFrom(
+      const siteData = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       siteData['account'] = name;
@@ -249,7 +394,7 @@ export class BCRegistryService {
       htmlFile = await this.getHtml(siteData, documentTemplate, authorizationToken.toString());
     }
 
-    var data = JSON.stringify({
+    const data = JSON.stringify({
       bodyType: 'html',
       body: `${htmlFile}`,
       contexts: [
@@ -272,7 +417,7 @@ export class BCRegistryService {
       subject: 'Hello {{ someone }}',
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
       headers: {
@@ -290,7 +435,7 @@ export class BCRegistryService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -298,13 +443,13 @@ export class BCRegistryService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
@@ -332,7 +477,7 @@ export class BCRegistryService {
       },
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
       headers: {
@@ -356,7 +501,7 @@ export class BCRegistryService {
   async getPlainText(token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getToken();
     let plainTextData: string;
-    var data = '';
+    const data = '';
 
     const md = JSON.stringify({
       data,
@@ -375,7 +520,7 @@ export class BCRegistryService {
       },
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
       headers: {
@@ -401,14 +546,14 @@ export class BCRegistryService {
     let template: string = detailedPartialTemplate;
     template = template.concat('<hr size="3" color="black">');
     // notations
-    let notationsLength = data.notationsArray.length;
+    const notationsLength = data.notationsArray.length;
     let counter = 0;
     if (notationsLength > 0) {
       // sort notations chronologically
       data.notationsArray.sort(this.sortByProperty('eventDate'));
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>NOTATIONS</h4>\n');
-      for (let notation of data.notationsArray) {
+      for (const notation of data.notationsArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -427,7 +572,7 @@ export class BCRegistryService {
           template = template.concat('<br>');
           template = template.concat(`<h5 style="text-indent: 4em"><em>Notation Participants</em></h5>`);
           template = template.concat(`<table>`);
-          for (let notationParticipant of notation.participantsArray) {
+          for (const notationParticipant of notation.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${notationParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${notationParticipant.roleString}</td></tr>`);
             template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
@@ -450,14 +595,14 @@ export class BCRegistryService {
       template = template.concat('<hr size="2" color="black">');
     }
     // participants
-    let participantsLength = data.participantsArray.length;
+    const participantsLength = data.participantsArray.length;
     counter = 0;
     if (participantsLength > 0) {
       // sort participants chronologically
       data.participantsArray.sort(this.sortByProperty('effectiveDate'));
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
-      for (let participant of data.participantsArray) {
+      for (const participant of data.participantsArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -483,14 +628,14 @@ export class BCRegistryService {
       template = template.concat('<hr size="2" color="black">');
     }
     // documents
-    let documentsLength = data.documentsArray.length;
+    const documentsLength = data.documentsArray.length;
     counter = 0;
     if (documentsLength > 0) {
       // sort documents chronologically
       data.documentsArray.sort(this.sortByProperty('documentDate'));
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>DOCUMENTS</h4>\n');
-      for (let document of data.documentsArray) {
+      for (const document of data.documentsArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -503,7 +648,7 @@ export class BCRegistryService {
           template = template.concat('<br>');
           template = template.concat(`<h5 style="text-indent: 4em"><em>Document Participants</em></h5>`);
           template = template.concat(`<table>`);
-          for (let documentParticipant of document.participantsArray) {
+          for (const documentParticipant of document.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${documentParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${documentParticipant.roleString}</td></tr>`);
             template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
@@ -527,14 +672,14 @@ export class BCRegistryService {
     }
 
     // associated sites
-    let assocSitesLength = data.associatedSitesArray.length;
+    const assocSitesLength = data.associatedSitesArray.length;
     counter = 0;
     if (assocSitesLength > 0) {
       // sort associated sites chronologically
       data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
-      for (let associatedSite of data.associatedSitesArray) {
+      for (const associatedSite of data.associatedSitesArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -560,12 +705,12 @@ export class BCRegistryService {
     }
 
     // suspect land uses
-    let suspectLandUsesLength = data.suspectLandUsesArray.length;
+    const suspectLandUsesLength = data.suspectLandUsesArray.length;
     counter = 0;
     if (suspectLandUsesLength > 0) {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
-      for (let suspectLandUse of data.suspectLandUsesArray) {
+      for (const suspectLandUse of data.suspectLandUsesArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -590,14 +735,14 @@ export class BCRegistryService {
     }
 
     // parcel descriptions
-    let parcelDescriptionsLength = data.parcelDescriptionsArray.length;
+    const parcelDescriptionsLength = data.parcelDescriptionsArray.length;
     counter = 0;
     if (parcelDescriptionsLength > 0) {
       // sort parcel descriptions chronologically
       data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
-      for (let parcelDescription of data.parcelDescriptionsArray) {
+      for (const parcelDescription of data.parcelDescriptionsArray) {
         if (counter > 0) {
           template = template.concat('<div style="page-break-inside: avoid">\n');
         }
@@ -666,15 +811,16 @@ export class BCRegistryService {
       return 0;
     };
   }
-  
+
   // get token for use with CDOGS
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getToken(): Promise<Object> {
-    let url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
-    let service_client_id = process.env.service_client_id;
-    let service_client_secret = process.env.service_client_secret;
+    const url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
+    const service_client_id = process.env.service_client_id;
+    const service_client_secret = process.env.service_client_secret;
     const token = `${service_client_id}:${service_client_secret}`;
     const encodedToken = Buffer.from(token).toString('base64');
-    let config = {
+    const config = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: 'Basic ' + encodedToken,
@@ -691,7 +837,7 @@ export class BCRegistryService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -699,13 +845,13 @@ export class BCRegistryService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });

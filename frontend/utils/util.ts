@@ -11,3 +11,10 @@ export function getPostalCodes() {
     return null;
   }
 }
+
+export function prependZeroesToSiteId(siteId: string) {
+  while (siteId.length < 10) {
+    siteId = '0' + siteId;
+  }
+  return siteId;
+}

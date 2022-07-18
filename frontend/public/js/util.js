@@ -81,8 +81,16 @@ async function searchArea() {
     var coordinatesTab = document.getElementById('pills-coordinates');
     const latLon = getLatLon();
     if (postalCodeTab.classList.contains('active')) {
-      localStorage.setItem('searchType', 'postal');
-      localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+      if (
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(
+          document.getElementById('postalCodeInput').value
+        )
+      ) {
+        localStorage.setItem('searchType', 'postal');
+        localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+      } else {
+        alert('Please input a valid Postal Code');
+      }
     } else if (coordinatesTab.classList.contains('active')) {
       const dms = getDMS(latLon.lat, latLon.lon);
       localStorage.setItem('searchType', 'coords');
@@ -157,11 +165,64 @@ function checkAreaSearchInputs() {
     }
   }
   if (postalCodeTab.classList.contains('active')) {
-    if (document.getElementById('postalCodeInput').value.length !== 6) {
+    if (document.getElementById('postalCodeInput').value.replace('-', '').replace(' ', '').length !== 6) {
       return false;
     }
   }
   return true;
+}
+
+async function getPdfSynopsis() {
+  const siteId = document.getElementById('siteId').value;
+  $(':button').prop('disabled', true);
+  displaySynDownloadSpinner();
+  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}`, {
+    method: 'GET',
+  })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'synopsis-report_siteid-' + parseInt(siteId) + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      hideSynDownloadSpinner();
+      $(':button').prop('disabled', false);
+    })
+    .catch(() => {
+      alert('Something went wrong');
+      hideSynDownloadSpinner();
+      $(':button').prop('disabled', false);
+    });
+}
+async function getPdfDetailed() {
+  const siteId = document.getElementById('siteId').value;
+  $(':button').prop('disabled', true);
+  displayDetDownloadSpinner();
+  fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
+    method: 'GET',
+  })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'detailed-report_siteid-' + parseInt(siteId) + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      hideDetDownloadSpinner();
+      $(':button').prop('disabled', false);
+    })
+    .catch(() => {
+      alert('Something went wrong');
+      hideDetDownloadSpinner();
+      $(':button').prop('disabled', false);
+    });
 }
 
 async function getPdf(siteId) {
@@ -356,4 +417,37 @@ function hideNilSpinner() {
     spinner.classList.add('d-none');
   }
   buttonText.innerText = 'Download Nil Search Report';
+}
+
+// site id search page
+function displaySynDownloadSpinner() {
+  var buttonText = document.getElementById('synopsisBtnText');
+  var spinner = document.getElementById('downloadSpinnerSynopsis');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideSynDownloadSpinner() {
+  var buttonText = document.getElementById('synopsisBtnText');
+  var spinner = document.getElementById('downloadSpinnerSynopsis');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Display Synopsis Report';
+}
+
+function displayDetDownloadSpinner() {
+  var buttonText = document.getElementById('detailedBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetailed');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideDetDownloadSpinner() {
+  var buttonText = document.getElementById('detailedBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetailed');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Display Detailed Report';
 }

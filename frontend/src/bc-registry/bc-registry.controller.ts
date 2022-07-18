@@ -3,6 +3,7 @@ import { AuthenticationFilter } from 'src/authentication/authentication.filter';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
 import { SessionData } from 'utils/types';
+import { prependZeroesToSiteId } from 'utils/util';
 import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')
@@ -34,6 +35,39 @@ export class BCRegistryController {
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
         return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
+      } else {
+        return null;
+      }
+    }
+  }
+
+  // this route is specifically for the siteId search page report downloads
+  @Get('download-pdf2/:reportType/:siteId')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=report.pdf')
+  async getPdfSiteId(
+    @Param('reportType') reportType: string,
+    @Param('siteId') siteId: string,
+    @Session() session: { data?: SessionData }
+  ): Promise<StreamableFile | null> {
+    siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
+    const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
+    let paymentStatus: string;
+    if (isSaved) {
+      return new StreamableFile(await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name));
+    } else {
+      if (reportType == 'synopsis') {
+        paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+      } else if (reportType == 'detailed') {
+        paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+      } else {
+        return null; // report type error, payment api does not get called
+      }
+      if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
+        session.data.savedReports.push([siteId, reportType]);
+        return new StreamableFile(
+          await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name)
+        );
       } else {
         return null;
       }

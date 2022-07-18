@@ -9,6 +9,7 @@ export class MapController {
     lat: number;
     lng: number;
   }> {
+    postalCode = postalCode.replace(' ', '').replace('-', '');
     return this.mapService.getLatLngByPostalCode(postalCode);
   }
 }

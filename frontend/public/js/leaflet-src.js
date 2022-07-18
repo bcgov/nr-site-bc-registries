@@ -101,8 +101,6 @@ map.on('mouseup', function (e) {
 function postalCodeCircle() {
   const postalCode = document.getElementById('postalCodeInput').value;
   if (checkPostalCode(postalCode)) {
-    postalCode.replace(' ', '');
-
     fetch(`/map/postalcode/${postalCode}`)
       .then(function (response) {
         return response.json();

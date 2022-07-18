@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-var axios = require('axios');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axios = require('axios');
 
 let ESRA_PARCEL_SRCH: string;
 let ESRA_PIN_SRCH: string;
@@ -14,16 +15,16 @@ let ESRA_SYN_RPT: string;
 @Injectable()
 export class PayService {
   constructor() {
-    ESRA_PARCEL_SRCH = 'BCINC';
-    // ESRA_PARCEL_SRCH = 'PARCEL_SRCH';
+    // ESRA_PARCEL_SRCH = 'BCINC';
+    // ESRA_SITE_SRCH = 'BCINC';
+    // ESRA_AREA_SRCH_SM = 'BCINC';
+    // ESRA_AREA_SRCH_LG = 'BCINC';
+    ESRA_PARCEL_SRCH = 'ESRA_PARCEL_SRCH';
     ESRA_PIN_SRCH = 'BCINC';
     ESRA_FILE_SRCH = 'BCINC';
-    ESRA_SITE_SRCH = 'BCINC';
-    // ESRA_SITE_SRCH = 'SITE_SRCH';
-    ESRA_AREA_SRCH_SM = 'BCINC';
-    // ESRA_AREA_SRCH_SM = 'AR_SRCH_SM';
-    ESRA_AREA_SRCH_LG = 'BCINC';
-    // ESRA_AREA_SRCH_LG = 'AR_SRCH_LG';
+    ESRA_SITE_SRCH = 'ESRA_SITE_SRCH';
+    ESRA_AREA_SRCH_SM = 'ESRA_AR_SRCH_SM';
+    ESRA_AREA_SRCH_LG = 'ESRA_AR_SRCH_LG';
     ESRA_ADDRESS_SRCH = 'BCINC';
     ESRA_DTL_RPT = 'BCINC';
     ESRA_SYN_RPT = 'BCINC';
@@ -67,7 +68,7 @@ export class PayService {
 
   async createInvoice(token: string, account_id: number, filingTypeCode: string): Promise<string> {
     // send the request to pay api to create the invoice
-    var data = JSON.stringify({
+    const data = JSON.stringify({
       filingInfo: {
         filingTypes: [
           {
@@ -83,7 +84,7 @@ export class PayService {
       },
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: process.env.baseUrl,
       headers: {
@@ -102,7 +103,7 @@ export class PayService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -110,13 +111,13 @@ export class PayService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
