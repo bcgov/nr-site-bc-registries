@@ -1,8 +1,19 @@
-import { Get, Param, Controller, Header, Session, UseFilters, UseGuards, StreamableFile } from '@nestjs/common';
+import {
+  Get,
+  Param,
+  Controller,
+  Header,
+  Session,
+  UseFilters,
+  UseGuards,
+  StreamableFile,
+  Post,
+  Body,
+} from '@nestjs/common';
 import { AuthenticationFilter } from 'src/authentication/authentication.filter';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
-import { SessionData } from 'utils/types';
+import { SearchResultsJson, SessionData } from 'utils/types';
 import { prependZeroesToSiteId } from 'utils/util';
 import { BCRegistryService } from './bc-registry.service';
 
@@ -44,7 +55,7 @@ export class BCRegistryController {
   // this route is specifically for the siteId search page report downloads
   @Get('download-pdf2/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
-  @Header('Content-Disposition', 'attachment; filename=report.pdf')
+  @Header('Content-Disposition', 'inline; filename=report.pdf')
   async getPdfSiteId(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
@@ -104,6 +115,16 @@ export class BCRegistryController {
         return { message: 'Payment Error' };
       }
     }
+  }
+
+  @Post('email-search-results')
+  async emailSearchResults(
+    @Body() searchResultsJson: SearchResultsJson,
+    @Session() session: { data?: SessionData }
+  ): Promise<{ message: string }> {
+    return {
+      message: await this.bcRegistryService.emailSearchResultsHTML(searchResultsJson, session.data.name),
+    };
   }
 
   @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3')

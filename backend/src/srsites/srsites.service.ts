@@ -479,6 +479,16 @@ export class SrsitesService {
     };
   }
 
+  async getSearchResultsData(): Promise<any> {
+    const srdate = await this.srdatesRepository.find();
+    return {
+      account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+    };
+  }
+
   async update(id: number, updateSrsiteDto: UpdateSrsiteDto): Promise<Srsite> {
     await this.srsitesRepository.update({ id }, updateSrsiteDto);
     return this.findOne(id);

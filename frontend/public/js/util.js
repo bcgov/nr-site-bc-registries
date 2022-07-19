@@ -35,7 +35,6 @@ async function searchCLF() {
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsFile !== '') {
-    console.log(encodeURIComponent(crownLandsFile));
     const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
     await getSearchResults(url);
   } else {
@@ -171,7 +170,6 @@ function checkAreaSearchInputs() {
   }
   return true;
 }
-
 async function getPdfSynopsis() {
   const siteId = document.getElementById('siteId').value;
   $(':button').prop('disabled', true);
@@ -261,7 +259,7 @@ async function emailPdf(siteId) {
   if (reportType == 'synopsis' || reportType == 'detailed') {
     $(':button').prop('disabled', true);
     displayEmailSpinner(siteId);
-    let email = prompt('Please enter your Email Address');
+    let email = prompt('Please enter your email address');
     email = email !== null ? email : '';
     if (email.match(/^\S+@\S+\.\S+$/) !== null) {
       fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
@@ -287,6 +285,104 @@ async function emailPdf(siteId) {
   } else {
     alert('Please select a Report Type');
   }
+}
+
+async function emailSearchResults() {
+  $(':button').prop('disabled', true);
+  const searchData = JSON.parse(localStorage.getItem('searchResults'));
+  let email = prompt('Please enter your email address');
+  email = email !== null ? email : '';
+  if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+    const data = {
+      email: email,
+      searchData: searchData,
+      searchInfo: getSearchInfo(),
+    };
+    fetch(`/bc-registry/email-search-results`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      responseType: 'application/json',
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resJson) => {
+        alert(resJson.message);
+        $(':button').prop('disabled', false);
+      })
+      .catch(() => {
+        alert('Something went wrong');
+        $(':button').prop('disabled', false);
+      });
+  } else {
+    alert('Please enter a valid email');
+    $(':button').prop('disabled', false);
+  }
+}
+
+function getSearchInfo() {
+  let searchType = localStorage.getItem('searchType');
+  let searchCriteria1;
+  let searchCriteria2;
+  let searchCriteria3;
+  switch (searchType) {
+    case 'pid': {
+      searchType = 'Parcel ID';
+      searchCriteria1 = 'Parcel ID: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'clf': {
+      searchType = 'Crown Lands File Number';
+      searchCriteria1 = 'Crown Lands File Number: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'clp': {
+      searchType = 'Crown Lands PIN';
+      searchCriteria1 = 'Crown Lands PIN: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'sid': {
+      searchType = 'Site ID';
+      searchCriteria1 = 'Site ID: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'adr': {
+      searchType = 'Address';
+      searchCriteria1 = 'Address: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'City: ' + localStorage.getItem('searchCriteria2');
+      searchCriteria3 = '';
+      break;
+    }
+    case 'coords': {
+      searchType = 'Area';
+      searchCriteria1 = 'Latitude: ' + localStorage.getItem('latDms');
+      searchCriteria2 = 'Longitude: ' + localStorage.getItem('lonDms');
+      searchCriteria3 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      break;
+    }
+    case 'postal': {
+      searchType = 'Area';
+      searchCriteria1 = 'Postal Code: ' + localStorage.getItem('postalCode');
+      searchCriteria2 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      searchCriteria3 = '';
+      break;
+    }
+  }
+  return {
+    searchType: searchType,
+    searchCriteria1: searchCriteria1,
+    searchCriteria2: searchCriteria2,
+    searchCriteria3: searchCriteria3,
+  };
 }
 
 async function getNilPdf() {
@@ -433,7 +529,7 @@ function hideSynDownloadSpinner() {
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
-  buttonText.innerText = 'Display Synopsis Report';
+  buttonText.innerText = 'Download Synopsis Report';
 }
 
 function displayDetDownloadSpinner() {
@@ -449,5 +545,5 @@ function hideDetDownloadSpinner() {
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
-  buttonText.innerText = 'Display Detailed Report';
+  buttonText.innerText = 'Download Detailed Report';
 }
