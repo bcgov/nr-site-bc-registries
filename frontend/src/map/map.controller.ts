@@ -9,7 +9,7 @@ export class MapController {
     lat: number;
     lng: number;
   }> {
-    postalCode = postalCode.replace(' ', '').replace('-', '');
+    // postal code is in the format 'A1A 1A1'
     return this.mapService.getLatLngByPostalCode(postalCode);
   }
 }

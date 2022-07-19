@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // utility functions
 function back() {
   window.history.go(-1);
@@ -71,6 +72,7 @@ async function searchAddress() {
 
 async function searchArea() {
   if (checkAreaSearchInputs()) {
+    document.getElementById('postalCodeError').innerHTML = '';
     const size = document.getElementById('sizeSmall').checked
       ? 'Small'
       : document.getElementById('sizeLarge').checked
@@ -80,15 +82,12 @@ async function searchArea() {
     var coordinatesTab = document.getElementById('pills-coordinates');
     const latLon = getLatLon();
     if (postalCodeTab.classList.contains('active')) {
-      if (
-        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(
-          document.getElementById('postalCodeInput').value
-        )
-      ) {
+      if (checkPostalCode(document.getElementById('postalCodeInput').value)) {
         localStorage.setItem('searchType', 'postal');
         localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
       } else {
-        alert('Please input a valid Postal Code');
+        document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
+        return false;
       }
     } else if (coordinatesTab.classList.contains('active')) {
       const dms = getDMS(latLon.lat, latLon.lon);

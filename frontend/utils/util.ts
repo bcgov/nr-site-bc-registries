@@ -18,3 +18,15 @@ export function prependZeroesToSiteId(siteId: string) {
   }
   return siteId;
 }
+
+export function checkPostalCode(postalCode) {
+  // const regex = new RegExp(/([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i); // spaces and dashes trimmer
+  const regex = new RegExp(
+    /([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz] \d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d)/i
+  ); // BC POSTAL CODE - must contain a space
+  if (regex.test(postalCode.toString())) {
+    return true;
+  } else {
+    return false;
+  }
+}
