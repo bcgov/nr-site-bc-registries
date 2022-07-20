@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-var axios = require('axios');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axios = require('axios');
 
 let ESRA_PARCEL_SRCH: string;
 let ESRA_PIN_SRCH: string;
@@ -63,7 +64,7 @@ export class PayService {
 
   async createInvoice(token: string, account_id: number, filingTypeCode: string): Promise<string> {
     // send the request to pay api to create the invoice
-    var data = JSON.stringify({
+    const data = JSON.stringify({
       filingInfo: {
         filingTypes: [
           {
@@ -79,7 +80,7 @@ export class PayService {
       },
     });
 
-    var config = {
+    const config = {
       method: 'post',
       url: process.env.baseUrl,
       headers: {
