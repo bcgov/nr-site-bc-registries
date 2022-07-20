@@ -29,6 +29,7 @@ L.drawLocal.draw.handlers.marker.tooltip.start = 'Click to place the area';
 map.addControl(drawControl);
 
 map.on(L.Draw.Event.CREATED, function (e) {
+  document.getElementById('pills-coordinates-tab').click(); // marker is based on coordinates so switch to coords tab
   var type = e.layerType,
     layer = e.layer;
   drawnItems.addLayer(layer);
@@ -101,9 +102,8 @@ map.on('mouseup', function (e) {
 function postalCodeCircle() {
   const postalCode = document.getElementById('postalCodeInput').value;
   if (checkPostalCode(postalCode)) {
-    postalCode.replace(' ', '');
-
-    fetch(`/map/postalcode/${postalCode}`)
+    document.getElementById('postalCodeError').innerHTML = '';
+    fetch(`/map/postalcode/${encodeURI(postalCode)}`)
       .then(function (response) {
         return response.json();
       })
@@ -126,7 +126,7 @@ function postalCodeCircle() {
         console.log('Failed to fetch the postal code coordinates');
       });
   } else {
-    console.log('Bad Postal Code');
+    document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
   }
 }
 
@@ -165,9 +165,12 @@ function drawCircle(latitude, longitude, size) {
 }
 
 function checkPostalCode(postalCode) {
-  postalCode = postalCode.toString().trim();
-  var regex = new RegExp(/([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i); // BC POSTAL CODE
-  if (regex.test(postalCode.toString().replace(/\W+/g, ''))) {
+  // postalCode = postalCode.toString().trim(); // remove white space
+  var regex = new RegExp(
+    /([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz] \d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d)/i
+  );
+  // var regex = new RegExp(/([Vv]\d)([ABCEGHJKLMNPRSTVWXYZabceghjklmnprstvwxyz]\d){2}/i); // BC POSTAL CODE
+  if (regex.test(postalCode.toString())) {
     return true;
   } else {
     return false;

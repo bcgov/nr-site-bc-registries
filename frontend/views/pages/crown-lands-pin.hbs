@@ -14,7 +14,7 @@
               <label for="crownLandsPin" class="m-2">Crown Lands PIN:</p>
             </div>
             <div class="col-xs-1">
-              <input type="number" class="form-control m-2" id="crownLandsPin">
+              <input type="text" maxlength="7" class="form-control m-2" id="crownLandsPin">
             </div>
           </div>
         </div>
@@ -27,5 +27,29 @@
         </div>
       </div>
     </main>
+    <script>
+      // only allow numbers in the pin input
+      const ele = document.getElementById('crownLandsPin');
+      const state = {
+          value: ele.value,
+      };
+
+      ele.addEventListener('keydown', function (e) {
+          const target = e.target;
+          state.selectionStart = target.selectionStart;
+          state.selectionEnd = target.selectionEnd;
+      });
+
+      ele.addEventListener('input', function (e) {
+          const target = e.target;
+
+          if (/^[0-9]*$/.test(target.value)) {
+              state.value = target.value;
+          } else {
+              target.value = state.value;
+              target.setSelectionRange(state.selectionStart, state.selectionEnd);
+          }
+      });
+    </script>
   {{/inline}}
 {{/template}}

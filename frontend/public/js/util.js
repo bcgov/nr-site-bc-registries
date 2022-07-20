@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // utility functions
 function back() {
   window.history.go(-1);
@@ -35,7 +36,6 @@ async function searchCLF() {
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsFile !== '') {
-    console.log(encodeURIComponent(crownLandsFile));
     const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
     await getSearchResults(url);
   } else {
@@ -72,6 +72,7 @@ async function searchAddress() {
 
 async function searchArea() {
   if (checkAreaSearchInputs()) {
+    document.getElementById('postalCodeError').innerHTML = '';
     const size = document.getElementById('sizeSmall').checked
       ? 'Small'
       : document.getElementById('sizeLarge').checked
@@ -81,8 +82,13 @@ async function searchArea() {
     var coordinatesTab = document.getElementById('pills-coordinates');
     const latLon = getLatLon();
     if (postalCodeTab.classList.contains('active')) {
-      localStorage.setItem('searchType', 'postal');
-      localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+      if (checkPostalCode(document.getElementById('postalCodeInput').value)) {
+        localStorage.setItem('searchType', 'postal');
+        localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+      } else {
+        document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
+        return false;
+      }
     } else if (coordinatesTab.classList.contains('active')) {
       const dms = getDMS(latLon.lat, latLon.lon);
       localStorage.setItem('searchType', 'coords');
@@ -157,11 +163,63 @@ function checkAreaSearchInputs() {
     }
   }
   if (postalCodeTab.classList.contains('active')) {
-    if (document.getElementById('postalCodeInput').value.length !== 6) {
+    if (document.getElementById('postalCodeInput').value.replace('-', '').replace(' ', '').length !== 6) {
       return false;
     }
   }
   return true;
+}
+async function getPdfSynopsis() {
+  const siteId = document.getElementById('siteId').value;
+  $(':button').prop('disabled', true);
+  displaySynDownloadSpinner();
+  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}`, {
+    method: 'GET',
+  })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'synopsis-report_siteid-' + parseInt(siteId) + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      hideSynDownloadSpinner();
+      $(':button').prop('disabled', false);
+    })
+    .catch(() => {
+      alert('Something went wrong');
+      hideSynDownloadSpinner();
+      $(':button').prop('disabled', false);
+    });
+}
+async function getPdfDetailed() {
+  const siteId = document.getElementById('siteId').value;
+  $(':button').prop('disabled', true);
+  displayDetDownloadSpinner();
+  fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
+    method: 'GET',
+  })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'detailed-report_siteid-' + parseInt(siteId) + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      hideDetDownloadSpinner();
+      $(':button').prop('disabled', false);
+    })
+    .catch(() => {
+      alert('Something went wrong');
+      hideDetDownloadSpinner();
+      $(':button').prop('disabled', false);
+    });
 }
 
 async function getPdf(siteId) {
@@ -200,7 +258,7 @@ async function emailPdf(siteId) {
   if (reportType == 'synopsis' || reportType == 'detailed') {
     $(':button').prop('disabled', true);
     displayEmailSpinner(siteId);
-    let email = prompt('Please enter your Email Address');
+    let email = prompt('Please enter your email address');
     email = email !== null ? email : '';
     if (email.match(/^\S+@\S+\.\S+$/) !== null) {
       fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
@@ -226,6 +284,104 @@ async function emailPdf(siteId) {
   } else {
     alert('Please select a Report Type');
   }
+}
+
+async function emailSearchResults() {
+  $(':button').prop('disabled', true);
+  const searchData = JSON.parse(localStorage.getItem('searchResults'));
+  let email = prompt('Please enter your email address');
+  email = email !== null ? email : '';
+  if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+    const data = {
+      email: email,
+      searchData: searchData,
+      searchInfo: getSearchInfo(),
+    };
+    fetch(`/bc-registry/email-search-results`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      responseType: 'application/json',
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((resJson) => {
+        alert(resJson.message);
+        $(':button').prop('disabled', false);
+      })
+      .catch(() => {
+        alert('Something went wrong');
+        $(':button').prop('disabled', false);
+      });
+  } else {
+    alert('Please enter a valid email');
+    $(':button').prop('disabled', false);
+  }
+}
+
+function getSearchInfo() {
+  let searchType = localStorage.getItem('searchType');
+  let searchCriteria1;
+  let searchCriteria2;
+  let searchCriteria3;
+  switch (searchType) {
+    case 'pid': {
+      searchType = 'Parcel ID';
+      searchCriteria1 = 'Parcel ID: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'clf': {
+      searchType = 'Crown Lands File Number';
+      searchCriteria1 = 'Crown Lands File Number: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'clp': {
+      searchType = 'Crown Lands PIN';
+      searchCriteria1 = 'Crown Lands PIN: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'sid': {
+      searchType = 'Site ID';
+      searchCriteria1 = 'Site ID: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = '';
+      searchCriteria3 = '';
+      break;
+    }
+    case 'adr': {
+      searchType = 'Address';
+      searchCriteria1 = 'Address: ' + localStorage.getItem('searchCriteria');
+      searchCriteria2 = 'City: ' + localStorage.getItem('searchCriteria2');
+      searchCriteria3 = '';
+      break;
+    }
+    case 'coords': {
+      searchType = 'Area';
+      searchCriteria1 = 'Latitude: ' + localStorage.getItem('latDms');
+      searchCriteria2 = 'Longitude: ' + localStorage.getItem('lonDms');
+      searchCriteria3 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      break;
+    }
+    case 'postal': {
+      searchType = 'Area';
+      searchCriteria1 = 'Postal Code: ' + localStorage.getItem('postalCode');
+      searchCriteria2 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      searchCriteria3 = '';
+      break;
+    }
+  }
+  return {
+    searchType: searchType,
+    searchCriteria1: searchCriteria1,
+    searchCriteria2: searchCriteria2,
+    searchCriteria3: searchCriteria3,
+  };
 }
 
 async function getNilPdf() {
@@ -356,4 +512,37 @@ function hideNilSpinner() {
     spinner.classList.add('d-none');
   }
   buttonText.innerText = 'Download Nil Search Report';
+}
+
+// site id search page
+function displaySynDownloadSpinner() {
+  var buttonText = document.getElementById('synopsisBtnText');
+  var spinner = document.getElementById('downloadSpinnerSynopsis');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideSynDownloadSpinner() {
+  var buttonText = document.getElementById('synopsisBtnText');
+  var spinner = document.getElementById('downloadSpinnerSynopsis');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Download Synopsis Report';
+}
+
+function displayDetDownloadSpinner() {
+  var buttonText = document.getElementById('detailedBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetailed');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideDetDownloadSpinner() {
+  var buttonText = document.getElementById('detailedBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetailed');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Download Detailed Report';
 }

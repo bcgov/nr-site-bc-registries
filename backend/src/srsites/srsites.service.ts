@@ -189,7 +189,7 @@ export class SrsitesService {
   }
 
   async searchAddress(address: string, city: string): Promise<MinimalSiteData[]> {
-    const cityPattern = city !== '' ? `[a-zA-Z]*${city.toLowerCase()}[a-zA-Z]*` : `[a-zA-Z]*`;
+    const cityPattern = `${city.toLowerCase()}[a-zA-Z]*`;
     const re = new RegExp(cityPattern);
     let sites: any;
     let sitesArray: MinimalSiteData[] = [];
@@ -476,6 +476,16 @@ export class SrsitesService {
       todaysDate: getTodaysDate(),
       currentTime: getCurrentTime(),
       downloaddate: srdate[0].downloaddate,
+    };
+  }
+
+  async getSearchResultsData(): Promise<any> {
+    const srdate = await this.srdatesRepository.find();
+    return {
+      account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
     };
   }
 

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
 import { postalCodeJSON } from 'utils/types';
-import { getPostalCodes } from 'utils/util';
+import { getPostalCodes, checkPostalCode } from 'utils/util';
 
-var postalCodes: [postalCodeJSON];
+let postalCodes: [postalCodeJSON];
 
 @Injectable()
 export class MapService {
@@ -16,6 +16,11 @@ export class MapService {
   }> {
     let lat: number;
     let lng: number;
+    // verify that the postal code received by the user follows 'A1A 1A1' formatting
+    if (!checkPostalCode(postalCode)) {
+      throw new BadRequestException(null, 'Invalid Postal Code');
+    }
+    postalCode = postalCode.replace(' ', ''); // remove the whitespace
     // if no postal codes json file, use geocoder which is slower and less reliable
     if (postalCodes == null) {
       const url = `https://geocoder.ca/${postalCode}?json=1`;
