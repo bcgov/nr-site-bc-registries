@@ -14,19 +14,15 @@ let ESRA_SYN_RPT: string;
 @Injectable()
 export class PayService {
   constructor() {
-    ESRA_PARCEL_SRCH = 'BCINC';
-    // ESRA_PARCEL_SRCH = 'PARCEL_SRCH';
-    ESRA_PIN_SRCH = 'BCINC';
-    ESRA_FILE_SRCH = 'BCINC';
-    ESRA_SITE_SRCH = 'BCINC';
-    // ESRA_SITE_SRCH = 'SITE_SRCH';
-    ESRA_AREA_SRCH_SM = 'BCINC';
-    // ESRA_AREA_SRCH_SM = 'AR_SRCH_SM';
-    ESRA_AREA_SRCH_LG = 'BCINC';
-    // ESRA_AREA_SRCH_LG = 'AR_SRCH_LG';
-    ESRA_ADDRESS_SRCH = 'BCINC';
-    ESRA_DTL_RPT = 'BCINC';
-    ESRA_SYN_RPT = 'BCINC';
+    ESRA_PARCEL_SRCH = 'PARCEL_SRC';
+    ESRA_PIN_SRCH = 'PIN_SRCH';
+    ESRA_FILE_SRCH = 'FILE_SRCH';
+    ESRA_SITE_SRCH = 'SITE_SRCH';
+    ESRA_AREA_SRCH_SM = 'AR_SRCH_SM';
+    ESRA_AREA_SRCH_LG = 'AR_SRCH_LG';
+    ESRA_ADDRESS_SRCH = 'ADRS_SRCH';
+    ESRA_DTL_RPT = 'DTL_RPT';
+    ESRA_SYN_RPT = 'SYN_RPT';
   }
 
   async createParcelSearchInvoice(token: string, account_id: number) {
@@ -102,7 +98,7 @@ export class PayService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -110,13 +106,13 @@ export class PayService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
