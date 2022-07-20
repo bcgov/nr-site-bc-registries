@@ -10,6 +10,7 @@ async function searchPid() {
   localStorage.setItem('searchCriteria', parcelId);
   localStorage.setItem('searchCriteria2', '');
   if (parcelId !== '') {
+    displayViewResultsSpinner();
     const url = `/site-registry/searchPid/${parcelId}`;
     await getSearchResults(url);
   } else {
@@ -23,6 +24,7 @@ async function searchCLP() {
   localStorage.setItem('searchCriteria', crownLandsPin);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsPin !== '') {
+    displayViewResultsSpinner();
     const url = `/site-registry/searchCLP/${crownLandsPin}`;
     await getSearchResults(url);
   } else {
@@ -36,6 +38,7 @@ async function searchCLF() {
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
   if (crownLandsFile !== '') {
+    displayViewResultsSpinner();
     const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
     await getSearchResults(url);
   } else {
@@ -49,6 +52,7 @@ async function searchSiteId() {
   localStorage.setItem('searchCriteria', siteId);
   localStorage.setItem('searchCriteria2', '');
   if (siteId !== '') {
+    displaySiteIDSearchSpinner();
     const url = `/site-registry/searchSiteId/${siteId}`;
     await getSearchResults(url);
   } else {
@@ -63,6 +67,7 @@ async function searchAddress() {
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
   if (city.length >= 2 && city.replace(/\*/g, '').length >= 2) {
+    displayViewResultsSpinner();
     const url = `/site-registry/searchAddr`;
     await postSearchResults(url, { city: city, address: address });
   } else {
@@ -72,6 +77,7 @@ async function searchAddress() {
 
 async function searchArea() {
   if (checkAreaSearchInputs()) {
+    displayViewResultsSpinner();
     document.getElementById('postalCodeError').innerHTML = '';
     const size = document.getElementById('sizeSmall').checked
       ? 'Small'
@@ -117,10 +123,33 @@ async function getSearchResults(url) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
         window.location.href = '/view-search-results';
       } else {
+        hideViewResultsSpinner();
         alert('Error with payment: ' + resJson.error);
       }
     })
     .catch(() => {
+      hideViewResultsSpinner();
+      alert('Something went wrong');
+    });
+}
+
+async function getSearchResultsSiteId(url) {
+  fetch(url, {
+    method: 'GET',
+    responseType: 'application/json',
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      if (!resJson.error) {
+        localStorage.setItem('searchResults', JSON.stringify(resJson));
+        window.location.href = '/view-search-results';
+      } else {
+        hideSiteIDSearchSpinner();
+        alert('Error with payment: ' + resJson.error);
+      }
+    })
+    .catch(() => {
+      hideSiteIDSearchSpinner();
       alert('Something went wrong');
     });
 }
@@ -253,14 +282,16 @@ async function getPdf(siteId) {
   }
 }
 
-async function emailPdf(siteId) {
+async function emailPdf() {
+  const siteId = $('#reportSiteId').val();
   const reportType = document.getElementById(`reportType${siteId}`).value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
     $(':button').prop('disabled', true);
-    displayEmailSpinner(siteId);
-    let email = prompt('Please enter your email address');
-    email = email !== null ? email : '';
-    if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+    displayReportEmailSpinner();
+    let email = $('#selectReportEmailRadio').is(':checked')
+      ? $('#reportEmailSelect').val()
+      : $('#reportEmailInput').val();
+    if (email !== null && email.match(/^\S+@\S+\.\S+$/) !== null) {
       fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
         method: 'GET',
         responseType: 'application/json',
@@ -268,17 +299,17 @@ async function emailPdf(siteId) {
         .then((res) => res.json())
         .then((resJson) => {
           alert(resJson.message);
-          hideEmailSpinner(siteId);
+          hideReportEmailSpinner();
           $(':button').prop('disabled', false);
         })
         .catch(() => {
           alert('Something went wrong');
-          hideEmailSpinner(siteId);
+          hideReportEmailSpinner();
           $(':button').prop('disabled', false);
         });
     } else {
       alert('Please enter a valid email');
-      hideEmailSpinner(siteId);
+      hideReportEmailSpinner();
       $(':button').prop('disabled', false);
     }
   } else {
@@ -288,10 +319,12 @@ async function emailPdf(siteId) {
 
 async function emailSearchResults() {
   $(':button').prop('disabled', true);
+  displayReportEmailSpinner();
   const searchData = JSON.parse(localStorage.getItem('searchResults'));
-  let email = prompt('Please enter your email address');
-  email = email !== null ? email : '';
-  if (email.match(/^\S+@\S+\.\S+$/) !== null) {
+  let email = $('#selectSearchResultsEmailRadio').is(':checked')
+    ? $('#searchResultsEmailSelect').val()
+    : $('#searchResultsEmailInput').val();
+  if (email !== null && email.match(/^\S+@\S+\.\S+$/) !== null) {
     const data = {
       email: email,
       searchData: searchData,
@@ -308,14 +341,17 @@ async function emailSearchResults() {
       .then((res) => res.json())
       .then((resJson) => {
         alert(resJson.message);
+        hideReportEmailSpinner();
         $(':button').prop('disabled', false);
       })
       .catch(() => {
         alert('Something went wrong');
+        hideReportEmailSpinner();
         $(':button').prop('disabled', false);
       });
   } else {
     alert('Please enter a valid email');
+    hideReportEmailSpinner();
     $(':button').prop('disabled', false);
   }
 }
@@ -466,6 +502,7 @@ async function getNilPdf() {
   }
 }
 
+// report download spinner
 function displayDownloadSpinner(siteId) {
   var buttonText = document.getElementById('downloadBtnTxt' + siteId);
   var spinner = document.getElementById('downloadSpinner' + siteId);
@@ -482,22 +519,41 @@ function hideDownloadSpinner(siteId) {
   buttonText.innerText = 'Download';
 }
 
-function displayEmailSpinner(siteId) {
-  var buttonText = document.getElementById('emailBtnTxt' + siteId);
-  var spinner = document.getElementById('emailSpinner' + siteId);
+// email report spinner
+function displayReportEmailSpinner() {
+  var buttonText = document.getElementById('emailReportBtnTxt');
+  var spinner = document.getElementById('emailReportSpinner');
   spinner.classList.remove('d-none');
   buttonText.innerText = '';
 }
 
-function hideEmailSpinner(siteId) {
-  var buttonText = document.getElementById('emailBtnTxt' + siteId);
-  var spinner = document.getElementById('emailSpinner' + siteId);
+function hideReportEmailSpinner() {
+  var buttonText = document.getElementById('emailReportBtnTxt');
+  var spinner = document.getElementById('emailReportSpinner');
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
-  buttonText.innerText = 'Email';
+  buttonText.innerText = 'Send Email';
 }
 
+// email search results spinner
+function displaySearchResultsEmailSpinner() {
+  var buttonText = document.getElementById('emailSearchResultsBtnTxt');
+  var spinner = document.getElementById('emailSearchResultsSpinner');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideSearchResultsEmailSpinner() {
+  var buttonText = document.getElementById('emailSearchResultsBtnTxt');
+  var spinner = document.getElementById('emailSearchResultsSpinner');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Send Email';
+}
+
+// nil report download spinner
 function displayNilSpinner() {
   var buttonText = document.getElementById('nilBtnText');
   var spinner = document.getElementById('nilSpinner');
@@ -545,4 +601,42 @@ function hideDetDownloadSpinner() {
     spinner.classList.add('d-none');
   }
   buttonText.innerText = 'Download Detailed Report';
+}
+
+// view results button spinners
+function displayViewResultsSpinner() {
+  $(':button').prop('disabled', true);
+  var buttonText = document.getElementById('searchBtnTxt');
+  var spinner = document.getElementById('searchSpinner');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideViewResultsSpinner() {
+  var buttonText = document.getElementById('searchBtnTxt');
+  var spinner = document.getElementById('searchSpinner');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'View Search Results';
+  $(':button').prop('disabled', false);
+}
+
+// site id search spinner (has different button text)
+function displaySiteIDSearchSpinner() {
+  $(':button').prop('disabled', true);
+  var buttonText = document.getElementById('searchBtnTxt');
+  var spinner = document.getElementById('searchSpinner');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideSiteIDSearchSpinner() {
+  var buttonText = document.getElementById('searchBtnTxt');
+  var spinner = document.getElementById('searchSpinner');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Site ID Selection List';
+  $(':button').prop('disabled', false);
 }

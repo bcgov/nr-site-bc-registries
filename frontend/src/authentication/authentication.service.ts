@@ -28,8 +28,8 @@ export class AuthenticationService {
     this.bc_registry_base_url = process.env.BC_REGISTRY_BASE_URL;
   }
 
-  // function unnecessary since the token contains this info
-  async getUserDetails(token: string) {
+  // includes contacts list which the token doesn't contain
+  async getUserDetails(token: string): Promise<{ contacts: [{ email: string }] }> {
     const config = {
       url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
       headers: {
@@ -49,7 +49,7 @@ export class AuthenticationService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -57,13 +57,13 @@ export class AuthenticationService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
@@ -89,7 +89,7 @@ export class AuthenticationService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -97,13 +97,13 @@ export class AuthenticationService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
@@ -138,7 +138,7 @@ export class AuthenticationService {
     console.log(this.grant_type);
     console.log(this.client_id);
     console.log(this.redirect_uri);
-    
+
     return axios
       .post(url, params, config)
       .then((res) => {
@@ -148,7 +148,7 @@ export class AuthenticationService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -156,13 +156,13 @@ export class AuthenticationService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });
@@ -210,11 +210,21 @@ export class AuthenticationService {
     //   });
   }
 
-  async getTokenDetails(token: string): Promise<{ name: string; label: string; account_id: number }> {
+  async getTokenDetails(token: string): Promise<{ name: string; label: string; account_id: number; emails: string[] }> {
     const decodedToken: { sub: string; name: string } = jwt_decode(token);
     const userSettings = await this.getUserSettings(token, decodedToken.sub);
+    const userDetails: { contacts: [{ email: string }] } = await this.getUserDetails(token);
+    const emailArray: string[] = [];
+    for (const c of userDetails.contacts) {
+      emailArray.push(c.email);
+    }
     // there are multiple roles in userSettings, the first entry may not be the correct one every time so logic here may need to be improved
-    return { name: decodedToken.name, label: userSettings[0].label, account_id: userSettings[0].id };
+    return {
+      name: decodedToken.name,
+      label: userSettings[0].label,
+      account_id: userSettings[0].id,
+      emails: emailArray,
+    };
   }
 
   async refreshToken(refresh_token: string): Promise<TokenObject> {
@@ -225,7 +235,7 @@ export class AuthenticationService {
     params.append('client_id', this.client_id);
     params.append('client_secret', this.secret);
 
-    var config = {
+    const config = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -240,7 +250,7 @@ export class AuthenticationService {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log("Response:");
+          console.log('Response:');
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
@@ -248,13 +258,13 @@ export class AuthenticationService {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log("Request:");
+          console.log('Request:');
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log("Error config:");
+        console.log('Error config:');
         console.log(error.config);
         console.log(error);
       });

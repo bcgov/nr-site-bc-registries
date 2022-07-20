@@ -13,6 +13,7 @@ export type SessionData = {
   name: string;
   label: string;
   account_id: number;
+  emails: string[];
   savedReports: savedReport[];
 };
 

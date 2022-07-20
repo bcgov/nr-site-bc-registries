@@ -37,11 +37,131 @@
             <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
           </div>
           <div class="col-sm-3">
-            <button onclick="emailSearchResults()" id="emailSearchResults" class="btn btn-primary m-2 text-right">Email Search Results</button>
+            <button type="button" class="btn btn-primary m-2 text-right" data-toggle="modal" data-target="#emailSearchResultsModal" id="openEmailSearchResultsModal">Email Search Results</button>
+          </div>
+        </div>
+      </div>
+      <!-- Email Report Modal -->
+      <div class="modal fade" id="emailReportModal" tabindex="-1" role="dialog" aria-labelledby="emailReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <form>
+              <div class="modal-header">
+                <h5 class="modal-title" id="emailReportModalLabel">Email Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-check">
+                  <div class="form-group row">
+                    <div class="col-sm-4">
+                        <input class="form-check-input" type="radio" name="emailReportRadio" id="selectReportEmailRadio" value="option1" checked>
+                        <label for="selectReportEmailRadio">Select an email from contacts:</label>
+                      </div>
+                    <div class="col-sm-8">
+                      <select id="reportEmailSelect" class="form-control">
+                        {{#each emails}}
+                        <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-4">
+                      <input class="form-check-input" type="radio" name="emailReportRadio" id="inputReportEmailRadio" value="option2">
+                      <label for="inputReportEmailRadio">Input an email:</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input id="reportEmailInput" class="form-control" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class='btn btn-primary' onclick="emailPdf()" id="emailReportButton"><span id="emailReportSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="emailReportBtnTxt">Send Email</span></button>
+                <param id="reportSiteId" value="">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Email Search Results Modal-->
+      <div class="modal fade" id="emailSearchResultsModal" tabindex="-1" role="dialog" aria-labelledby="emailSearchResultsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <form>
+              <div class="modal-header">
+                <h5 class="modal-title" id="emailSearchResultsModalLabel">Email Search Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-check">
+                  <div class="form-group row">
+                    <div class="col-sm-4">
+                        <input class="form-check-input" type="radio" name="emailSearchResultsRadio" id="selectSearchResultsEmailRadio" value="option1" checked>
+                        <label for="selectSearchResultsEmailRadio">Select an email from contacts:</label>
+                      </div>
+                    <div class="col-sm-8">
+                      <select id="searchResultsEmailSelect" class="form-control">
+                        {{#each emails}}
+                        <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-4">
+                      <input class="form-check-input" type="radio" name="emailSearchResultsRadio" id="inputSearchResultsEmailRadio" value="option2">
+                      <label for="inputSearchResultsEmailRadio">Input an email:</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input id="searchResultsEmailInput" class="form-control" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class='btn btn-primary' onclick="emailSearchResults()" id="emailSearchResultsButton"><span id="emailSearchResultsSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="emailSearchResultsBtnTxt">Send Email</span></button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </main>
+    <script>
+      $("#selectSearchResultsEmailRadio").click(function() {
+        $("#searchResultsEmailSelect").prop('disabled', false);
+        $("#searchResultsEmailInput").prop('disabled', true);
+      })
+      $("#inputSearchResultsEmailRadio").click(function() {
+        $("#searchResultsEmailInput").prop('disabled', false);
+        $("#searchResultsEmailSelect").prop('disabled', true);
+      })
+      $("#selectReportEmailRadio").click(function() {
+        $("#reportEmailSelect").prop('disabled', false);
+        $("#reportEmailInput").prop('disabled', true);
+      })
+      $("#inputReportEmailRadio").click(function() {
+        $("#reportEmailInput").prop('disabled', false);
+        $("#reportEmailSelect").prop('disabled', true);
+      })
+      $(document).on("click", ".emailButton", function () {
+        const siteId = $(this).data('id');
+        if ($(`#reportType${siteId}`).prop('selectedIndex') != 0) {
+          const reportText = $(`#reportType${siteId} option:selected`).text();
+          $("#emailReportModal #reportSiteId").val( siteId );
+          $("#emailReportModalLabel").text(`Email ${reportText} for Site ${parseInt(siteId)}`);
+          $("#emailReportModal").modal('toggle');
+        } else {
+          alert('Please select a report type');
+        }
+      });
+    </script>
     <script>
         var searchType = localStorage.getItem("searchType")
         var searchCriteria = localStorage.getItem("searchCriteria")
@@ -104,7 +224,8 @@
         myObj['Address/City'] = obj.city;
         myObj['Pending'] = obj.pending;
         myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')" style="width:100%"><span id="downloadSpinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="downloadBtnTxt${obj.siteId}">Download</span></button>`;
-        myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')"><span id="emailSpinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="emailBtnTxt${obj.siteId}">Email</span></button>`;
+        myObj['  '] = `<button class='btn btn-primary emailButton' data-id="${obj.siteId}">Email</button>`;
+        {{!-- myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')"><span id="emailSpinner${obj.siteId}" class="spinner-border spinner-border-sm d-none"></span><span id="emailBtnTxt${obj.siteId}">Email</span></button>`; --}}
         results.push(myObj);
       };
 
@@ -124,50 +245,9 @@
             {data: "Pending"},
             {data: " "},
             {data: "  "},
-          ],
-          //ajax: getData(),
+          ]
         });
       });
-
-    //function getData() {
-    //  var searchType = localStorage.getItem("searchType");
-    //  var searchCriteria = localStorage.getItem("searchCriteria");
-    //  var searchCriteria2 = localStorage.getItem("searchCriteria2");
-    //  var searchCriteria3 = localStorage.getItem("searchCriteria3");
-    //  var url = '';
-    //  if (searchType == 'pid') {
-    //    url = `/site-registry/searchPid/${searchCriteria}`
-    //  } else if (searchType == 'clf') {
-    //    url = `/site-registry/searchCLF/${searchCriteria}`
-    //  } else if (searchType == 'clp') {
-    //    url = `/site-registry/searchCLP/${searchCriteria}`
-    //  } else if (searchType == 'sid') {
-    //    url = `/site-registry/searchSiteId/${searchCriteria}`
-    //  } else if (searchType == 'adr') {
-    //    url = `/site-registry/searchAddr/${searchCriteria}/${searchCriteria2}`
-    //  } else if (searchType == 'coords' || searchType == 'postal') {
-    //    url = `/site-registry/searchArea/${searchCriteria}/${searchCriteria2}/${searchCriteria3}`
-    //  }
-      //$.ajax({
-      //  url: url,
-      //  success: function (data) {
-      //    var results = [];
-      //    $.each(data, function (ind, obj) {
-      //      myObj = {};
-      //      myObj['Report Type'] = `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option><option value='detailed'>Detailed Report</option></select>`
-      //      myObj['Site ID'] = parseInt(obj.siteId);
-      //      myObj['Updated Date'] = obj.modifiedDate != '' ? obj.modifiedDate : obj.registeredDate;
-      //      myObj['Address/City'] = obj.city;
-      //      myObj[' '] = `<button class='btn btn-primary' id="downloadButton${obj.siteId}" onclick="getPdf('${obj.siteId}')">Download</button>`;
-      //      myObj['  '] = `<button class='btn btn-primary' id="emailButton${obj.siteId}" onclick="emailPdf('${obj.siteId}')">Email</button>`;
-      //      results.push(myObj);
-      //    });
-      //    $('#sitesTable').DataTable().rows.add(results).draw();
-      //    document.getElementById('downloadHeader').innerHTML = '';
-      //    document.getElementById('emailHeader').innerHTML = '';
-      //  },
-      //});
-      //  }
     </script>
   {{/inline}}
 {{/template}}
