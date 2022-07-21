@@ -3,7 +3,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { AuthenticationService } from './authentication.service';
 import { Request } from 'express';
 import { URL } from 'url';
-import { TokenObject } from 'utils/types';
+import { AccountObject, TokenObject } from 'utils/types';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -21,7 +21,7 @@ export class AuthenticationGuard implements CanActivate {
 
     let tokenStatus: string;
     let tokenObject: TokenObject;
-    let tokenDetails: { name: string; label: string; account_id: number; emails: string[] };
+    let tokenDetails: { activeAccount: AccountObject; accounts: AccountObject[]; name: string; contacts: string[] };
 
     // no session and no code
     if (code == null && token == null) {
@@ -46,10 +46,10 @@ export class AuthenticationGuard implements CanActivate {
           tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
           request.session.data = {
             ...tokenObject,
+            activeAccount: tokenDetails.activeAccount,
+            accounts: tokenDetails.accounts,
             name: tokenDetails.name,
-            label: tokenDetails.label,
-            account_id: tokenDetails.account_id,
-            emails: tokenDetails.emails,
+            contacts: tokenDetails.contacts,
             savedReports: [],
           };
           return true;
@@ -63,21 +63,27 @@ export class AuthenticationGuard implements CanActivate {
     else {
       // get token from code and run a health check
       tokenObject = await this.authenticationService.getToken(code, redirect);
-      tokenStatus = await this.authenticationService.getHealthCheck(tokenObject.access_token);
-      if (tokenStatus == 'good') {
-        // health check is good, set the session variables
-        tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
-        request.session.data = {
-          ...tokenObject,
-          name: tokenDetails.name,
-          label: tokenDetails.label,
-          account_id: tokenDetails.account_id,
-          emails: tokenDetails.emails,
-          savedReports: [],
-        };
-        return true;
+      if (tokenObject) {
+        tokenStatus = await this.authenticationService.getHealthCheck(tokenObject.access_token);
+        if (tokenStatus == 'good') {
+          // health check is good, set the session variables
+          tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
+          request.session.data = {
+            ...tokenObject,
+            activeAccount: tokenDetails.activeAccount,
+            accounts: tokenDetails.accounts,
+            name: tokenDetails.name,
+            contacts: tokenDetails.contacts,
+            savedReports: [],
+          };
+          return true;
+        } else {
+          // health check is bad (meaning code is bad) so redirect
+          request.session = null;
+          throw new UnauthorizedException('Invalid code, redirecting.');
+        }
       } else {
-        // health check is bad (meaning code is bad) so redirect
+        // bad code so redirect
         request.session = null;
         throw new UnauthorizedException('Invalid code, redirecting.');
       }

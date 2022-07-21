@@ -1,9 +1,11 @@
 import { Get, Controller, Render, UseGuards, UseFilters, Session } from '@nestjs/common';
-import { AuthenticationGuard } from './authentication/authentication.guard';
-import { PAGE_TITLES } from 'utils/constants';
-import { AuthenticationFilter } from './authentication/authentication.filter';
-import { SessionData } from 'utils/types';
 import { AppService } from './app.service';
+import { PAGE_TITLES } from 'utils/constants';
+import { SessionData } from 'utils/types';
+import { AuthenticationGuard } from './authentication/authentication.guard';
+import { AuthenticationFilter } from './authentication/authentication.filter';
+import { AccountGuard } from './account/account.guard';
+import { AccountFilter } from './account/account.filter';
 
 @Controller()
 export class AppController {
@@ -14,17 +16,26 @@ export class AppController {
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
   async root(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.INDEX,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
+          accounts: session.data.accounts,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.INDEX,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
+          accounts: session.data.accounts,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -33,18 +44,27 @@ export class AppController {
   @Render('parcel-id')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getParcelId(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -53,18 +73,27 @@ export class AppController {
   @Render('crown-lands-pin')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getCrownLandsPin(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -73,18 +102,27 @@ export class AppController {
   @Render('crown-lands-file')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getCrownLandsFile(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -93,18 +131,27 @@ export class AppController {
   @Render('site-id-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getSiteIdSearch(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -113,18 +160,27 @@ export class AppController {
   @Render('address-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getAddressSearch(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -133,18 +189,27 @@ export class AppController {
   @Render('area-search')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getAreaSearch(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
         };
   }
@@ -153,21 +218,30 @@ export class AppController {
   @Render('view-search-results')
   @UseFilters(AuthenticationFilter)
   @UseGuards(AuthenticationGuard)
+  @UseFilters(AccountFilter)
+  @UseGuards(AccountGuard)
   async getViewSearchResults(@Session() session: { data?: SessionData }) {
+    const username = session.data.name;
+    const label =
+      session.data.activeAccount !== undefined
+        ? session.data.activeAccount.label
+        : session.data.accounts.length == 0
+        ? '~'
+        : '-';
     return process.env.site_environment == 'DEVELOPMENT'
       ? {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
-          emails: { emails: session.data.emails },
+          emails: { emails: session.data.contacts },
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
-          username: session.data.name,
-          label: session.data.label,
+          username: username,
+          label: label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
-          emails: { emails: session.data.emails },
+          emails: { emails: session.data.contacts },
         };
   }
 }

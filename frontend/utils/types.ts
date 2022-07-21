@@ -10,11 +10,19 @@ export type postalCodeJSON = {
 export type SessionData = {
   access_token: string;
   refresh_token: string;
+  accounts: AccountObject[];
+  activeAccount: AccountObject;
   name: string;
-  label: string;
-  account_id: number;
-  emails: string[];
+  contacts: string[];
   savedReports: savedReport[];
+};
+
+export type AccountObject = {
+  accountStatus: string;
+  accountType: string;
+  id: number;
+  label: string;
+  type: string;
 };
 
 type savedReport = [string, string];

@@ -3,6 +3,14 @@
     <main role="main">
       <div class="container">
         <div class="row">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4">
+              <p class="account-error  p-1 pl-2 pr-2 border d-none" id="accountError">No active premium accounts were found</p>
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+
+        <div class="row">
           <div class="col-sm">
             <p class="top-text">
               NOTE: This Registry will NOT produce a Land Title search. If you require a Land Title record please go to
@@ -85,6 +93,51 @@
         </div>
         <br />
       </div>
+      <!-- Select account modal -->
+      <div class="modal fade" id="setAccountModal" tabindex="-1" role="dialog" aria-labelledby="setAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <form>
+              <div class="modal-header">
+                <h5 class="modal-title" id="setAccountModalLabel">Select An Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group row">
+                  <div class="col-sm-8">
+                    <select id="accountSelect" class="form-control">
+                      {{#each accounts}}
+                      <option value="{{this.label}}">{{this.label}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class='btn btn-primary' onclick="setAccount()" id="setAccountButton"><span id="setAccountSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="setAccountBtnTxt">Set Account</span></button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </main>
+    <script>
+      $(window).on('load', function() {
+        const setAccountLink = $('#setAccountLink');
+        if (setAccountLink.text() == '-') {
+          setAccountLink.text('Select an account');
+          $('#setAccountModal').modal('show');
+        }
+        if ($('#accountSelect').val() == null) {
+          setAccountLink.text('No eligible accounts found');
+          setAccountLink.removeAttr('data-toggle');
+          setAccountLink.removeAttr('data-target');
+          setAccountLink.css('cursor','default');
+          $('#accountError').removeClass('d-none');
+        }
+    });
+    </script>
   {{/inline}}
 {{/template}}

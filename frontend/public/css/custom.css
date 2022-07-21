@@ -117,3 +117,8 @@ input[type='number'] {
 .vrbutton {
   width: 175px;
 }
+
+.account-error {
+  color: red;
+  text-align: center;
+}

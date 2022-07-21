@@ -121,6 +121,7 @@ async function getSearchResults(url) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
         hideViewResultsSpinner();
@@ -167,12 +168,15 @@ async function postSearchResults(url, data) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
+        hideViewResultsSpinner();
         alert('Error with payment: ' + resJson.error);
       }
     })
     .catch(() => {
+      hideViewResultsSpinner();
       alert('Something went wrong');
     });
 }
@@ -502,6 +506,36 @@ async function getNilPdf() {
   }
 }
 
+function setAccount() {
+  $(':button').prop('disabled', true);
+  displaySetAccountSpinner();
+  const accountLabel = $('#accountSelect').val();
+  const data = {
+    label: accountLabel,
+  };
+  fetch(`/authentication/setAccount`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    responseType: 'application/json',
+    body: JSON.stringify(data),
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      $('#setAccountLink').text(accountLabel);
+      hideSetAccountSpinner();
+      $(':button').prop('disabled', false);
+      alert(resJson.message);
+      $('#setAccountModal').modal('hide');
+    })
+    .catch(() => {
+      alert('Something went wrong 2');
+      hideSetAccountSpinner();
+      $(':button').prop('disabled', false);
+    });
+}
+
 // report download spinner
 function displayDownloadSpinner(siteId) {
   var buttonText = document.getElementById('downloadBtnTxt' + siteId);
@@ -638,5 +672,24 @@ function hideSiteIDSearchSpinner() {
     spinner.classList.add('d-none');
   }
   buttonText.innerText = 'Site ID Selection List';
+  $(':button').prop('disabled', false);
+}
+
+// set account spinner
+function displaySetAccountSpinner() {
+  $(':button').prop('disabled', true);
+  var buttonText = document.getElementById('setAccountBtnTxt');
+  var spinner = document.getElementById('setAccountSpinner');
+  spinner.classList.remove('d-none');
+  buttonText.innerText = '';
+}
+
+function hideSetAccountSpinner() {
+  var buttonText = document.getElementById('setAccountBtnTxt');
+  var spinner = document.getElementById('setAccountSpinner');
+  if (!spinner.classList.contains('d-none')) {
+    spinner.classList.add('d-none');
+  }
+  buttonText.innerText = 'Set Account';
   $(':button').prop('disabled', false);
 }
