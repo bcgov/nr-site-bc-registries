@@ -955,8 +955,13 @@ export class BCRegistryService {
         template = template.concat(`<td>${entry.city}</td>`);
         template = template.concat(`<td>${entry.updatedDate}</td></tr>`);
       }
+      template = template.concat(`</tr></table>`);
+    } else {
+      template = template.concat(`</tr></table>`);
+      template = template.concat(
+        `<div style="text-align: center">No sites were found with the given search criteria</div>`
+      );
     }
-    template = template.concat(`</tr></table>`);
     template = template.concat('<hr />');
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
     template = template.concat('</div></body></html>');
