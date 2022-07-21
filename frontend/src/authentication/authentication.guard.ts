@@ -11,17 +11,17 @@ export class AuthenticationGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request & { session? } = context.switchToHttp().getRequest();
-    const protocol = process.env.site_environment == 'DEVELOPMENT' ? 'http://' : 'https://'
+    const protocol = process.env.site_environment == 'DEVELOPMENT' ? 'http://' : 'https://';
     const url = new URL(protocol + request.headers.host + request.originalUrl);
     const urlPath = url.pathname == '/' ? '' : url.pathname;
     const redirect = url.origin + urlPath;
 
     const code = url.searchParams.get('code') ? url.searchParams.get('code') : null;
-    let token = request.session.data ? request.session.data.access_token : null;
+    const token = request.session.data ? request.session.data.access_token : null;
 
     let tokenStatus: string;
     let tokenObject: TokenObject;
-    let tokenDetails: { name: string; label: string; account_id: number };
+    let tokenDetails: { name: string; label: string; account_id: number; emails: string[] };
 
     // no session and no code
     if (code == null && token == null) {
@@ -49,6 +49,7 @@ export class AuthenticationGuard implements CanActivate {
             name: tokenDetails.name,
             label: tokenDetails.label,
             account_id: tokenDetails.account_id,
+            emails: tokenDetails.emails,
             savedReports: [],
           };
           return true;
@@ -71,6 +72,7 @@ export class AuthenticationGuard implements CanActivate {
           name: tokenDetails.name,
           label: tokenDetails.label,
           account_id: tokenDetails.account_id,
+          emails: tokenDetails.emails,
           savedReports: [],
         };
         return true;

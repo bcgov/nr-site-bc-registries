@@ -160,12 +160,14 @@ export class AppController {
           username: session.data.name,
           label: session.data.label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          emails: { emails: session.data.emails },
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
           username: session.data.name,
           label: session.data.label,
           downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          emails: { emails: session.data.emails },
         };
   }
 }
