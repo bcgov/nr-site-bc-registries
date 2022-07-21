@@ -55,11 +55,11 @@ export class PayService {
   }
 
   async createSynopsisInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_DTL_RPT);
+    return this.createInvoice(token, account_id, ESRA_SYN_RPT);
   }
 
   async createDetailedInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_SYN_RPT);
+    return this.createInvoice(token, account_id, ESRA_DTL_RPT);
   }
 
   async createInvoice(token: string, account_id: number, filingTypeCode: string): Promise<string> {
