@@ -137,6 +137,13 @@
           setAccountLink.css('cursor','default');
           $('#accountError').removeClass('d-none');
         }
+        if ($('#accountSelect').val() !== null) {
+          if ($('#accountSelect option').length == 1) {
+            setAccountLink.removeAttr('data-toggle');
+            setAccountLink.removeAttr('data-target');
+            setAccountLink.css('cursor','default');
+          }
+        }
     });
     </script>
   {{/inline}}
