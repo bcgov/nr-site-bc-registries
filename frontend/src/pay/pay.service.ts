@@ -15,19 +15,15 @@ let ESRA_SYN_RPT: string;
 @Injectable()
 export class PayService {
   constructor() {
-    ESRA_PARCEL_SRCH = 'BCINC';
-    ESRA_SITE_SRCH = 'BCINC';
-    ESRA_AREA_SRCH_SM = 'BCINC';
-    ESRA_AREA_SRCH_LG = 'BCINC';
-    // ESRA_PARCEL_SRCH = 'ESRA_PARCEL_SRCH';
-    // ESRA_SITE_SRCH = 'ESRA_SITE_SRCH';
-    // ESRA_AREA_SRCH_SM = 'ESRA_AR_SRCH_SM';
-    // ESRA_AREA_SRCH_LG = 'ESRA_AR_SRCH_LG';
-    ESRA_PIN_SRCH = 'BCINC';
-    ESRA_FILE_SRCH = 'BCINC';
-    ESRA_ADDRESS_SRCH = 'BCINC';
-    ESRA_DTL_RPT = 'BCINC';
-    ESRA_SYN_RPT = 'BCINC';
+    ESRA_PARCEL_SRCH = 'PARCEL_SRC';
+    ESRA_SITE_SRCH = 'SITE_SRCH';
+    ESRA_AREA_SRCH_SM = 'AR_SRCH_SM';
+    ESRA_AREA_SRCH_LG = 'AR_SRCH_LG';
+    ESRA_PIN_SRCH = 'PIN_SRCH';
+    ESRA_FILE_SRCH = 'FILE_SRCH';
+    ESRA_ADDRESS_SRCH = 'ADRS_SRCH';
+    ESRA_DTL_RPT = 'DTL_RPT';
+    ESRA_SYN_RPT = 'SYN_RPT';
   }
 
   async createParcelSearchInvoice(token: string, account_id: number) {
@@ -79,7 +75,7 @@ export class PayService {
         ],
       },
       businessInfo: {
-        corpType: 'BC',
+        corpType: 'ESRA',
         businessIdentifier: 'BC1000000',
       },
     });
