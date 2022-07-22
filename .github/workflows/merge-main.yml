@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  NAME: gfp
+  NAME: esra
 
 jobs:
   codeql:

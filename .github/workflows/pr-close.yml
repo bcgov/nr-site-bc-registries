@@ -11,7 +11,7 @@ on:
       - "**.yaml"
 
 env:
-  NAME: gfp
+  NAME: esra
 
 jobs:
   # Clean up OpenShift when PR closed, no conditions
