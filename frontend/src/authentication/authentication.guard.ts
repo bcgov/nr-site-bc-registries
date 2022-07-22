@@ -83,7 +83,7 @@ export class AuthenticationGuard implements CanActivate {
           throw new UnauthorizedException('Invalid code, redirecting.');
         }
       } else {
-        // bad code so redirect
+        // Bad code so redirect
         request.session = null;
         throw new UnauthorizedException('Invalid code, redirecting.');
       }
