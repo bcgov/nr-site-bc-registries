@@ -3,7 +3,7 @@ import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
 import jwt_decode from 'jwt-decode';
-import { TokenObject } from 'utils/types';
+import { AccountObject, TokenObject } from 'utils/types';
 
 export class AuthenticationError extends Error {}
 
@@ -29,7 +29,7 @@ export class AuthenticationService {
   }
 
   // includes contacts list which the token doesn't contain
-  async getUserDetails(token: string): Promise<{ contacts: [{ email: string }] }> {
+  async getUserDetails(token: string) {
     const config = {
       url: `${this.bc_registry_base_url}/auth/api/v1/users/@me`,
       headers: {
@@ -210,21 +210,47 @@ export class AuthenticationService {
     //   });
   }
 
-  async getTokenDetails(token: string): Promise<{ name: string; label: string; account_id: number; emails: string[] }> {
+  async getTokenDetails(
+    token: string
+  ): Promise<{ activeAccount: AccountObject; accounts: AccountObject[]; name: string; contacts: string[] }> {
+    let activeAccount: AccountObject;
     const decodedToken: { sub: string; name: string } = jwt_decode(token);
-    const userSettings = await this.getUserSettings(token, decodedToken.sub);
-    const userDetails: { contacts: [{ email: string }] } = await this.getUserDetails(token);
+    // gets name + contacts
+    const userDetails: { firstname: string; lastname: string; contacts: [{ email: string }] } =
+      await this.getUserDetails(token);
     const emailArray: string[] = [];
     for (const c of userDetails.contacts) {
       emailArray.push(c.email);
     }
-    // there are multiple roles in userSettings, the first entry may not be the correct one every time so logic here may need to be improved
+    // gets accounts
+    const userSettings = await this.getUserSettings(token, decodedToken.sub);
+    const accounts = this.getPremiumUsers(userSettings);
+    // if one active+premium account, set that as active account
+    if (accounts.length > 1) {
+      activeAccount = null;
+    } else {
+      activeAccount = accounts[0];
+    }
     return {
-      name: decodedToken.name,
-      label: userSettings[0].label,
-      account_id: userSettings[0].id,
-      emails: emailArray,
+      activeAccount: activeAccount,
+      accounts: accounts,
+      name: userDetails.firstname + ' ' + userDetails.lastname,
+      contacts: emailArray,
     };
+  }
+
+  getPremiumUsers(userSettings: AccountObject[]) {
+    const accounts: AccountObject[] = [];
+    for (const entry of userSettings) {
+      // one of the user's accounts
+      if (entry.type == 'ACCOUNT') {
+        // it's active and premium so add it to account list
+        if (entry.accountType == 'PREMIUM' && entry.accountStatus == 'ACTIVE') {
+          accounts.push(entry);
+        }
+      }
+    }
+    return accounts;
   }
 
   async refreshToken(refresh_token: string): Promise<TokenObject> {

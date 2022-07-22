@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { AuthenticationFilter } from '../authentication/authentication.filter';
 import { AuthenticationGuard } from '../authentication/authentication.guard';
-import { PayService } from '../pay/pay.service';
 import { SearchResultsObject, SessionData } from 'utils/types';
 import { SiteRegistryService } from './site-registry.service';
 import { AddressSearchPipe } from './pipe/address-search.pipe';
@@ -26,14 +25,14 @@ type AreaSearchObject = { lat: string; lng: string; size: string };
 @UseFilters(AuthenticationFilter)
 @UseGuards(AuthenticationGuard)
 export class SiteRegistryController {
-  constructor(private siteRegistryService: SiteRegistryService, private payService: PayService) {}
+  constructor(private siteRegistryService: SiteRegistryService) {}
 
   @Get('searchPid/:pid')
   async getPidSearch(
     @Param('pid', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pid: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchPid(pid, session.data.access_token, session.data.account_id);
+    return this.siteRegistryService.searchPid(pid, session.data.access_token, session.data.activeAccount.id);
   }
 
   @Get('searchCLP/:pin')
@@ -41,7 +40,7 @@ export class SiteRegistryController {
     @Param('pin', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pin: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchCrownPin(pin, session.data.access_token, session.data.account_id);
+    return this.siteRegistryService.searchCrownPin(pin, session.data.access_token, session.data.activeAccount.id);
   }
 
   @Get('searchCLF/:crownLandsFileNumber')
@@ -52,7 +51,7 @@ export class SiteRegistryController {
     return this.siteRegistryService.searchCrownFile(
       crownLandsFileNumber,
       session.data.access_token,
-      session.data.account_id
+      session.data.activeAccount.id
     );
   }
 
@@ -61,7 +60,7 @@ export class SiteRegistryController {
     @Param('siteId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.account_id);
+    return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.activeAccount.id);
   }
 
   @Post('searchAddr')
@@ -73,7 +72,7 @@ export class SiteRegistryController {
       searchObject.address,
       searchObject.city,
       session.data.access_token,
-      session.data.account_id
+      session.data.activeAccount.id
     );
   }
 
@@ -87,7 +86,7 @@ export class SiteRegistryController {
       searchObject.lng,
       searchObject.size,
       session.data.access_token,
-      session.data.account_id
+      session.data.activeAccount.id
     );
   }
 }

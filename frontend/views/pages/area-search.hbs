@@ -212,6 +212,8 @@
                 var postalCodeInput = document.getElementById('postalCodeInput').value;
                 if (postalCodeInput.length == 7) {
                     postalCodeCircle();
+                } else if (postalCodeInput.replace(' ','').replace('-','').length == 6) {
+                    document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
                 }
             } else if (coordinatesTab.classList.contains('active')) {
                 var lonDeg = document.getElementById('lonDegInput').value;

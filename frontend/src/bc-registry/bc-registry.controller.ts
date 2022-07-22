@@ -37,9 +37,15 @@ export class BCRegistryController {
       return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
     } else {
       if (reportType == 'synopsis') {
-        paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createDetailedInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else {
         return null; // report type error, payment api does not get called
       }
@@ -68,9 +74,15 @@ export class BCRegistryController {
       return new StreamableFile(await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name));
     } else {
       if (reportType == 'synopsis') {
-        paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createDetailedInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else {
         return null; // report type error, payment api does not get called
       }
@@ -100,9 +112,15 @@ export class BCRegistryController {
       };
     } else {
       if (reportType == 'synopsis') {
-        paymentStatus = await this.payService.createSynopsisInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(session.data.access_token, session.data.account_id);
+        paymentStatus = await this.payService.createDetailedInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id
+        );
       } else {
         return { message: 'Report type error' };
       }
