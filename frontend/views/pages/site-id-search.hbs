@@ -1,0 +1,83 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role="main">
+      <div class="container">
+        <div class="row">
+          <h2 class="indented">Search By:</h2>
+        </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+          <form class="form-inline">
+            <div class="form-group row">
+              <div class="col-sm mt-1 ml-4">
+                <label for="siteId" class="m-2">Site ID:</label>
+              </div>
+            </div>
+            <div class="col-sm mt-1">
+              <input type="text" class="form-control m-2" id="siteId" maxlength="10">
+            </div>
+          </form>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <table class="my-table site-id-table">
+              <tr>
+                <td><button class='btn btn-primary m-2 btn-block' onclick="searchSiteId()" id="searchButton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">Site ID Selection List</span></button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$11.50</label></td>
+              </tr>
+              <tr>
+                <td><button class='btn btn-primary m-2 btn-block' id="downloadSynopsisReport" onclick="getPdfSynopsis()" style="width:100%">
+                  <span id="downloadSpinnerSynopsis" class="spinner-border spinner-border-sm d-none"></span>
+                  <span id="synopsisBtnText">Download Synopsis Report</span>
+                </button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$26.50</label></td>
+              </tr>
+              <tr>
+                <td><button class='btn btn-primary m-2 btn-block' id="downloadDetailReport" onclick="getPdfDetailed()" style="width:100%">
+                  <span id="downloadSpinnerDetailed" class="spinner-border spinner-border-sm d-none"></span>
+                  <span id="detailedBtnText">Download Detail Report</span>
+                </button></td>
+                <td><label class="my-label">-</label></td>
+                <td><label class="my-label">$51.50</label></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4">
+            <button onclick="back()" id="backButton" class="btn btn-secondary">Back</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      // only allow numbers in the siteId input
+      const ele = document.getElementById('siteId');
+      const state = {
+          value: ele.value,
+      };
+
+      ele.addEventListener('keydown', function (e) {
+          const target = e.target;
+          state.selectionStart = target.selectionStart;
+          state.selectionEnd = target.selectionEnd;
+      });
+
+      ele.addEventListener('input', function (e) {
+          const target = e.target;
+
+          if (/^[0-9]*$/.test(target.value)) {
+              state.value = target.value;
+          } else {
+              target.value = state.value;
+              target.setSelectionRange(state.selectionStart, state.selectionEnd);
+          }
+      });
+    </script>
+  {{/inline}}
+{{/template}}

@@ -1,4 +1,25 @@
 {
+  "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      { 
+        "include": "../utils",
+        "outDir": "dist/utils",
+        "watchAssets": true 
+      },
+      {
+        "include": "../views",
+        "outDir": "dist/views",
+        "watchAssets": true 
+      },
+      {
+        "include": "../public",
+        "outDir": "dist/public",
+        "watchAssets": true 
+      },"**/*.hbs"
+    ],
+    "watchAssets": true
+  }
 }

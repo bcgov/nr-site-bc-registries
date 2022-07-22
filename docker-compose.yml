@@ -26,6 +26,10 @@ services:
       POSTGRESQL_USER: default
       POSTGRESQL_PASSWORD: default
       POSTGRESQL_DATABASE: default
+      object_store_bucket: epdsbx
+      object_store_host: nrs.objectstore.gov.bc.ca
+      object_store_secret: ${object_store_secret}
+      object_store_userid: ${object_store_userid}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 1m30s
@@ -51,7 +55,9 @@ services:
       - "npm i && npm run start"
     environment:
       NODE_ENV: development
-      BACKEND_URL: backend
+      BACKEND_URL: http://backend
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 1m30s

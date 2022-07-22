@@ -1,0 +1,55 @@
+{{#> template}}
+  {{#*inline "content"}}
+    <main role="main">
+      <div class="container">
+        <div class="row">
+          <h2 class="indented">Search By:</h2>
+        </div>
+        <div class="row">
+          <div id="line"><hr /></div>
+        </div>
+        <div class="row">
+          <div class="form-group row">
+            <div class="col-xs-1 mt-1 ml-2">
+              <label for="parcelId" class="m-2">Parcel ID:</label>
+            </div>
+            <div class="col-xs-1">
+              <input type="text" maxlength="9" class="form-control m-2" id="parcelId">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-4">
+            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+            <button onclick="searchPid()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      // only allow numbers in the file number input
+      const ele = document.getElementById('parcelId');
+      const state = {
+          value: ele.value,
+      };
+
+      ele.addEventListener('keydown', function (e) {
+          const target = e.target;
+          state.selectionStart = target.selectionStart;
+          state.selectionEnd = target.selectionEnd;
+      });
+
+      ele.addEventListener('input', function (e) {
+          const target = e.target;
+
+          if (/^[0-9]*$/.test(target.value)) {
+              state.value = target.value;
+          } else {
+              target.value = state.value;
+              target.setSelectionRange(state.selectionStart, state.selectionEnd);
+          }
+      });
+    </script>
+  {{/inline}}
+{{/template}}

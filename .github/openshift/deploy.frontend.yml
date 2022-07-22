@@ -12,7 +12,7 @@ labels:
 parameters:
   - name: NAME
     description: Module name
-    value: gfp
+    value: esra
   - name: COMPONENT
     description: Component name
     value: frontend
@@ -33,7 +33,7 @@ parameters:
     value: ghcr.io
   - name: PROMOTE
     description: Image (namespace/name:tag) to promote/import
-    value: openshift/postgresql:12
+    value: bcgov/greenfield-pipeline:prod-frontend
 objects:
   - apiVersion: v1
     kind: ImageStream
@@ -51,6 +51,19 @@ objects:
             name: ${REGISTRY}/${PROMOTE}
           referencePolicy:
             type: Local
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: esra-sessions
+      labels:
+        app: ${NAME}-${ZONE}
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: "1Gi"
+      storageClassName: netapp-file-standard
   - apiVersion: v1
     kind: DeploymentConfig
     metadata:
@@ -79,13 +92,78 @@ objects:
             app: ${NAME}-${ZONE}
             deploymentconfig: ${NAME}-${ZONE}-${COMPONENT}
         spec:
+          volumes:
+            - name: esra-sessions
+              persistentVolumeClaim:
+                claimName: esra-sessions
           containers:
             - image: ${NAME}-${ZONE}-${COMPONENT}:${IMAGE_TAG}
               imagePullPolicy: Always
               name: ${NAME}
               env:
+                - name: NODE_TLS_REJECT_UNAUTHORIZED 
+                  value: '0'
                 - name: BACKEND_URL
                   value: https://${NAME}-${ZONE}-backend.${DOMAIN}
+                  value: http://${NAME}-${ZONE}-backend
+                - name: BC_REGISTRY_BASE_URL
+                  value: https://bcregistry-test.apigee.net
+                - name: baseUrl
+                  value: https://bcregistry-test.apigee.net/pay/api/v1/payment-requests
+                - name: site_environment
+                  value: TEST
+                - name: SESSION_PATH
+                  value: '/mnt/sessions'
+                - name: COOKIE_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: esra-sessions
+                      key: COOKIE_SECRET
+                - name: SESSION_SECRET
+                  valueFrom:
+                    secretKeyRef: 
+                      name: esra-sessions
+                      key: SESSION_SECRET
+                - name: KEYCLOAK_BASE_URL
+                  valueFrom:
+                    secretKeyRef: 
+                      name: keycloak
+                      key: KEYCLOAK_BASE_URL
+                - name: KEYCLOAK_REALM
+                  valueFrom:
+                    secretKeyRef: 
+                      name: keycloak
+                      key: KEYCLOAK_REALM
+                - name: KEYCLOAK_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef: 
+                      name: keycloak
+                      key: KEYCLOAK_CLIENT_ID
+                - name: KEYCLOAK_SECRET
+                  valueFrom:
+                    secretKeyRef: 
+                      name: keycloak
+                      key: KEYCLOAK_SECRET
+                - name: KEYCLOAK_XAPIKEY
+                  valueFrom:
+                    secretKeyRef: 
+                      name: keycloak
+                      key: KEYCLOAK_XAPIKEY
+                - name: service_realm
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: service_realm
+                - name: service_client_id
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: service_client_id
+                - name: service_client_secret
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: service_client_secret
               ports:
                 - containerPort: 3000
                   protocol: TCP
@@ -98,19 +176,22 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 30
                 periodSeconds: 30
                 timeoutSeconds: 1
               livenessProbe:
                 successThreshold: 1
-                failureThreshold: 3
+                failureThreshold: 5
                 httpGet:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 30
                 periodSeconds: 30
                 timeoutSeconds: 5
+              volumeMounts:
+                - mountPath: /mnt/sessions
+                  name: esra-sessions
   - apiVersion: v1
     kind: Service
     metadata:

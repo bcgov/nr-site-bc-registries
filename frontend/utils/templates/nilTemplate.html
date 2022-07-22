@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="fill-height-md">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @page {
+        margin: 1cm;
+      }
+      .container {
+        width: 595px;
+        height: auto;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">As of: {d.downloaddate}</div>
+        <div class="col-sm text-right">{d.todaysDate}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm text-right">{d.currentTime}</div>
+      </div>
+      <h2 style="text-align: center; margin: 0.5rem">BC Online: Site Registry</h2>
+      <p style="text-align: center; margin: 0">For: {d.account}</p>
+      <!-- <p>Folio:</p> -->
+
+      <hr size="5" />
+      <h3 style="text-align: center">{d.searchType} Nil Search</h3>
+      <hr />
+      <br />
+      <div class="row">
+        <div class="col-sm-8 text-right">
+          As of {d.downloaddate}, no records from Site Registry match the given search criteria:
+        </div>
+        <div class="col-sm-4 text-left">
+          <table>
+            <tr>
+              <td>{d.searchCriteria1}</td>
+            </tr>
+            <tr>
+              <td>{d.searchCriteria2}</td>
+            </tr>
+            <tr>
+              <td>{d.searchCriteria3}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <br />
+      <div class="row"><div class="col-lg text-center">You have been charged for this information.</div></div>
+      <hr />
+      <br />
+      <div class="row">
+        <div class="col-lg text-center">
+          Sites may be revealed by searching with alternate search methods. For example, a site not revealed in an Area
+          search may be revealed by searching with another piece of information such as PID, PIN, address, or Crown
+          Lands File Number.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

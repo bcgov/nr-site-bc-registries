@@ -1,0 +1,124 @@
+/* index.hbs */
+.disclaimer-box {
+  width: 300px;
+  height: 460px;
+  padding: 2em;
+  margin: 2em;
+  border-style: solid;
+  background-color: lightgray;
+}
+.top-text,
+.disclaimer-text,
+.bottom-text {
+  text-align: center;
+}
+.top-text {
+  color: red;
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+}
+.my-table {
+  margin-top: 2em;
+  margin-right: 2em;
+  margin-bottom: 2em;
+  padding: 2em;
+}
+thead {
+  display: table-header-group;
+  vertical-align: middle;
+}
+tbody {
+  vertical-align: middle;
+}
+th,
+td {
+  margin: 1em;
+  padding: 1em;
+}
+
+/* parcel-id+ */
+.my-button {
+  width: 220px;
+}
+.my-label {
+  font-size: large;
+  font-weight: bold;
+}
+.my-p {
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+}
+.site-id-table td {
+  margin: 0.5m;
+  padding: 0.5em;
+}
+.my-input {
+  margin: 0.5em;
+}
+.my-div {
+  text-align: center;
+}
+td.center {
+  text-align: center;
+}
+hr {
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;
+  background-color: #000000;
+  height: 1px;
+}
+#line {
+  float: left;
+  width: 500px;
+  height: 40px;
+}
+.indented {
+  margin-left: 1em;
+}
+.parcel-p {
+  text-align: left;
+  padding: 0.5em;
+  font-size: large;
+  font-weight: bold;
+}
+.parcel-input {
+  display: inline-block;
+  margin: 0.5em;
+}
+#map {
+  height: 500px;
+}
+img {
+  max-height: 100%;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: rgb(131, 192, 136);
+}
+
+/* Disable up and down arrows on number inputs */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.vrbutton {
+  width: 175px;
+}
+
+.account-error {
+  color: red;
+  text-align: center;
+}

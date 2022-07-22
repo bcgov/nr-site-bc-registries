@@ -12,7 +12,7 @@ labels:
 parameters:
   - name: NAME
     description: Module name
-    value: gfp
+    value: esra
   - name: COMPONENT
     description: Component name
     value: backend
@@ -33,7 +33,7 @@ parameters:
     value: ghcr.io
   - name: PROMOTE
     description: Image (namespace/name:tag) to promote/import
-    required: true
+    value: bcgov/greenfield-pipeline:prod-backend
 objects:
   - apiVersion: v1
     kind: ImageStream
@@ -84,6 +84,8 @@ objects:
               imagePullPolicy: Always
               name: ${NAME}
               env:
+                - name: NODE_TLS_REJECT_UNAUTHORIZED 
+                  value: '0'
                 - name: POSTGRESQL_HOST
                   value: ${NAME}-${ZONE}-database
                 - name: POSTGRESQL_DATABASE
@@ -101,6 +103,26 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
                       key: database-user
+                - name: object_store_bucket
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_bucket
+                - name: object_store_host
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_host
+                - name: object_store_secret
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_secret
+                - name: object_store_userid
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_userid
               ports:
                 - containerPort: 3000
                   protocol: TCP
@@ -113,9 +135,9 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 180
                 periodSeconds: 15
-                timeoutSeconds: 1
+                timeoutSeconds: 5
               livenessProbe:
                 successThreshold: 1
                 failureThreshold: 3
@@ -123,7 +145,7 @@ objects:
                   path: /
                   port: 3000
                   scheme: HTTP
-                initialDelaySeconds: 15
+                initialDelaySeconds: 180
                 periodSeconds: 30
                 timeoutSeconds: 5
   - apiVersion: v1

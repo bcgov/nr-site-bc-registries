@@ -1,12 +1,14 @@
-# RedHat UBI 8 with nodejs 14
+# RedHat UBI 8 with nodejs 16
 FROM registry.access.redhat.com/ubi8/ubi as builder
-RUN dnf module install -y nodejs:14
+RUN dnf module install -y nodejs:16
 
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
 RUN npm ci --only=prod && \
     npm run build
+
+
 
 # Deployment container
 FROM registry.access.redhat.com/ubi8/ubi-micro
@@ -34,4 +36,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT ["node", "dist/main"]
+ENTRYPOINT ["node", "dist/src/main"]
