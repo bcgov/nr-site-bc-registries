@@ -92,6 +92,7 @@ async function searchArea() {
         localStorage.setItem('searchType', 'postal');
         localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
       } else {
+        hideViewResultsSpinner();
         document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
         return false;
       }
