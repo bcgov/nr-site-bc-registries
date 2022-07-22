@@ -33,7 +33,7 @@ parameters:
     value: ghcr.io
   - name: PROMOTE
     description: Image (namespace/name:tag) to promote/import
-    required: true
+    value: bcgov/greenfield-pipeline:prod-backend
 objects:
   - apiVersion: v1
     kind: ImageStream
@@ -137,7 +137,7 @@ objects:
                   scheme: HTTP
                 initialDelaySeconds: 180
                 periodSeconds: 15
-                timeoutSeconds: 1
+                timeoutSeconds: 5
               livenessProbe:
                 successThreshold: 1
                 failureThreshold: 3
@@ -158,6 +158,24 @@ objects:
       ports:
         - name: 3000-tcp
           protocol: TCP
-          port: 3000
+          port: 80
+          targetPort: 3000
       selector:
         deploymentconfig: ${NAME}-${ZONE}-${COMPONENT}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      host: ${NAME}-${ZONE}-${COMPONENT}.${DOMAIN}
+      port:
+        targetPort: 3000-tcp
+      to:
+        kind: Service
+        name: ${NAME}-${ZONE}-${COMPONENT}
+        weight: 100
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
