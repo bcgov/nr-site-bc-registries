@@ -18,7 +18,7 @@ export class AppController {
   async root(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -42,14 +42,14 @@ export class AppController {
 
   @Get('parcel-id')
   @Render('parcel-id')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getParcelId(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -71,14 +71,14 @@ export class AppController {
 
   @Get('crown-lands-pin')
   @Render('crown-lands-pin')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getCrownLandsPin(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -100,14 +100,14 @@ export class AppController {
 
   @Get('crown-lands-file')
   @Render('crown-lands-file')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getCrownLandsFile(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -129,14 +129,14 @@ export class AppController {
 
   @Get('site-id-search')
   @Render('site-id-search')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getSiteIdSearch(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -158,14 +158,14 @@ export class AppController {
 
   @Get('address-search')
   @Render('address-search')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getAddressSearch(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -187,14 +187,14 @@ export class AppController {
 
   @Get('area-search')
   @Render('area-search')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getAreaSearch(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
@@ -216,14 +216,14 @@ export class AppController {
 
   @Get('view-search-results')
   @Render('view-search-results')
-  @UseFilters(AuthenticationFilter)
-  @UseGuards(AuthenticationGuard)
   @UseFilters(AccountFilter)
   @UseGuards(AccountGuard)
+  @UseFilters(AuthenticationFilter)
+  @UseGuards(AuthenticationGuard)
   async getViewSearchResults(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== undefined
+      session.data.activeAccount !== null && session.data.activeAccount !== undefined
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
