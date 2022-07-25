@@ -25,7 +25,7 @@ Features:
 * Starter TypeScript application stack
 
 This project is in active development.  Please visit our [issues](https://github.com/bcgov/greenfield-template/issues) page to view or request features.
-
+ 
 
 ### Pull Request Opened/Modified
 
