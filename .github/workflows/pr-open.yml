@@ -14,7 +14,7 @@ jobs:
   check:
     name: Check
     outputs:
-      build: ${{ steps.check.outputs.build }}
+      build: ${{ steps.check.outputs.build }} 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
