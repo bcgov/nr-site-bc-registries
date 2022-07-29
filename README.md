@@ -18,7 +18,7 @@ Features:
 * Sandboxed development deployments (OpenShift)
 * Gated production deployments (OpenShift)
 * Container publishing (ghcr.io) and importing (OpenShift)
-* Security, vulnerability, infrastructure and container scan tools
+* Security, vulnerability, infrastructure and container scan tools 
 * Automatic dependency patching with Pull Requests
 * Gatekeeping based on code reviews and pipeline checks
 * Templates and setup documentation
