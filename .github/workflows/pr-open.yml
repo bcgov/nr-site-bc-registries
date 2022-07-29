@@ -41,16 +41,6 @@ jobs:
           done < <(git diff origin/main --name-only)
           echo "Container build not required"
 
-      - name: Recycle/retag PROD Image
-        if: steps.check.outputs.build != 'true'
-        uses: shrink/actions-docker-registry-tag@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          repository: ${{ github.repository }}
-          target: prod-backend
-          tags: |
-            ${{ github.event.number }}-backend
-
   check-frontend:
     name: Check Frontend
     outputs:
@@ -83,16 +73,6 @@ jobs:
               done
           done < <(git diff origin/main --name-only)
           echo "Container build not required"
-
-      - name: Recycle/retag PROD Image
-        if: steps.check.outputs.build != 'true'
-        uses: shrink/actions-docker-registry-tag@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          repository: ${{ github.repository }}
-          target: prod-frontend
-          tags: |
-            ${{ github.event.number }}-frontend
 
   build-backend:
     name: Backend Image Build
