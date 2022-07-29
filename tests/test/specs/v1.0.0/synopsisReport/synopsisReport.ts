@@ -34,7 +34,7 @@ const readPdf = async (uri: any) => {
 
 describe('Synopsis Report Test', () => {
   before(async () => {
-    console.log('dirname: ' + __dirname);
+    console.log('dirname: ' + __dirname); 
     console.log('downloadDir: ' + downloadDir);
     await indexPage.open();
   });
