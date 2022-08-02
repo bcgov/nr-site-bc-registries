@@ -86,7 +86,7 @@ export class CronService {
   }
 
   // should fetch data from bucket, send to parseData function, and return the parsed data
-  async getData() {
+  async getData() { 
     // query the bucket
     let srassocs = await this.getCsv('srassocs.csv');
     let srdate = await this.getCsv('srdate.csv');

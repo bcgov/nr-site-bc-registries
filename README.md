@@ -18,14 +18,14 @@ Features:
 * Sandboxed development deployments (OpenShift)
 * Gated production deployments (OpenShift)
 * Container publishing (ghcr.io) and importing (OpenShift)
-* Security, vulnerability, infrastructure and container scan tools
+* Security, vulnerability, infrastructure and container scan tools 
 * Automatic dependency patching with Pull Requests
 * Gatekeeping based on code reviews and pipeline checks
 * Templates and setup documentation
 * Starter TypeScript application stack
 
 This project is in active development.  Please visit our [issues](https://github.com/bcgov/greenfield-template/issues) page to view or request features.
-
+ 
 
 ### Pull Request Opened/Modified
 
