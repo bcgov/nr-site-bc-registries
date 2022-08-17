@@ -399,6 +399,8 @@ export class CronService {
       '/dbdump/' +
       process.env.object_store_env +
       `/${fileName}`;
+
+    console.log(url);
     let object_store_userid = process.env.object_store_userid;
     let object_store_secret = process.env.object_store_secret;
     const interceptor = aws4Interceptor(
