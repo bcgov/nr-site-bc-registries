@@ -86,7 +86,7 @@ export class CronService {
   }
 
   // should fetch data from bucket, send to parseData function, and return the parsed data
-  async getData() { 
+  async getData() {
     // query the bucket
     let srassocs = await this.getCsv('srassocs.csv');
     let srdate = await this.getCsv('srdate.csv');
@@ -392,7 +392,15 @@ export class CronService {
   async getCsv(fileName: string) {
     const client = axios.create();
     let url =
-      'https://' + process.env.object_store_host + '/' + process.env.object_store_bucket + `/dbdump/${fileName}`;
+      'https://' +
+      process.env.object_store_host +
+      '/' +
+      process.env.object_store_bucket +
+      '/dbdump/' +
+      process.env.object_store_env +
+      `/${fileName}`;
+
+    console.log(url);
     let object_store_userid = process.env.object_store_userid;
     let object_store_secret = process.env.object_store_secret;
     const interceptor = aws4Interceptor(
