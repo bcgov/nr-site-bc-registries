@@ -74,31 +74,33 @@ export class SrsitesService {
     for (let i = 0; i < 9 - pid.length; i++) {
       pidWithZeroes = '0' + pidWithZeroes;
     }
-    let srpinpid: any;
+    let srpinpids: any;
     let site: any;
+    const sites: MinimalSiteData[] = [];
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ pid: pidWithZeroes });
+      srpinpids = await this.srpinpidsRepository.find({ pid: pidWithZeroes });
     } catch (err) {
       return [];
     }
     try {
-      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+      for (let srpinpid of srpinpids) {
+        site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+        sites.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
+        });
+      }
     } catch (err) {
       return [];
     }
-    return [
-      {
-        siteId: site.siteId,
-        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        updatedDate:
-          site.modifiedDate != ''
-            ? site.modifiedDate
-            : site.registeredDate != ''
-            ? site.registeredDate
-            : site.detailRemovedDate,
-        pending: site.status == 'PENDING' ? 'PENDING' : '',
-      },
-    ];
+    return sites;
   }
 
   async searchCrownPin(pin: string): Promise<MinimalSiteData[]> {
@@ -107,59 +109,63 @@ export class SrsitesService {
     for (let i = 0; i < 9 - pin.length; i++) {
       pinWithZeroes = '0' + pinWithZeroes;
     }
-    let srpinpid: any;
+    let srpinpids: any;
     let site: any;
+    const sites: MinimalSiteData[] = [];
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ pin: pinWithZeroes });
+      srpinpids = await this.srpinpidsRepository.find({ pin: pinWithZeroes });
     } catch (err) {
       return [];
     }
     try {
-      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+      for (let srpinpid of srpinpids) {
+        site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+        sites.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
+        });
+      }
     } catch (err) {
       return [];
     }
-    return [
-      {
-        siteId: site.siteId,
-        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        updatedDate:
-          site.modifiedDate != ''
-            ? site.modifiedDate
-            : site.registeredDate != ''
-            ? site.registeredDate
-            : site.detailRemovedDate,
-        pending: site.status == 'PENDING' ? 'PENDING' : '',
-      },
-    ];
+    return sites;
   }
 
   async searchCrownFile(crownLandsFileNumber: string): Promise<MinimalSiteData[]> {
-    let srpinpid: any;
+    let srpinpids: any;
     let site: any;
+    const sites: MinimalSiteData[] = [];
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
+      srpinpids = await this.srpinpidsRepository.find({ crownLandsFileNumber: crownLandsFileNumber });
     } catch (err) {
       return [];
     }
     try {
-      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+      for (let srpinpid of srpinpids) {
+        site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+        sites.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
+        });
+      }
     } catch (err) {
       return [];
     }
-    return [
-      {
-        siteId: site.siteId,
-        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        updatedDate:
-          site.modifiedDate != ''
-            ? site.modifiedDate
-            : site.registeredDate != ''
-            ? site.registeredDate
-            : site.detailRemovedDate,
-        pending: site.status == 'PENDING' ? 'PENDING' : '',
-      },
-    ];
+    return sites;
   }
 
   async searchSiteId(siteId: string): Promise<MinimalSiteData[]> {
