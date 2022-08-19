@@ -135,31 +135,33 @@ export class SrsitesService {
   }
 
   async searchCrownFile(crownLandsFileNumber: string): Promise<MinimalSiteData[]> {
-    let srpinpid: any;
+    let srpinpids: any;
     let site: any;
+    const sites: MinimalSiteData[] = [];
     try {
-      srpinpid = await this.srpinpidsRepository.findOne({ crownLandsFileNumber: crownLandsFileNumber });
+      srpinpids = await this.srpinpidsRepository.find({ crownLandsFileNumber: crownLandsFileNumber });
     } catch (err) {
       return [];
     }
     try {
-      site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+      for (let srpinpid of srpinpids) {
+        site = await this.srsitesRepository.findOneOrFail({ siteId: srpinpid.siteId });
+        sites.push({
+          siteId: site.siteId,
+          city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
+          updatedDate:
+            site.modifiedDate != ''
+              ? site.modifiedDate
+              : site.registeredDate != ''
+              ? site.registeredDate
+              : site.detailRemovedDate,
+          pending: site.status == 'PENDING' ? 'PENDING' : '',
+        });
+      }
     } catch (err) {
       return [];
     }
-    return [
-      {
-        siteId: site.siteId,
-        city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
-        updatedDate:
-          site.modifiedDate != ''
-            ? site.modifiedDate
-            : site.registeredDate != ''
-            ? site.registeredDate
-            : site.detailRemovedDate,
-        pending: site.status == 'PENDING' ? 'PENDING' : '',
-      },
-    ];
+    return sites;
   }
 
   async searchSiteId(siteId: string): Promise<MinimalSiteData[]> {
