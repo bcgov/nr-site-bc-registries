@@ -346,7 +346,7 @@ export class SrsitesService {
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.find({ siteId: siteId });
     const srprofil = await this.srprofilsRepository.findOne({ siteId: siteId });
-    let numAssocs = srassocs[1] + srassocs2[1];
+    let numAssocs = 0;
     let numParcelDescs = 0;
 
     for (let entry of srpinpids) {
