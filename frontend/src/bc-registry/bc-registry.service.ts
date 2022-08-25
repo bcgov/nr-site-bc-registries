@@ -694,9 +694,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Approved:</th><td>${notation.approvedDate}</td></tr>`);
         template = template.concat(`<tr><th>Ministry Contact:</th><td>${notation.ministryContact}</td></tr>`);
         template = template.concat(`<tr><th>Note:</th><td>${notation.noteString}</td></tr>`);
-        template = template.concat(
-          `<tr><th style="font-size: 16px;">Required Actions:</th><td>${notation.requiredAction}</td></tr>`
-        );
+        template = template.concat(`<tr><th>Required Actions:</th><td>${notation.requiredAction}</td></tr>`);
         template = template.concat(`</table>`);
         if (notation.participantsArray.length > 0) {
           template = template.concat('<br>');
