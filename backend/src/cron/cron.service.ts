@@ -77,7 +77,7 @@ export class CronService {
   @Cron('0 0 0 * * *')
   async updateTables() {
     // randomly wait between 0 and 10 seconds so that all the pods don't update at the exact same time
-    await delay(Math.floor(Math.random()*10000));
+    await delay(Math.floor(Math.random()*5000));
     // check if another pod is updating the tables before attempting
     const action = await this.actionsService.findFirst();
     if (!action.updating) {
