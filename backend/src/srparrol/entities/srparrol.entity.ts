@@ -7,7 +7,7 @@ export class Srparrol {
   id: number;
   @Column('varchar', { length: 10 })
   participantId: string; // a10;
-  @Column('varchar', { length: 40 })
+  @Column('varchar', { length: 500 })
   roleString: string; // a40;
 
   constructor(partial: Partial<Srparrol>) {

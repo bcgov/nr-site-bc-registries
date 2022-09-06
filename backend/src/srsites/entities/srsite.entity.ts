@@ -49,7 +49,7 @@ export class Srsite {
   regionalFileNumber: string; // a40;
   @Column('varchar', { length: 40 })
   classification: string; // a40;
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   locationDescription: string; // a255;
   @Column('varchar', { length: 10 })
   registeredDate: string; // a10;

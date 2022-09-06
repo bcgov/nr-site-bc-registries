@@ -11,7 +11,7 @@ export class Srprfuse {
   dateCompleted: string; // a10;
   @Column('varchar', { length: 6 })
   landUseCode: string; // a6;
-  @Column('varchar', { length: 100 })
+  @Column('varchar', { length: 1000 })
   landUseString: string; // a40; -- some entries are longer than 40 characters
 
   constructor(partial: Partial<Srprfuse>) {

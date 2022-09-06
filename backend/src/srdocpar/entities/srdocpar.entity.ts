@@ -7,9 +7,9 @@ export class Srdocpar {
   id: number;
   @Column('varchar', { length: 10 })
   docId: string; // a10;
-  @Column('varchar', { length: 150 })
+  @Column('varchar', { length: 500 })
   nameString: string; // a150;
-  @Column('varchar', { length: 40 })
+  @Column('varchar', { length: 200 })
   roleString: string; // a40;
 
   constructor(partial: Partial<Srdocpar>) {
