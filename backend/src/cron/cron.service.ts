@@ -5,6 +5,7 @@ import * as csv from 'csvtojson';
 import axios from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
 
+import { ActionsService } from '../actions/actions.service';
 import { SrassocsService } from '../srassocs/srassocs.service';
 import { SrdatesService } from '../srdate/srdates.service';
 import { SrdocparsService } from '../srdocpar/srdocpars.service';
@@ -37,10 +38,12 @@ import { SrsitdocDto } from '../srsitdoc/dto/srsitdoc.dto';
 import { SrsitparDto } from '../srsitpar/dto/srsitpar.dto';
 import { SrsiteDto } from '../srsites/dto/srsite.dto';
 import { SrdocparDto } from '../srdocpar/dto/srdocpar.dto';
+import { delay } from '../../utils/util';
 
 @Injectable()
 export class CronService {
   constructor(
+    private actionsService: ActionsService,
     private srassocsService: SrassocsService,
     private srdatesService: SrdatesService,
     private srdocparsService: SrdocparsService,
@@ -61,8 +64,11 @@ export class CronService {
 
   // called on app startup - check the srsites table for data, if none then clean the db and get new data
   async initTablesData() {
-    const numSrsitesEntries = await this.srsitesService.countEntries();
-    if (numSrsitesEntries == 0) {
+    if (await this.actionsService.findFirst() == null) {
+      await this.actionsService.create({updating: false, hasData: false});
+    }
+    const action = await this.actionsService.findFirst();
+    if (!action.hasData) {
       console.log('Database is empty, grabbing data');
       await this.updateTables();
     }
@@ -70,19 +76,29 @@ export class CronService {
 
   @Cron('0 0 0 * * *')
   async updateTables() {
-    console.log('update tables job starting');
-    const timeTaken = 'Total time';
-    console.time(timeTaken);
-    // grab data from bucket
-    const data = await this.getData();
-    // call removeall route on each Service
-    await this.removePreviousData();
-    // call create on each json array entry
-    process.env.POSTGRESQL_HOST.includes('database')
-      ? await this.sendDataToTablesQuietly(data)
-      : await this.sendDataToTables(data);
-    console.log('update tables job complete');
-    console.timeEnd(timeTaken);
+    // randomly wait between 0 and 10 seconds so that all the pods don't update at the exact same time
+    await delay(Math.floor(Math.random()*10000));
+    // check if another pod is updating the tables before attempting
+    const action = await this.actionsService.findFirst();
+    if (!action.updating) {
+      await this.actionsService.update({updating: true, hasData: false});
+      console.log('Update tables job starting');
+      const timeTaken = 'Total time';
+      console.time(timeTaken);
+      // grab data from bucket
+      const data = await this.getData();
+      // call removeall route on each Service
+      await this.removePreviousData();
+      // call create on each json array entry
+      process.env.POSTGRESQL_HOST.includes('database')
+        ? await this.sendDataToTablesQuietly(data)
+        : await this.sendDataToTables(data);
+      console.log('Update tables job complete');
+      console.timeEnd(timeTaken);
+      await this.actionsService.update({updating: false, hasData: true});
+    } else {
+      console.log("The database is being updated by another pod.");
+    }
   }
 
   // should fetch data from bucket, send to parseData function, and return the parsed data
@@ -233,7 +249,7 @@ export class CronService {
     const srlands: [SrlandDto] = parsedData.srlands;
     counter = 0;
     console.log('');
-    process.stdout.write(`Adding srlands entry `);
+    process.stdout.write(`Adding srlands  entry `);
     for (const entry of srlands) {
       counter += 1;
       await this.srlandsService.create(entry);
