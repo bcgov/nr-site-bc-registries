@@ -7,9 +7,9 @@ export class Srland {
   id: number;
   @Column('varchar', { length: 10 })
   siteId: string; // a10;
-  @Column('varchar', { length: 100 })
+  @Column('varchar', { length: 500 })
   landUse: string; // a40; - some entries are larger than 40 characters
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   noteString: string; // a255;
 
   constructor(partial: Partial<Srland>) {

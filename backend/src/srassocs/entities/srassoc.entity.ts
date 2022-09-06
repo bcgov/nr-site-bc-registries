@@ -11,7 +11,7 @@ export class Srassoc {
   associatedSiteId: string; // a10;
   @Column('varchar', { length: 10 })
   effectDate: string; // a10;
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   noteString: string; // a255;
 
   constructor(partial: Partial<Srassoc>) {

@@ -13,7 +13,7 @@ export class Srpinpid {
   pid: string; // a9;
   @Column('varchar', { length: 7 })
   crownLandsFileNumber: string; // a7;
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   legalDescription: string; // a255;
   @Column('varchar', { length: 10 })
   dateNoted: string; // a10;

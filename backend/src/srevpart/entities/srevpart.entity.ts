@@ -7,9 +7,9 @@ export class Srevpart {
   id: number;
   @Column('varchar', { length: 10 })
   eventId: string; // a10;
-  @Column('varchar', { length: 150 })
+  @Column('varchar', { length: 500 })
   nameString: string; // a150;
-  @Column('varchar', { length: 40 })
+  @Column('varchar', { length: 500 })
   roleString: string; // a40;
 
   constructor(partial: Partial<Srevpart>) {
