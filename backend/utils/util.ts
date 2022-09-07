@@ -32,3 +32,8 @@ export function getTodaysDate() {
   const yStr = year.toString().slice(2);
   return dStr + '-' + mStr + '-' + yStr;
 }
+
+export function delay(milliseconds: number) {
+  console.log("Delaying for "+milliseconds+" milliseconds");
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
