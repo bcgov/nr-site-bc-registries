@@ -1,7 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, ForbiddenException } from '@nestjs/common';
 import { URL } from 'url';
 
-@Catch(HttpException) 
+@Catch(HttpException)  
 export class AccountFilter implements ExceptionFilter {
   catch(exception: ForbiddenException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

@@ -107,11 +107,6 @@ objects:
                     secretKeyRef:
                       name: object-storage-secrets
                       key: object_store_bucket
-                - name: object_store_bucket
-                  valueFrom:
-                    secretKeyRef:
-                      name: object-storage-secrets
-                      key: object_store_bucket
                 - name: object_store_env
                   valueFrom:
                     secretKeyRef:
