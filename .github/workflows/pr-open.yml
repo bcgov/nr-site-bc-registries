@@ -352,7 +352,7 @@ jobs:
             -p PROMOTE=${{ github.repository }}:${{ env.ZONE }}-backend | oc apply -f -
 
           # Clean previous image, if rebuilding
-          if [ ${{ needs.build-backend.outputs.build == 'true' }} ]
+          if [ ${{ needs.build-frontend.outputs.build == 'true' }} ]
           then
             # Clear stale images for import/replacement
             oc delete is ${{ env.NAME }}-${{ env.ZONE }}-frontend || \
