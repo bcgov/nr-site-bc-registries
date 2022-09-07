@@ -21,13 +21,13 @@ async function bootstrap() {
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new fileSession({ path: resolve("./", process.env.SESSION_PATH) }),
+    store: new fileSession({ path: resolve('./', process.env.SESSION_PATH) }),
     cookie: { maxAge: 3600000, secure: false, httpOnly: true },
   };
 
   app.use(expressSession(sessionOptions));
 
-  await app.listen(3000); 
+  await app.listen(3000);
 
   const appService = app.get(AppService);
   await appService.initDownloadDate();
