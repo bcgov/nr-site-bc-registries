@@ -11,7 +11,8 @@ export function isInsideArea(checkPoint: latlng, centerPoint: latlng, meters: nu
 
 // returns current time in hh:mm:ss format
 export function getCurrentTime() {
-  const today = new Date();
+  let today = new Date();
+  today = convertTZ(today, 'America/Vancouver');
   const hours = today.getHours();
   const minutes = today.getMinutes();
   const seconds = today.getSeconds();
@@ -23,7 +24,8 @@ export function getCurrentTime() {
 
 // returns todays date in dd-mm-yy format
 export function getTodaysDate() {
-  const today = new Date();
+  let today = new Date();
+  today = convertTZ(today, 'America/Vancouver');
   const day = today.getDate();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
@@ -33,7 +35,11 @@ export function getTodaysDate() {
   return dStr + '-' + mStr + '-' + yStr;
 }
 
+function convertTZ(date, tzString) {
+  return new Date((typeof date === 'string' ? new Date(date) : date).toLocaleString('en-US', { timeZone: tzString }));
+}
+
 export function delay(milliseconds: number) {
-  console.log("Delaying for "+milliseconds+" milliseconds");
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+  console.log('Delaying for ' + milliseconds + ' milliseconds');
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
