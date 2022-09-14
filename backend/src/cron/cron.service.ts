@@ -71,6 +71,15 @@ export class CronService {
     if (!action.hasData) {
       console.log('Database is empty, grabbing data');
       await this.updateTables();
+    } else if (action.hasData) {
+      // if the download date has changed, grab the data again
+      const srdate = await this.srdatesService.findAll();
+      const previousDate = srdate[0].downloaddate;
+      const newDate = await this.getCsv('srdate.csv');
+      if (newDate != previousDate) {
+        console.log('Download date has changed, updating tables');
+        await this.updateTables();
+      }
     }
   }
 
