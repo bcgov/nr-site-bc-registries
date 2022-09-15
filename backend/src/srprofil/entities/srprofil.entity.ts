@@ -25,15 +25,15 @@ export class Srprofil {
   dateDecision: string;
   @Column('varchar', { length: 10 })
   dateEntered: string;
-  @Column('varchar', { length: 500 })
+  @Column('varchar', { length: 2000 })
   decisionText: string;
   @Column('varchar', { length: 2000 })
   commentString: string; // a2000;
-  @Column('varchar', { length: 500 })
+  @Column('varchar', { length: 2000 })
   plannedActivityComment: string;
-  @Column('varchar', { length: 500 })
+  @Column('varchar', { length: 2000 })
   siteDisclosureComment: string;
-  @Column('varchar', { length: 500 })
+  @Column('varchar', { length: 2000 })
   govDocumentsComment: string;
   @Column('varchar', { length: 100 })
   localAuthEmail: string;
