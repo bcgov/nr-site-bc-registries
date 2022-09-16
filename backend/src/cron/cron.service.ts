@@ -22,23 +22,26 @@ import { SrprofilsService } from '../srprofil/srprofils.service';
 import { SrsitdocsService } from '../srsitdoc/srsitdocs.service';
 import { SrsitparsService } from '../srsitpar/srsitpars.service';
 import { SrsitesService } from '../srsites/srsites.service';
-import { SrassocDto } from '../srassocs/dto/srassoc.dto';
-import { SrdateDto } from '../srdate/dto/srdate.dto';
-import { SreventDto } from '../srevents/dto/srevent.dto';
-import { SrevpartDto } from '../srevpart/dto/srevpart.dto';
-import { SrlandDto } from '../srlands/dto/srland.dto';
-import { SrparrolDto } from '../srparrol/dto/srparrol.dto';
-import { SrpinpidDto } from '../srpinpid/dto/srpinpid.dto';
-import { SrprfanDto } from '../srprfans/dto/srprfan.dto';
-import { SrprfcatDto } from '../srprfcat/dto/srprfcat.dto';
-import { SrprfqueDto } from '../srprfque/dto/srprfque.dto';
-import { SrprfuseDto } from '../srprfuse/dto/srprfuse.dto';
-import { SrprofilDto } from '../srprofil/dto/srprofil.dto';
-import { SrsitdocDto } from '../srsitdoc/dto/srsitdoc.dto';
-import { SrsitparDto } from '../srsitpar/dto/srsitpar.dto';
-import { SrsiteDto } from '../srsites/dto/srsite.dto';
-import { SrdocparDto } from '../srdocpar/dto/srdocpar.dto';
 import { delay } from '../../utils/util';
+import { getConnection } from 'typeorm';
+import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
+import { Srparrol } from '../srparrol/entities/srparrol.entity';
+import { Srprfan } from '../srprfans/entities/srprfan.entity';
+import { Srprfcat } from '../srprfcat/entities/srprfcat.entity';
+import { Srprfque } from '../srprfque/entities/srprfque.entity';
+import { Srprfuse } from '../srprfuse/entities/srprfuse.entity';
+import { Srprofil } from '../srprofil/entities/srprofil.entity';
+import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
+import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
+import { Srsite } from '../srsites/entities/srsite.entity';
+import { Srland } from '../srlands/entities/srland.entity';
+import { Srevpart } from '../srevpart/entities/srevpart.entity';
+import { Srevent } from '../srevents/entities/srevent.entity';
+import { Srdocpar } from '../srdocpar/entities/srdocpar.entity';
+import { Srdate } from '../srdate/entities/srdate.entity';
+import { Srassoc } from '../srassocs/entities/srassoc.entity';
+
+const chunkSize = 1000;
 
 @Injectable()
 export class CronService {
@@ -97,14 +100,8 @@ export class CronService {
         console.log('Update tables job starting');
         const timeTaken = 'Total time';
         console.time(timeTaken);
-        // grab data from bucket
-        const data = await this.getData();
-        // call removeall route on each Service
-        await this.removePreviousData();
-        // call create on each json array entry
-        process.env.POSTGRESQL_HOST.includes('database')
-          ? await this.sendDataToTablesQuietly(data)
-          : await this.sendDataToTables(data);
+        // grabs data, parses it, and adds it to the tables
+        await this.getData();
         console.log('Update tables job complete');
         console.timeEnd(timeTaken);
         await this.actionsService.update({ updating: false, hasData: true });
@@ -158,9 +155,8 @@ export class CronService {
     return this.parseData(rawData);
   }
 
-  // receives raw data and parses it
   async parseData(rawData) {
-    console.log('parsing data');
+    console.log('\nParsing data\n');
     // db export of srprfcat splits question type into two pieces, recombine them here
     let srprfcatTemp = await csv().fromString(
       'categoryId,sequenceNumber,effectiveDate,expiryDate,questionType,questionType2,categoryDescription\n' +
@@ -178,247 +174,277 @@ export class CronService {
       };
       srprfcat.push(newEntry);
     }
-    const parsedData = {
-      srassocs: await csv().fromString(CSV_HEADERS.SRASSOCS + rawData.srassocs),
-      srdate: await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate),
-      srdocpar: await csv().fromString(CSV_HEADERS.SRDOCPAR + rawData.srdocpar),
-      srevents: await csv().fromString(CSV_HEADERS.SREVENTS + rawData.srevents),
-      srevpart: await csv().fromString(CSV_HEADERS.SREVPART + rawData.srevpart),
-      srlands: await csv().fromString(CSV_HEADERS.SRLANDS + rawData.srlands),
-      srparrol: await csv().fromString(CSV_HEADERS.SRPARROL + rawData.srparrol),
-      srpinpid: await csv().fromString(CSV_HEADERS.SRPINPID + rawData.srpinpid),
-      srprfans: await csv().fromString(CSV_HEADERS.SRPRFANS + rawData.srprfans),
-      srprfcat: srprfcat,
-      srprfque: await csv().fromString(CSV_HEADERS.SRPRFQUE + rawData.srprfque),
-      srprfuse: await csv().fromString(CSV_HEADERS.SRPRFUSE + rawData.srprfuse),
-      srprofil: await csv().fromString(CSV_HEADERS.SRPROFIL + rawData.srprofil),
-      srsitdoc: await csv().fromString(CSV_HEADERS.SRSITDOC + rawData.srsitdoc),
-      srsites: await csv().fromString(CSV_HEADERS.SRSITES + rawData.srsites),
-      srsitpar: await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar),
-    };
-
-    // have to parse each item in the array
-    return parsedData;
+    await this.updateSrassocs(await csv().fromString(CSV_HEADERS.SRASSOCS + rawData.srassocs));
+    await this.updateSrdate(await csv().fromString(CSV_HEADERS.SRDATE + rawData.srdate));
+    await this.updateSrdocpar(await csv().fromString(CSV_HEADERS.SRDOCPAR + rawData.srdocpar));
+    await this.updateSrevents(await csv().fromString(CSV_HEADERS.SREVENTS + rawData.srevents));
+    await this.updateSrevpart(await csv().fromString(CSV_HEADERS.SREVPART + rawData.srevpart));
+    await this.updateSrlands(await csv().fromString(CSV_HEADERS.SRLANDS + rawData.srlands));
+    await this.updateSrparrol(await csv().fromString(CSV_HEADERS.SRPARROL + rawData.srparrol));
+    await this.updateSrpinpid(await csv().fromString(CSV_HEADERS.SRPINPID + rawData.srpinpid));
+    await this.updateSrprfans(await csv().fromString(CSV_HEADERS.SRPRFANS + rawData.srprfans));
+    await this.updateSrprfcat(srprfcat);
+    await this.updateSrprfque(await csv().fromString(CSV_HEADERS.SRPRFQUE + rawData.srprfque));
+    await this.updateSrprfuse(await csv().fromString(CSV_HEADERS.SRPRFUSE + rawData.srprfuse));
+    await this.updateSrprofil(await csv().fromString(CSV_HEADERS.SRPROFIL + rawData.srprofil));
+    await this.updateSrsitdoc(await csv().fromString(CSV_HEADERS.SRSITDOC + rawData.srsitdoc));
+    await this.updateSrsite(await csv().fromString(CSV_HEADERS.SRSITES + rawData.srsites));
+    await this.updateSrsitpar(await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar));
   }
 
-  async removePreviousData() {
-    console.log('removing old data');
-    await this.srassocsService.removeAll();
-    await this.srdatesService.removeAll();
-    await this.srdocparsService.removeAll();
-    await this.sreventsService.removeAll();
-    await this.srevpartsService.removeAll();
-    await this.srlandsService.removeAll();
-    await this.srparrolsService.removeAll();
-    await this.srpinpidsService.removeAll();
-    await this.srprfansService.removeAll();
-    await this.srprfcatsService.removeAll();
-    await this.srprfquesService.removeAll();
-    await this.srprfusesService.removeAll();
-    await this.srprofilsService.removeAll();
-    await this.srsitdocsService.removeAll();
-    await this.srsitparsService.removeAll();
-    await this.srsitesService.removeAll();
+  async updateTable<T>(array: any[]) {
+    try {
+      console.log(`Removing old  data`);
+      await this.srassocsService.removeAll();
+      console.log(`Adding new  data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srassoc).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating  table');
+    }
   }
 
-  async sendDataToTables(parsedData) {
-    console.log('adding data to tables...\n');
-    let counter = 0;
-    process.stdout.write(`Adding srassocs entry `);
-    const srassocs: [SrassocDto] = parsedData.srassocs;
-    for (const entry of srassocs) {
-      counter += 1;
-      await this.srassocsService.create(entry);
+  async updateSrassocs(array: any[]) {
+    try {
+      console.log(`Removing old srassocs data`);
+      await this.srassocsService.removeAll();
+      console.log(`Adding new srassocs data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srassoc).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srassocs table');
     }
-    const srdate: [SrdateDto] = parsedData.srdate;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srdate   entry `);
-    for (const entry of srdate) {
-      counter += 1;
-      await this.srdatesService.create(entry);
-    }
-    const srdocpar: [SrdocparDto] = parsedData.srdocpar;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srdocpar entry `);
-    for (const entry of srdocpar) {
-      counter += 1;
-      await this.srdocparsService.create(entry);
-    }
-    const srevents: [SreventDto] = parsedData.srevents;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srevents entry `);
-    for (const entry of srevents) {
-      counter += 1;
-      await this.sreventsService.create(entry);
-    }
-    const srevpart: [SrevpartDto] = parsedData.srevpart;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srevpart entry `);
-    for (const entry of srevpart) {
-      counter += 1;
-      await this.srevpartsService.create(entry);
-    }
-    const srlands: [SrlandDto] = parsedData.srlands;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srlands  entry `);
-    for (const entry of srlands) {
-      counter += 1;
-      await this.srlandsService.create(entry);
-    }
-    const srparrol: [SrparrolDto] = parsedData.srparrol;
-    counter = 0;
-    console.log('');
-    for (const entry of srparrol) {
-      counter += 1;
-      await this.srparrolsService.create(entry);
-    }
-    const srpinpid: [SrpinpidDto] = parsedData.srpinpid;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srpinpid entry `);
-    for (const entry of srpinpid) {
-      counter += 1;
-      await this.srpinpidsService.create(entry);
-    }
-    const srprfans: [SrprfanDto] = parsedData.srprfans;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srprfans entry `);
-    for (const entry of srprfans) {
-      counter += 1;
-      await this.srprfansService.create(entry);
-    }
-    const srprfcat: [SrprfcatDto] = parsedData.srprfcat;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srprfcat entry `);
-    for (const entry of srprfcat) {
-      counter += 1;
-      await this.srprfcatsService.create(entry);
-    }
-    const srprfque: [SrprfqueDto] = parsedData.srprfque;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srprfque entry `);
-    for (const entry of srprfque) {
-      counter += 1;
-      await this.srprfquesService.create(entry);
-    }
-    const srprfuse: [SrprfuseDto] = parsedData.srprfuse;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srprfuse entry `);
-    for (const entry of srprfuse) {
-      counter += 1;
-      await this.srprfusesService.create(entry);
-    }
-    const srprofil: [SrprofilDto] = parsedData.srprofil;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srprofil entry `);
-    for (const entry of srprofil) {
-      counter += 1;
-      await this.srprofilsService.create(entry);
-    }
-    const srsitdoc: [SrsitdocDto] = parsedData.srsitdoc;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srsitdoc entry `);
-    for (const entry of srsitdoc) {
-      counter += 1;
-      await this.srsitdocsService.create(entry);
-    }
-    const srsitpar: [SrsitparDto] = parsedData.srsitpar;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srsitpar entry `);
-    for (const entry of srsitpar) {
-      counter += 1;
-      await this.srsitparsService.create(entry);
-    }
-    const srsites: [SrsiteDto] = parsedData.srsites;
-    counter = 0;
-    console.log('');
-    process.stdout.write(`Adding srsite   entry `);
-    for (const entry of srsites) {
-      counter += 1;
-      await this.srsitesService.create(entry);
-    }
-    console.log('\nadded data to tables');
   }
 
-  async sendDataToTablesQuietly(parsedData) {
-    console.log('adding data to tables...');
-    const srassocs: [SrassocDto] = parsedData.srassocs;
-    for (const entry of srassocs) {
-      await this.srassocsService.create(entry);
+  async updateSrdate(array: any[]) {
+    try {
+      console.log(`Removing old srdate data`);
+      await this.srdatesService.removeAll();
+      console.log(`Adding new srdate data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srdate).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srdate table');
     }
-    const srdate: [SrdateDto] = parsedData.srdate;
-    for (const entry of srdate) {
-      await this.srdatesService.create(entry);
+  }
+
+  async updateSrdocpar(array: any[]) {
+    try {
+      console.log(`Removing old srdocpar data`);
+      await this.srdocparsService.removeAll();
+      console.log(`Adding new srdocpar data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srdocpar).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srdocpar table');
     }
-    const srdocpar: [SrdocparDto] = parsedData.srdocpar;
-    for (const entry of srdocpar) {
-      await this.srdocparsService.create(entry);
+  }
+
+  async updateSrevents(array: any[]) {
+    try {
+      console.log(`Removing old srevent data`);
+      await this.sreventsService.removeAll();
+      console.log(`Adding new srevent data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srevent).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srevent table');
     }
-    const srevents: [SreventDto] = parsedData.srevents;
-    for (const entry of srevents) {
-      await this.sreventsService.create(entry);
+  }
+
+  async updateSrevpart(array: any[]) {
+    try {
+      console.log(`Removing old srevpart data`);
+      await this.srevpartsService.removeAll();
+      console.log(`Adding new srevpart data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srevpart).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srevpart table');
     }
-    const srevpart: [SrevpartDto] = parsedData.srevpart;
-    for (const entry of srevpart) {
-      await this.srevpartsService.create(entry);
+  }
+
+  async updateSrlands(array: any[]) {
+    try {
+      console.log(`Removing old srlands data`);
+      await this.srlandsService.removeAll();
+      console.log(`Adding new srlands data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srland).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srlands table');
     }
-    const srlands: [SrlandDto] = parsedData.srlands;
-    for (const entry of srlands) {
-      await this.srlandsService.create(entry);
+  }
+
+  async updateSrparrol(array: any[]) {
+    try {
+      console.log(`Removing old srparrol data`);
+      await this.srparrolsService.removeAll();
+      console.log(`Adding new srparrol data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srparrol).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srparrol table');
     }
-    const srparrol: [SrparrolDto] = parsedData.srparrol;
-    for (const entry of srparrol) {
-      await this.srparrolsService.create(entry);
+  }
+
+  async updateSrpinpid(array: any[]) {
+    try {
+      console.log(`Removing old srpinpid data`);
+      await this.srpinpidsService.removeAll();
+      console.log(`Adding new srpinpid data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srpinpid).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srpinpid table');
     }
-    const srpinpid: [SrpinpidDto] = parsedData.srpinpid;
-    for (const entry of srpinpid) {
-      await this.srpinpidsService.create(entry);
+  }
+
+  async updateSrprfans(array: any[]) {
+    try {
+      console.log(`Removing old srprfans data`);
+      await this.srprfansService.removeAll();
+      console.log(`Adding new srprfans data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srprfan).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srprfans table');
     }
-    const srprfans: [SrprfanDto] = parsedData.srprfans;
-    for (const entry of srprfans) {
-      await this.srprfansService.create(entry);
+  }
+
+  async updateSrprfcat(array: any[]) {
+    try {
+      console.log(`Removing old srprfcat data`);
+      await this.srprfcatsService.removeAll();
+      console.log(`Adding new srprfcat data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srprfcat).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srprfcat table');
     }
-    const srprfcat: [SrprfcatDto] = parsedData.srprfcat;
-    for (const entry of srprfcat) {
-      await this.srprfcatsService.create(entry);
+  }
+
+  async updateSrprfque(array: any[]) {
+    try {
+      console.log(`Removing old srprfque data`);
+      await this.srprfquesService.removeAll();
+      console.log(`Adding new srprfque data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srprfque).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srprfque table');
     }
-    const srprfque: [SrprfqueDto] = parsedData.srprfque;
-    for (const entry of srprfque) {
-      await this.srprfquesService.create(entry);
+  }
+
+  async updateSrprfuse(array: any[]) {
+    try {
+      console.log(`Removing old srprfuse data`);
+      await this.srprfusesService.removeAll();
+      console.log(`Adding new srprfuse data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srprfuse).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srprfuse table');
     }
-    const srprfuse: [SrprfuseDto] = parsedData.srprfuse;
-    for (const entry of srprfuse) {
-      await this.srprfusesService.create(entry);
+  }
+
+  async updateSrprofil(array: any[]) {
+    try {
+      console.log(`Removing old srprofil data`);
+      await this.srprofilsService.removeAll();
+      console.log(`Adding new srprofil data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srprofil).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srprofil table');
     }
-    const srprofil: [SrprofilDto] = parsedData.srprofil;
-    for (const entry of srprofil) {
-      await this.srprofilsService.create(entry);
+  }
+
+  async updateSrsitdoc(array: any[]) {
+    try {
+      console.log(`Removing old srsitdoc data`);
+      await this.srsitdocsService.removeAll();
+      console.log(`Adding new srsitdoc data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srsitdoc).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srsitdoc table');
     }
-    const srsitdoc: [SrsitdocDto] = parsedData.srsitdoc;
-    for (const entry of srsitdoc) {
-      await this.srsitdocsService.create(entry);
+  }
+
+  async updateSrsite(array: any[]) {
+    try {
+      console.log(`Removing old srsite data`);
+      await this.srsitesService.removeAll();
+      console.log(`Adding new srsite data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srsite).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srsite table');
     }
-    const srsitpar: [SrsitparDto] = parsedData.srsitpar;
-    for (const entry of srsitpar) {
-      await this.srsitparsService.create(entry);
+  }
+
+  async updateSrsitpar(array: any[]) {
+    try {
+      console.log(`Removing old srsitpar data`);
+      await this.srsitparsService.removeAll();
+      console.log(`Adding new srsitpar data`);
+      for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        await getConnection().createQueryBuilder().insert().into(Srsitpar).values(chunk).execute();
+      }
+      console.log('');
+    } catch (err) {
+      console.log('Error updating srsitpar table');
     }
-    const srsites: [SrsiteDto] = parsedData.srsites;
-    for (const entry of srsites) {
-      await this.srsitesService.create(entry);
-    }
-    console.log('added data to tables');
   }
 
   async getCsv(fileName: string) {
