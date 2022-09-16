@@ -64,8 +64,8 @@ export class CronService {
 
   // called on app startup - check the srsites table for data, if none then clean the db and get new data
   async initTablesData() {
-    if (await this.actionsService.findFirst() == null) {
-      await this.actionsService.create({updating: false, hasData: false});
+    if ((await this.actionsService.findFirst()) == null) {
+      await this.actionsService.create({ updating: false, hasData: false });
     }
     const action = await this.actionsService.findFirst();
     if (!action.hasData) {
@@ -88,25 +88,30 @@ export class CronService {
     // add a random delay of 0 to 5 seconds for each pod to stop them from updating at the exact same time
     await delay(Math.floor(Math.random() * 5000));
     // check if another pod is updating the tables before attempting
-    const action = await this.actionsService.findFirst();
-    if (!action.updating) {
-      await this.actionsService.update({updating: true, hasData: false});
-      console.log('Update tables job starting');
-      const timeTaken = 'Total time';
-      console.time(timeTaken);
-      // grab data from bucket
-      const data = await this.getData();
-      // call removeall route on each Service
-      await this.removePreviousData();
-      // call create on each json array entry
-      process.env.POSTGRESQL_HOST.includes('database')
-        ? await this.sendDataToTablesQuietly(data)
-        : await this.sendDataToTables(data);
-      console.log('Update tables job complete');
-      console.timeEnd(timeTaken);
-      await this.actionsService.update({updating: false, hasData: true});
-    } else {
-      console.log("The database is being updated by another pod.");
+    try {
+      const action = await this.actionsService.findFirst();
+      if (!action.updating) {
+        await this.actionsService.update({ updating: true, hasData: false });
+        console.log('Update tables job starting');
+        const timeTaken = 'Total time';
+        console.time(timeTaken);
+        // grab data from bucket
+        const data = await this.getData();
+        // call removeall route on each Service
+        await this.removePreviousData();
+        // call create on each json array entry
+        process.env.POSTGRESQL_HOST.includes('database')
+          ? await this.sendDataToTablesQuietly(data)
+          : await this.sendDataToTables(data);
+        console.log('Update tables job complete');
+        console.timeEnd(timeTaken);
+        await this.actionsService.update({ updating: false, hasData: true });
+      } else {
+        console.log('The database is being updated by another pod.');
+      }
+    } catch (err) {
+      console.log('Error adding data to tables');
+      await this.actionsService.update({ updating: false, hasData: false });
     }
   }
 
