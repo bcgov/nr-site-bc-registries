@@ -67,6 +67,8 @@ export class CronService {
     const srdate = await this.srdatesService.findAll();
     if ((await this.actionsService.findFirst()) == null) {
       await this.actionsService.create({ updating: false, hasData: false });
+    } else {
+      await this.actionsService.update({ updating: false });
     }
     const action = await this.actionsService.findFirst();
     if (!action.hasData || srdate.length == 0) {
