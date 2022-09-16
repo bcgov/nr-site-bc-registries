@@ -64,16 +64,16 @@ export class CronService {
 
   // called on app startup - check the srsites table for data, if none then clean the db and get new data
   async initTablesData() {
+    const srdate = await this.srdatesService.findAll();
     if ((await this.actionsService.findFirst()) == null) {
       await this.actionsService.create({ updating: false, hasData: false });
     }
     const action = await this.actionsService.findFirst();
-    if (!action.hasData) {
+    if (!action.hasData || srdate.length == 0) {
       console.log('Database is empty, grabbing data');
       await this.updateTables();
     } else if (action.hasData) {
       // if the download date has changed, grab the data again
-      const srdate = await this.srdatesService.findAll();
       const previousDate = srdate[0].downloaddate;
       const newDate = await this.getCsv('srdate.csv');
       if (newDate != previousDate) {

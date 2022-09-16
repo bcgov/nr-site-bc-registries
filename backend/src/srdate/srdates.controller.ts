@@ -17,11 +17,15 @@ export class SrdatesController {
   @Get()
   async firstEntry() {
     const dateObject = await this.srdatesService.findAll();
-    const isoDate = dateObject[0].downloaddate;
-    const date = new Date(isoDate);
-    const month = date.toLocaleString('default', { month: 'long' });
-    const updateString = month + ' ' + date.getUTCDate() + ', ' + date.getUTCFullYear();
-    return updateString;
+    if (dateObject.length > 0) {
+      const isoDate = dateObject[0].downloaddate;
+      const date = new Date(isoDate);
+      const month = date.toLocaleString('default', { month: 'long' });
+      const updateString = month + ' ' + date.getUTCDate() + ', ' + date.getUTCFullYear();
+      return updateString;
+    } else {
+      return '';
+    }
   }
 
   @Get(':id')
