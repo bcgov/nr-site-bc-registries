@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, ForbiddenException } from '@nestjs/common';
 import { URL } from 'url';
-
+ 
 @Catch(HttpException)  
 export class AccountFilter implements ExceptionFilter {
   catch(exception: ForbiddenException, host: ArgumentsHost) {
