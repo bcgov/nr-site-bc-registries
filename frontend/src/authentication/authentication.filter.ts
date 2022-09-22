@@ -4,12 +4,10 @@ import { response } from 'express';
 import { URL } from 'url';
 
 let keycloak_login_fullurl, keycloak_login_baseurl, keycloak_login_params;
-// let redirectUri = encodeURI('http://localhost:3000');
 
 @Catch(HttpException)
 export class AuthenticationFilter implements ExceptionFilter {
   constructor() {
-    // keycloak_login_params = `response_type=code&client_id=${process.env.KEYCLOAK_CLIENT_ID}&redirect_uri=${redirectUri}`;
     keycloak_login_baseurl = `${process.env.KEYCLOAK_BASE_URL}/auth/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/auth`;
     keycloak_login_fullurl = keycloak_login_baseurl + '?' + keycloak_login_params;
   }
