@@ -42,6 +42,7 @@ jobs:
           echo "Container build not required"
 
       - name: Recycle/retag PROD Image
+        if: steps.check.outputs.build == 'true' || steps.check.outputs.build != 'true'
         uses: shrink/actions-docker-registry-tag@v2
         with:
           registry: ${{ env.REGISTRY }}
@@ -84,6 +85,7 @@ jobs:
           echo "Container build not required"
 
       - name: Recycle/retag PROD Image
+        if: steps.check.outputs.build == 'true' || steps.check.outputs.build != 'true'
         uses: shrink/actions-docker-registry-tag@v2
         with:
           registry: ${{ env.REGISTRY }}
