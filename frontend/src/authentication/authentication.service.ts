@@ -190,6 +190,7 @@ export class AuthenticationService {
     }
   }
 
+  // hello
   async getTokenDetails(
     token: string
   ): Promise<{ activeAccount: AccountObject; accounts: AccountObject[]; name: string; contacts: string[] }> {
