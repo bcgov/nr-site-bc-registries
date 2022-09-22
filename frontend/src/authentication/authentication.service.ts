@@ -196,9 +196,8 @@ export class AuthenticationService {
     let activeAccount: AccountObject;
     const decodedToken: { sub: string; name: string } = jwt_decode(token);
     // gets name + contacts
-    let userDetails: { firstname: string; lastname: string; contacts: [{ email: string }] } = await this.getUserDetails(
-      token
-    );
+    // let userDetails: { firstname: string; lastname: string; contacts: [{ email: string }] } = await this.getUserDetails(
+    let userDetails: any = await this.getUserDetails(token);
     const emailArray: string[] = [];
     // since the user is itself a contact, if there are no contacts then there is no user account for this service
     if (userDetails) {
