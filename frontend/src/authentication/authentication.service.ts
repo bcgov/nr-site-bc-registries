@@ -201,9 +201,13 @@ export class AuthenticationService {
     );
     const emailArray: string[] = [];
     // since the user is itself a contact, if there are no contacts then there is no user account for this service
-    if (userDetails.contacts) {
-      for (const c of userDetails.contacts) {
-        emailArray.push(c.email);
+    if (userDetails) {
+      if (userDetails.contacts) {
+        for (const c of userDetails.contacts) {
+          emailArray.push(c.email);
+        }
+      } else {
+        throw new ImATeapotException('Access Denied');
       }
     } else {
       throw new ImATeapotException('Access Denied');

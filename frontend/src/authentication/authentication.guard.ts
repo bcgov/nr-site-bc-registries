@@ -71,7 +71,11 @@ export class AuthenticationGuard implements CanActivate {
         tokenStatus = await this.authenticationService.getHealthCheck(tokenObject.access_token);
         if (tokenStatus == 'good') {
           // health check is good, set the session variables
-          tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
+          try {
+            tokenDetails = await this.authenticationService.getTokenDetails(tokenObject.access_token);
+          } catch (err) {
+            throw new ImATeapotException('Access denied.');
+          }
           request.session.data = {
             ...tokenObject,
             activeAccount: tokenDetails.activeAccount,
