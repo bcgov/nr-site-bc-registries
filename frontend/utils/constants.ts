@@ -7,6 +7,7 @@ export const PAGE_TITLES = {
   ADDRESS_SEARCH: 'Address Search',
   AREA_SEARCH: 'Area Search',
   VIEW_SEARCH_RESULTS: 'View Search Results',
+  ERROR_PAGE: 'Error - Access Denied',
 };
 
 export const plainTextTemplate =
