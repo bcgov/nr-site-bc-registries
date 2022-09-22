@@ -174,9 +174,6 @@ jobs:
   tests-backend:
     name: Backend Unit Tests
     runs-on: ubuntu-latest
-    needs:
-      - check-backend
-    if: needs.check-backend.outputs.build == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -219,9 +216,6 @@ jobs:
   tests-frontend:
     name: Frontend Unit Tests
     runs-on: ubuntu-latest
-    needs:
-      - check-frontend
-    if: needs.check-frontend.outputs.build == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
