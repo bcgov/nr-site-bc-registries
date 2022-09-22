@@ -244,4 +244,24 @@ export class AppController {
           emails: { emails: session.data.contacts },
         };
   }
+
+  @Get('error')
+  @Render('error')
+  async getErrorPage() {
+    return process.env.site_environment == 'DEVELOPMENT'
+      ? {
+          title: 'DEVELOPMENT - ' + PAGE_TITLES.ERROR_PAGE,
+          username: '',
+          label: '',
+          downloaddate: '',
+          emails: { emails: [] },
+        }
+      : {
+          title: PAGE_TITLES.ERROR_PAGE,
+          username: '',
+          label: '',
+          downloaddate: '',
+          emails: { emails: [] },
+        };
+  }
 }

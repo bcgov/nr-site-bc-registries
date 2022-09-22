@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ImATeapotException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
@@ -196,11 +196,17 @@ export class AuthenticationService {
     let activeAccount: AccountObject;
     const decodedToken: { sub: string; name: string } = jwt_decode(token);
     // gets name + contacts
-    const userDetails: { firstname: string; lastname: string; contacts: [{ email: string }] } =
-      await this.getUserDetails(token);
+    let userDetails: { firstname: string; lastname: string; contacts: [{ email: string }] } = await this.getUserDetails(
+      token
+    );
     const emailArray: string[] = [];
-    for (const c of userDetails.contacts) {
-      emailArray.push(c.email);
+    // since the user is itself a contact, if there are no contacts then there is no user account for this service
+    if (userDetails.contacts) {
+      for (const c of userDetails.contacts) {
+        emailArray.push(c.email);
+      }
+    } else {
+      throw new ImATeapotException('Access Denied');
     }
     // gets accounts
     const userSettings = await this.getUserSettings(token, decodedToken.sub);
