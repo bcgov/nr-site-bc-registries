@@ -9,7 +9,7 @@ import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
 import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios');
+const axios = require('axios'); //
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
