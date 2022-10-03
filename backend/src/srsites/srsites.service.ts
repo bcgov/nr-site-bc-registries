@@ -255,14 +255,13 @@ export class SrsitesService {
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
-    const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.findAndCount({ siteId: siteId });
     const srprofil = await this.srprofilsRepository.find({ siteId: siteId });
     const siteProfileString =
       srprofil.length == 0 ? 'No Site Profile has been submitted for this site' : 'Site Profile Received';
-    let numAssocs = srassocs[1] + srassocs2[1];
+    let numAssocs = srassocs[1];
     let numParcelDescs = 0;
 
     for (let entry of srpinpids[0]) {
@@ -270,13 +269,6 @@ export class SrsitesService {
         numParcelDescs++;
       }
     }
-    // calculate the number of associated sites
-    srassocs[0].forEach(() => {
-      numAssocs++;
-    });
-    srassocs2[0].forEach(() => {
-      numAssocs++;
-    });
     let addedAssocSites: string[] = [];
     for (let entry of srpinpids[0]) {
       if (entry.pid != '') {
@@ -341,12 +333,11 @@ export class SrsitesService {
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
     const srlands = await this.srlandsRepository.findAndCount({ siteId: siteId });
     const srassocs = await this.srassocsRepository.findAndCount({ siteId: siteId });
-    const srassocs2 = await this.srassocsRepository.findAndCount({ associatedSiteId: siteId });
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.find({ siteId: siteId });
     const srprofil = await this.srprofilsRepository.findOne({ siteId: siteId });
-    let numAssocs = 0;
+    let numAssocs = srassocs[1];
     let numParcelDescs = 0;
 
     for (let entry of srpinpids) {
@@ -371,17 +362,8 @@ export class SrsitesService {
     // site associations array grabs from srassocs table & other sites with the same pid
     let associatedSitesArray = [];
     for (let entry of srassocs[0]) {
-      numAssocs++;
       let assocObject = {};
       assocObject['siteId'] = entry.associatedSiteId;
-      assocObject['effectDate'] = entry.effectDate;
-      assocObject['noteString'] = entry.noteString;
-      associatedSitesArray.push(assocObject);
-    }
-    for (let entry of srassocs2[0]) {
-      numAssocs++;
-      let assocObject = {};
-      assocObject['siteId'] = entry.siteId;
       assocObject['effectDate'] = entry.effectDate;
       assocObject['noteString'] = entry.noteString;
       associatedSitesArray.push(assocObject);
