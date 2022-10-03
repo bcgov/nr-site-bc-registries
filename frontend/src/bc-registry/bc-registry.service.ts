@@ -9,7 +9,7 @@ import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
 import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios');
+const axios = require('axios'); //
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -929,7 +929,7 @@ export class BCRegistryService {
 
     template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
 
-    return base64.encode(template);
+    return Buffer.from(template).toString('base64');
   }
 
   sortByProperty(property) {
@@ -964,7 +964,7 @@ export class BCRegistryService {
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
     template = template.concat('</div></body></html>');
 
-    return base64.encode(template);
+    return Buffer.from(template).toString('base64');
   }
 
   // get token for use with CDOGS
