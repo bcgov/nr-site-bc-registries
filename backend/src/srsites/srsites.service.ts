@@ -16,9 +16,11 @@ import { Srsitdoc } from '../srsitdoc/entities/srsitdoc.entity';
 import { MinimalSiteData } from 'utils/constants';
 import { Srevpart } from '../srevpart/entities/srevpart.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
-import { Srdocpar } from 'src/srdocpar/entities/srdocpar.entity';
-import { Srprofil } from 'src/srprofil/entities/srprofil.entity';
-import { Srprfuse } from 'src/srprfuse/entities/srprfuse.entity';
+import { Srdocpar } from '../srdocpar/entities/srdocpar.entity';
+import { Srprofil } from '../srprofil/entities/srprofil.entity';
+import { Srprfuse } from '../srprfuse/entities/srprfuse.entity';
+import { Srprfque } from '../srprfque/entities/srprfque.entity';
+import { Srprfan } from '../srprfans/entities/srprfan.entity';
 
 @Injectable()
 export class SrsitesService {
@@ -46,7 +48,11 @@ export class SrsitesService {
     @InjectRepository(Srdate)
     private srdatesRepository: Repository<Srdate>,
     @InjectRepository(Srprofil)
-    private srprofilsRepository: Repository<Srprofil>
+    private srprofilsRepository: Repository<Srprofil>,
+    @InjectRepository(Srprfque)
+    private srprfquesRepository: Repository<Srprfque>,
+    @InjectRepository(Srprfan)
+    private srprfansRepository: Repository<Srprfan>
   ) {}
 
   async create(srsite: CreateSrsiteDto): Promise<Srsite> {
@@ -337,6 +343,9 @@ export class SrsitesService {
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.find({ siteId: siteId });
     const srprofil = await this.srprofilsRepository.findOne({ siteId: siteId });
+    const srprfuses = await this.srprfusesRepository.find({ siteId: siteId });
+    const srprfans = await this.srprfansRepository.find({ siteId: siteId });
+    const srprfques = await this.srprfquesRepository.find(); // all questions (about 30, we use 20 of them)
     let numAssocs = srassocs[1];
     let numParcelDescs = 0;
 
@@ -419,6 +428,28 @@ export class SrsitesService {
     if (lonSec.length == 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
+    // get land uses
+    let landUse = [];
+    for (let entry of srprfuses) {
+      let landUseObject = {};
+      landUseObject['code'] = entry.landUseCode;
+      landUseObject['codeString'] = entry.landUseString;
+      landUse.push(landUseObject);
+    }
+
+    // get questions and answers, question id determines array index
+    let qna = Array(20);
+    for (let entry of srprfans) {
+      let qnaObject = {};
+      let questionDescription = srprfques.filter(function (e) {
+        return e.questionId == entry.questionId;
+      })[0].questionDescription;
+      qnaObject['question'] = questionDescription;
+      qnaObject['answer'] = entry.answer;
+      const index = parseInt(entry.questionId) - 1;
+      qna[index] = qnaObject;
+    }
+
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
@@ -455,6 +486,8 @@ export class SrsitesService {
       suspectLandUsesArray: suspectLandUsesArray, // description+notes array
       parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
       siteProfileData: srprofil, // site profile information
+      landUse: landUse, // land use information
+      qna: qna,
     };
   }
 
