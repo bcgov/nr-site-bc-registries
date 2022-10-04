@@ -14,6 +14,8 @@ import { Srdate } from '../srdate/entities/srdate.entity';
 import { Srdocpar } from '../srdocpar/entities/srdocpar.entity';
 import { Srprofil } from '../srprofil/entities/srprofil.entity';
 import { Srprfuse } from '../srprfuse/entities/srprfuse.entity';
+import { Srprfque } from '../srprfque/entities/srprfque.entity';
+import { Srprfan } from '../srprfans/entities/srprfan.entity';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { Srprfuse } from '../srprfuse/entities/srprfuse.entity';
     TypeOrmModule.forFeature([Srassoc]),
     TypeOrmModule.forFeature([Srdate]),
     TypeOrmModule.forFeature([Srprofil]),
+    TypeOrmModule.forFeature([Srprfque]),
+    TypeOrmModule.forFeature([Srprfan]),
   ],
   controllers: [SrsitesController],
   providers: [SrsitesService],
