@@ -902,18 +902,23 @@ export class BCRegistryService {
     // site profile
     if (data.siteProfileData != undefined) {
       template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>SITE PROFILE</h4>\n');
+      template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (Sec. III to X)</h4>\n');
       template = template.concat('<table>\n');
-      template = template.concat(`<tr><th>Date Received:</th><td>${data.siteProfileData.dateReceived}</td></tr>`);
-      template = template.concat(`<tr><th>Date Completed:</th><td>${data.siteProfileData.dateCompleted}</td></tr>`);
       template = template.concat(
-        `<tr><th>Date Local Authority:</th><td>${data.siteProfileData.dateLocalAuthority}</td></tr>`
+        `<tr><th>Site Profile Completion Date:</th><td>${data.siteProfileData.dateCompleted}</td></tr>`
       );
-      template = template.concat(`<tr><th>Date Registrar:</th><td>${data.siteProfileData.dateRegistrar}</td></tr>`);
-      template = template.concat(`<tr><th>Date Decision:</th><td>${data.siteProfileData.dateDecision}</td></tr>`);
-      template = template.concat(`<tr><th>Date Entered:</th><td>${data.siteProfileData.dateEntered}</td></tr>`);
+      template = template.concat(
+        `<tr><th>Local Authority Received:</th><td>${data.siteProfileData.dateLocalAuthority}</td></tr>`
+      );
+      template = template.concat(
+        `<tr><th>Ministry Regional Manager Received:</th><td>${data.siteProfileData.dateReceived}</td></tr>`
+      );
+      template = template.concat(`<tr><th>Decision Date:</th><td>${data.siteProfileData.dateDecision}</td></tr>`);
       template = template.concat(`<tr><th>Decision:</th><td>${data.siteProfileData.decisionText}</td></tr>`);
-      template = template.concat(`<tr><th>Comments:</th><td>${data.siteProfileData.commentString}</td></tr>`);
+      template = template.concat(
+        `<tr><th>Site Registrar Received:</th><td>${data.siteProfileData.dateRegistrar}</td></tr>`
+      );
+      template = template.concat(`<tr><th>Entry Date:</th><td>${data.siteProfileData.dateEntered}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
       counter++;
@@ -932,6 +937,7 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
       template = template.concat('<table>\n');
+      template = template.concat(`<tr><td><b>Reference</b></td><td><b>Description</b></td></tr>`);
       for (let item of data.landUse) {
         template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
       }
@@ -1063,8 +1069,28 @@ export class BCRegistryService {
       template = template.concat('</div>');
       template = template.concat('<hr size="2" color="black">');
     }
+    template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
+    template = template.concat('<table>');
+    template =
+      data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
+        ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
+        : template;
+    template =
+      data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
+        ? template.concat(
+            `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
+          )
+        : template;
+    template =
+      data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
+        ? template.concat(
+            `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
+          )
+        : template;
+    template = template.concat('</table>');
+    template = template.concat('<hr size="2" color="black">');
 
-    template = template.concat('<p style="text-align: center">End of Detailed Report</p></div></body></html>');
+    template = template.concat('<p style="text-align: center">End of Detail Report</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
