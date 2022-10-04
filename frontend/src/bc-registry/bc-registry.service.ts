@@ -933,7 +933,7 @@ export class BCRegistryService {
     }
 
     // site profile land use
-    if (data.landUse != undefined) {
+    if (data.landUse != undefined && data.landUse.length != 0) {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
       template = template.concat('<table>\n');
@@ -955,22 +955,14 @@ export class BCRegistryService {
     }
 
     // site profile questions and answers
-    if (data.qna != undefined) {
+    if (data.qna) {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[0].question
-        ? template.concat(`<tr><td>${data.qna[0].question}............${data.qna[0].answer}</td></tr>`)
-        : template;
-      template = data.qna[1].question
-        ? template.concat(`<tr><td>${data.qna[1].question}............${data.qna[1].answer}</td></tr>`)
-        : template;
-      template = data.qna[2].question
-        ? template.concat(`<tr><td>${data.qna[2].question}............${data.qna[2].answer}</td></tr>`)
-        : template;
-      template = data.qna[19].question
-        ? template.concat(`<tr><td>${data.qna[19].question}............${data.qna[19].answer}</td></tr>`)
-        : template;
+      template = template.concat(`<tr><td>${data.qna[0].question}............${data.qna[0].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[1].question}............${data.qna[1].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[2].question}............${data.qna[2].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[19].question}............${data.qna[19].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
@@ -979,15 +971,9 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>FILL MATERIALS</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[3].question
-        ? template.concat(`<tr><td>${data.qna[3].question}............${data.qna[3].answer}</td></tr>`)
-        : template;
-      template = data.qna[4].question
-        ? template.concat(`<tr><td>${data.qna[4].question}............${data.qna[4].answer}</td></tr>`)
-        : template;
-      template = data.qna[5].question
-        ? template.concat(`<tr><td>${data.qna[5].question}............${data.qna[5].answer}</td></tr>`)
-        : template;
+      template = template.concat(`<tr><td>${data.qna[3].question}............${data.qna[3].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[4].question}............${data.qna[4].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[5].question}............${data.qna[5].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
@@ -996,21 +982,12 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[6].question
-        ? template.concat(`<tr><td>${data.qna[6].question}............${data.qna[6].answer}</td></tr>`)
-        : template;
-      template = data.qna[7].question
-        ? template.concat(`<tr><td>${data.qna[7].question}............${data.qna[7].answer}</td></tr>`)
-        : template;
-      template = data.qna[8].question
-        ? template.concat(`<tr><td>${data.qna[8].question}............${data.qna[8].answer}</td></tr>`)
-        : template;
-      template = data.qna[9].question
-        ? template.concat(`<tr><td>${data.qna[9].question}............${data.qna[9].answer}</td></tr>`)
-        : template;
-      template = data.qna[10].question
-        ? template.concat(`<tr><td>${data.qna[10].question}............${data.qna[10].answer}</td></tr>`)
-        : template;
+
+      template = template.concat(`<tr><td>${data.qna[6].question}............${data.qna[6].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[7].question}............${data.qna[7].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[8].question}............${data.qna[8].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[9].question}............${data.qna[9].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[10].question}............${data.qna[10].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
@@ -1019,12 +996,8 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[11].question
-        ? template.concat(`<tr><td>${data.qna[11].question}............${data.qna[11].answer}</td></tr>`)
-        : template;
-      template = data.qna[12].question
-        ? template.concat(`<tr><td>${data.qna[12].question}............${data.qna[12].answer}</td></tr>`)
-        : template;
+      template = template.concat(`<tr><td>${data.qna[11].question}............${data.qna[11].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[12].question}............${data.qna[12].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
@@ -1033,30 +1006,18 @@ export class BCRegistryService {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[13].question
-        ? template.concat(`<tr><td>${data.qna[13].question}............${data.qna[13].answer}</td></tr>`)
-        : template;
-      template = data.qna[14].question
-        ? template.concat(`<tr><td>${data.qna[14].question}............${data.qna[14].answer}</td></tr>`)
-        : template;
-      template = data.qna[15].question
-        ? template.concat(`<tr><td>${data.qna[15].question}............${data.qna[15].answer}</td></tr>`)
-        : template;
+      template = template.concat(`<tr><td>${data.qna[13].question}............${data.qna[13].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[14].question}............${data.qna[14].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[15].question}............${data.qna[15].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
       template = template.concat('<table>\n');
-      template = data.qna[16].question
-        ? template.concat(`<tr><td>${data.qna[16].question}............${data.qna[16].answer}</td></tr>`)
-        : template;
-      template = data.qna[17].question
-        ? template.concat(`<tr><td>${data.qna[17].question}............${data.qna[17].answer}</td></tr>`)
-        : template;
-      template = data.qna[18].question
-        ? template.concat(`<tr><td>${data.qna[18].question}............${data.qna[18].answer}</td></tr>`)
-        : template;
+      template = template.concat(`<tr><td>${data.qna[16].question}............${data.qna[16].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[17].question}............${data.qna[17].answer}</td></tr>`);
+      template = template.concat(`<tr><td>${data.qna[18].question}............${data.qna[18].answer}</td></tr>`);
       template = template.concat(`</table>`);
       template = template.concat('</div>');
 
@@ -1071,22 +1032,24 @@ export class BCRegistryService {
     }
     template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
     template = template.concat('<table>');
-    template =
-      data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
-        ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
-        : template;
-    template =
-      data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
-        ? template.concat(
-            `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
-          )
-        : template;
-    template =
-      data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
-        ? template.concat(
-            `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
-          )
-        : template;
+    if (data.siteProfileData) {
+      template =
+        data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
+          ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
+          : template;
+      template =
+        data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
+          ? template.concat(
+              `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
+            )
+          : template;
+      template =
+        data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
+          ? template.concat(
+              `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
+            )
+          : template;
+    }
     template = template.concat('</table>');
     template = template.concat('<hr size="2" color="black">');
 

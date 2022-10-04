@@ -439,15 +439,17 @@ export class SrsitesService {
 
     // get questions and answers, question id determines array index
     let qna = Array(20);
-    for (let entry of srprfans) {
+    for (let entry of srprfques) {
       let qnaObject = {};
-      let questionDescription = srprfques.filter(function (e) {
-        return e.questionId == entry.questionId;
-      })[0].questionDescription;
+      let questionDescription = entry.questionDescription;
       qnaObject['question'] = questionDescription;
-      qnaObject['answer'] = entry.answer;
+      qnaObject['answer'] = '';
       const index = parseInt(entry.questionId) - 1;
       qna[index] = qnaObject;
+    }
+    for (let entry of srprfans) {
+      const index = parseInt(entry.questionId) - 1;
+      qna[index].answer = entry.answer;
     }
 
     return {
