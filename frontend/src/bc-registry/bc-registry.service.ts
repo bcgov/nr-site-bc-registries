@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import { PayService } from 'src/pay/pay.service';
 import * as path from 'path';
 import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
+import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
 
@@ -901,28 +902,157 @@ export class BCRegistryService {
 
     // site profile
     if (data.siteProfileData != undefined) {
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (Sec. III to X)</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(
-        `<tr><th>Site Profile Completion Date:</th><td>${data.siteProfileData.dateCompleted}</td></tr>`
-      );
-      template = template.concat(
-        `<tr><th>Local Authority Received:</th><td>${data.siteProfileData.dateLocalAuthority}</td></tr>`
-      );
-      template = template.concat(
-        `<tr><th>Ministry Regional Manager Received:</th><td>${data.siteProfileData.dateReceived}</td></tr>`
-      );
-      template = template.concat(`<tr><th>Decision Date:</th><td>${data.siteProfileData.dateDecision}</td></tr>`);
-      template = template.concat(`<tr><th>Decision:</th><td>${data.siteProfileData.decisionText}</td></tr>`);
-      template = template.concat(
-        `<tr><th>Site Registrar Received:</th><td>${data.siteProfileData.dateRegistrar}</td></tr>`
-      );
-      template = template.concat(`<tr><th>Entry Date:</th><td>${data.siteProfileData.dateEntered}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-      counter++;
+      for (const entry of data.siteProfileData) {
+        template = template.concat('<div style="page-break-inside: avoid">');
+        if (entry.dateCompleted) {
+          if (newSiteProfileDate(entry.dateCompleted)) {
+            template = template.concat('<h4>SITE DISCLOSURE STATEMENT</h4>\n');
+          } else {
+            template = template.concat('<h4>SITE PROFILE</h4>\n');
+          }
+        }
+        template = template.concat('<table>\n');
+        template = template.concat(
+          `<tr><th>Site Profile Completion Date:</th><td>${entry.dateCompleted}</td></tr>`
+        );
+        template = template.concat(
+          `<tr><th>Date Local Authority Received:</th><td>${entry.dateLocalAuthority}</td></tr>`
+        );
+        template = template.concat(
+          `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
+        );
+        template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
+        template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+        template = template.concat(
+          `<tr><th>Site Registrar Received:</th><td>${entry.dateRegistrar}</td></tr>`
+        );
+        template = template.concat(`<tr><th>Entry Date:</th><td>${entry.dateEntered}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('</div>');
+        counter++;
+        template = template.concat('<hr size="2" color="black">');
+
+        // site profile land use
+        if (data.landUse != undefined && data.landUse.length != 0) {
+          template = template.concat('<div style="page-break-inside: avoid">');
+          template = template.concat('<h4>COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
+          template = template.concat('<table>\n');
+          template = template.concat(`<tr><td><b>Reference</b></td><td><b>Description</b></td></tr>`);
+          for (const item of data.landUse) {
+            template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
+          }
+          template = template.concat(`</table>`);
+          template = template.concat('</div>');
+          counter++;
+          template = template.concat('<hr size="2" color="black">');
+        }
+
+        // site profile questions and answers
+        if (entry.qna) {
+          if ((entry && entry.dateCompleted && !newSiteProfileDate(entry.dateCompleted))) {
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
+            template = template.concat('<table>\n');
+            template = template.concat(`<tr><td>${entry.qna[0].question}............${entry.qna[0].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[1].question}............${entry.qna[1].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[2].question}............${entry.qna[2].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[19].question}............${entry.qna[19].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<hr size="2" color="black">');
+
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>FILL MATERIALS</h4>\n');
+            template = template.concat('<table>\n');
+            template = template.concat(`<tr><td>${entry.qna[3].question}............${entry.qna[3].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[4].question}............${entry.qna[4].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[5].question}............${entry.qna[5].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<hr size="2" color="black">');
+
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
+            template = template.concat('<table>\n');
+
+            template = template.concat(`<tr><td>${entry.qna[6].question}............${entry.qna[6].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[7].question}............${entry.qna[7].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[8].question}............${entry.qna[8].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[9].question}............${entry.qna[9].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[10].question}............${entry.qna[10].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[20].question}............${entry.qna[20].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[21].question}............${entry.qna[21].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[22].question}............${entry.qna[22].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[23].question}............${entry.qna[23].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[24].question}............${entry.qna[24].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<hr size="2" color="black">');
+
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
+            template = template.concat('<table>\n');
+            template = template.concat(`<tr><td>${entry.qna[11].question}............${entry.qna[11].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[12].question}............${entry.qna[12].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[25].question}............${entry.qna[25].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[26].question}............${entry.qna[26].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<hr size="2" color="black">');
+
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
+            template = template.concat('<table>\n');
+            template = template.concat(`<tr><td>${entry.qna[13].question}............${entry.qna[13].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[14].question}............${entry.qna[14].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[15].question}............${entry.qna[15].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[27].question}............${entry.qna[27].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[28].question}............${entry.qna[28].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[29].question}............${entry.qna[29].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<div style="page-break-inside: avoid">');
+            template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
+            template = template.concat('<table>\n');
+            template = template.concat(`<tr><td>${entry.qna[16].question}............${entry.qna[16].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[17].question}............${entry.qna[17].answer}</td></tr>`);
+            template = template.concat(`<tr><td>${entry.qna[18].question}............${entry.qna[18].answer}</td></tr>`);
+            template = template.concat(`</table>`);
+            template = template.concat('</div>');
+
+            template = template.concat('<hr size="2" color="black">');
+          } 
+        }
+      }
+    
+      template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
+      template = template.concat('<table>');
+      if (data.siteProfileData) {
+        template =
+          data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
+            ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
+            : template;
+        template =
+          data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
+            ? template.concat(
+                `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
+              )
+            : template;
+        template =
+          data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
+            ? template.concat(
+                `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
+              )
+            : template;
+      }
+      template = template.concat('</table>');
       template = template.concat('<hr size="2" color="black">');
+
     } else {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat(
@@ -931,127 +1061,6 @@ export class BCRegistryService {
       template = template.concat('</div>');
       template = template.concat('<hr size="2" color="black">');
     }
-
-    // site profile land use
-    if (data.landUse != undefined && data.landUse.length != 0) {
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td><b>Reference</b></td><td><b>Description</b></td></tr>`);
-      for (let item of data.landUse) {
-        template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
-      }
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-      counter++;
-      template = template.concat('<hr size="2" color="black">');
-    } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat(
-        '<div class="row"><div class="col-sm text-center">No land use information has been submitted for this site</div></div>'
-      );
-      template = template.concat('</div>');
-      template = template.concat('<hr size="2" color="black">');
-    }
-
-    // site profile questions and answers
-    if (data.qna) {
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td>${data.qna[0].question}............${data.qna[0].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[1].question}............${data.qna[1].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[2].question}............${data.qna[2].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[19].question}............${data.qna[19].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<hr size="2" color="black">');
-
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>FILL MATERIALS</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td>${data.qna[3].question}............${data.qna[3].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[4].question}............${data.qna[4].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[5].question}............${data.qna[5].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<hr size="2" color="black">');
-
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
-      template = template.concat('<table>\n');
-
-      template = template.concat(`<tr><td>${data.qna[6].question}............${data.qna[6].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[7].question}............${data.qna[7].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[8].question}............${data.qna[8].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[9].question}............${data.qna[9].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[10].question}............${data.qna[10].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<hr size="2" color="black">');
-
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td>${data.qna[11].question}............${data.qna[11].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[12].question}............${data.qna[12].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<hr size="2" color="black">');
-
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td>${data.qna[13].question}............${data.qna[13].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[14].question}............${data.qna[14].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[15].question}............${data.qna[15].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
-      template = template.concat('<table>\n');
-      template = template.concat(`<tr><td>${data.qna[16].question}............${data.qna[16].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[17].question}............${data.qna[17].answer}</td></tr>`);
-      template = template.concat(`<tr><td>${data.qna[18].question}............${data.qna[18].answer}</td></tr>`);
-      template = template.concat(`</table>`);
-      template = template.concat('</div>');
-
-      template = template.concat('<hr size="2" color="black">');
-    } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
-      template = template.concat(
-        '<div class="row"><div class="col-sm text-center">No Q/A information has been submitted for this site</div></div>'
-      );
-      template = template.concat('</div>');
-      template = template.concat('<hr size="2" color="black">');
-    }
-    template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-    template = template.concat('<table>');
-    if (data.siteProfileData) {
-      template =
-        data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
-          ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
-          : template;
-      template =
-        data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
-          ? template.concat(
-              `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
-            )
-          : template;
-      template =
-        data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
-          ? template.concat(
-              `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
-            )
-          : template;
-    }
-    template = template.concat('</table>');
-    template = template.concat('<hr size="2" color="black">');
 
     template = template.concat('<p style="text-align: center">End of Detail Report</p></div></body></html>');
 

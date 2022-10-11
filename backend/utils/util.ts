@@ -43,3 +43,25 @@ export function delay(milliseconds: number) {
   console.log('Delaying for ' + milliseconds + ' milliseconds');
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
+
+export function sortJsonArrayAsc(prop) {    
+  return function(a, b) {    
+      if (a[prop] > b[prop]) {    
+          return 1;    
+      } else if (a[prop] < b[prop]) {    
+          return -1;    
+      }    
+      return 0;    
+  }    
+}
+
+export function sortJsonArrayDesc(prop) {    
+  return function(a, b) {    
+      if (b[prop] > a[prop]) {
+          return 1;    
+      } else if (b[prop] < a[prop]) {    
+          return -1;    
+      }    
+      return 0;    
+  }    
+} 

@@ -7,7 +7,7 @@ import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { getCurrentTime, getTodaysDate, isInsideArea } from '../../utils/util';
+import { getCurrentTime, getTodaysDate, isInsideArea, sortJsonArrayAsc, sortJsonArrayDesc } from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
@@ -342,7 +342,7 @@ export class SrsitesService {
     const srsite = await this.srsitesRepository.findOneOrFail({ siteId: siteId });
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.find({ siteId: siteId });
-    const srprofil = await this.srprofilsRepository.findOne({ siteId: siteId });
+    const srprofil = await this.srprofilsRepository.find({ siteId: siteId });
     const srprfuses = await this.srprfusesRepository.find({ siteId: siteId });
     const srprfans = await this.srprfansRepository.find({ siteId: siteId });
     const srprfques = await this.srprfquesRepository.find(); // all questions (about 30, we use 20 of them)
@@ -437,19 +437,28 @@ export class SrsitesService {
       landUse.push(landUseObject);
     }
 
-    // get questions and answers, question id determines array index
-    let qna = Array(20);
-    for (let entry of srprfques) {
-      let qnaObject = {};
-      let questionDescription = entry.questionDescription;
-      qnaObject['question'] = questionDescription;
-      qnaObject['answer'] = '';
-      const index = parseInt(entry.questionId) - 1;
-      qna[index] = qnaObject;
-    }
-    for (let entry of srprfans) {
-      const index = parseInt(entry.questionId) - 1;
-      qna[index].answer = entry.answer;
+    srprofil.sort(sortJsonArrayDesc('dateCompleted'));
+    let profiles = [];
+    for (let entry of srprofil) {
+      // get questions and answers, question id determines array index
+      let qna = Array(30);
+      srprfques.sort(sortJsonArrayDesc('questionId'));
+      for (let entry of srprfques) {
+        let qnaObject = {};
+        let questionDescription = entry.questionDescription;
+        qnaObject['question'] = questionDescription;
+        qnaObject['answer'] = '';
+        const index = parseInt(entry.questionId) - 1;
+        qna[index] = qnaObject;
+      }
+      // sort ascending so that the most recent answers overwrite older answers in this loop
+      srprfans.sort(sortJsonArrayAsc('dateCompleted'));
+      for (let entry of srprfans) {
+        const index = parseInt(entry.questionId) - 1;
+        qna[index].answer = entry.answer;
+      }
+      entry['qna'] = qna; // add the qna portion for each individual site profile
+      profiles.push(entry);
     }
 
     return {
@@ -487,9 +496,8 @@ export class SrsitesService {
       associatedSitesArray: associatedSitesArray, // for now, just sites with the same parcel-id & those included in srassocs (there's only 1 entry)
       suspectLandUsesArray: suspectLandUsesArray, // description+notes array
       parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
-      siteProfileData: srprofil, // site profile information
+      siteProfileData: profiles, // site profile information
       landUse: landUse, // land use information
-      qna: qna,
     };
   }
 
