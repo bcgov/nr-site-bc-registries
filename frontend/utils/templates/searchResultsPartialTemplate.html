@@ -34,6 +34,10 @@
         font-size: 18px;
         font-family: Georgia, 'Times New Roman', Times, serif;
       }
+      .disclaimer {
+        font-size: 12px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
     </style>
   </head>
   <body>
@@ -45,10 +49,12 @@
       <div class="row">
         <div class="col-sm text-right" style="text-align: right">{d.currentTime}</div>
       </div>
-      <h2 style="text-align: center; margin: 0.5rem">BC Registries and Online Services: Site Registry</h2>
-      <p style="text-align: center; margin: 0">For: {d.account}</p>
-
-      <h3 style="text-align: center">{d.searchType} Search Results</h3>
+      <div class="row">
+        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
+      </div>
+      <h1 style="text-align: center">{d.searchType} Search Results</h1>
+      <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services: Site Registry</h3>
+      <br />
       <hr />
       <br />
 

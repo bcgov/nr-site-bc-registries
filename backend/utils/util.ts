@@ -1,3 +1,5 @@
+import { Srprofil } from "src/srprofil/entities/srprofil.entity";
+
 type latlng = { lat: number; lng: number };
 
 export function isInsideArea(checkPoint: latlng, centerPoint: latlng, meters: number) {
@@ -64,4 +66,16 @@ export function sortJsonArrayDesc(prop) {
       }    
       return 0;    
   }    
-} 
+}
+
+export function findMostRecentDate(srprofil: Srprofil[]): string {
+  let newestDate = '1900-01-01';
+  let currentDate: string;
+  for (const entry of srprofil) {
+    currentDate = entry.dateCompleted;
+    if (new Date(currentDate) > new Date(newestDate)) {
+      newestDate = currentDate;
+    }
+  }
+  return newestDate;
+}

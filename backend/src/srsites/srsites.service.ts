@@ -7,7 +7,7 @@ import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { getCurrentTime, getTodaysDate, isInsideArea, sortJsonArrayAsc, sortJsonArrayDesc } from '../../utils/util';
+import { findMostRecentDate, getCurrentTime, getTodaysDate, isInsideArea, sortJsonArrayAsc, sortJsonArrayDesc } from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
@@ -265,8 +265,9 @@ export class SrsitesService {
     const srdate = await this.srdatesRepository.find();
     const srpinpids = await this.srpinpidsRepository.findAndCount({ siteId: siteId });
     const srprofil = await this.srprofilsRepository.find({ siteId: siteId });
-    const siteProfileString =
-      srprofil.length == 0 ? 'No Site Profile has been submitted for this site' : 'Site Profile Received';
+    const srprfuses = await this.srprfusesRepository.find({ siteId: siteId });
+    const srprfans = await this.srprfansRepository.find({ siteId: siteId });
+    const srprfques = await this.srprfquesRepository.find();
     let numAssocs = srassocs[1];
     let numParcelDescs = 0;
 
@@ -300,6 +301,42 @@ export class SrsitesService {
     if (lonSec.length == 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
+    // get land uses
+    let landUse = [];
+    for (let entry of srprfuses) {
+      let landUseObject = {};
+      landUseObject['code'] = entry.landUseCode;
+      landUseObject['codeString'] = entry.landUseString;
+      landUse.push(landUseObject);
+    }
+
+    const recentDate = findMostRecentDate(srprofil);
+    const filteredSrprofil = srprofil.filter(function (x) {
+      return x.dateCompleted == recentDate;
+    })
+    let profiles = [];
+    for (let entry of filteredSrprofil) {
+      // get questions and answers, question id determines array index
+      let qna = Array(30);
+      srprfques.sort(sortJsonArrayDesc('questionId'));
+      for (let entry of srprfques) {
+        let qnaObject = {};
+        let questionDescription = entry.questionDescription;
+        qnaObject['question'] = questionDescription;
+        qnaObject['answer'] = '';
+        const index = parseInt(entry.questionId) - 1;
+        qna[index] = qnaObject;
+      }
+      // sort ascending so that the most recent answers overwrite older answers in this loop
+      srprfans.sort(sortJsonArrayAsc('dateCompleted'));
+      for (let entry of srprfans) {
+        const index = parseInt(entry.questionId) - 1;
+        qna[index].answer = entry.answer;
+      }
+      entry['qna'] = qna; // add the qna portion for each individual site profile
+      profiles.push(entry);
+    }
+
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
@@ -329,7 +366,8 @@ export class SrsitesService {
       locationDescription: srsite.locationDescription,
       status: srsite.status,
       classification: srsite.classification,
-      siteProfileString: siteProfileString,
+      siteProfileData: profiles, // site profile information
+      landUse: landUse, // land use information
     };
   }
 
@@ -345,7 +383,7 @@ export class SrsitesService {
     const srprofil = await this.srprofilsRepository.find({ siteId: siteId });
     const srprfuses = await this.srprfusesRepository.find({ siteId: siteId });
     const srprfans = await this.srprfansRepository.find({ siteId: siteId });
-    const srprfques = await this.srprfquesRepository.find(); // all questions (about 30, we use 20 of them)
+    const srprfques = await this.srprfquesRepository.find();
     let numAssocs = srassocs[1];
     let numParcelDescs = 0;
 
