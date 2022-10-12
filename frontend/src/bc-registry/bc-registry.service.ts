@@ -75,7 +75,7 @@ export class BCRegistryService {
 
     switch (searchType) {
       case 'pid': {
-        data['searchType'] = 'Parcel ID';
+        data['searchType'] = 'Parcel Identifier (PID)';
         data['searchCriteria1'] = searchCriteria1; // parcel id
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
@@ -89,14 +89,14 @@ export class BCRegistryService {
         break;
       }
       case 'clp': {
-        data['searchType'] = 'Crown Lands PIN';
+        data['searchType'] = 'Crown Lands PIN Search';
         data['searchCriteria1'] = searchCriteria1; // crown lands pin
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'sid': {
-        data['searchType'] = 'Site ID';
+        data['searchType'] = 'Site Identifier';
         data['searchCriteria1'] = searchCriteria1; // siteid
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
@@ -177,7 +177,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
-    data['searchType'] = 'Site ID';
+    data['searchType'] = 'Site Identifier';
     data['siteId'] = siteId; // siteid
 
     const md = JSON.stringify({
@@ -514,16 +514,70 @@ export class BCRegistryService {
     let htmlFile: string;
     if (requestUrl !== '') {
       // construct the template data object
-      const searchData = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
-      searchData['account'] = name;
-      searchData['searchType'] = 'Parcel ID';
-      searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
-      searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
-      searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
+      console.log('searchResultsJson')
+      console.log(searchResultsJson)
+      data['account'] = name;
+      switch (searchResultsJson.searchInfo.searchType) {
+        case 'pid': {
+          data['searchType'] = 'Parcel Identifier (PID) Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // parcel id
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'clf': {
+          data['searchType'] = 'Crown Lands File Number Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands file number
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'clp': {
+          data['searchType'] = 'Crown Lands PIN Search Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands pin
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'sid': {
+          data['searchType'] = 'Site Identifier Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // siteid
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'adr': {
+          data['searchType'] = 'Address';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // address
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // city
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'coords': {
+          data['searchType'] = 'Area Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // lat
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // lon
+          data['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3; // size
+          break;
+        }
+        case 'postal': {
+          data['searchType'] = 'Area Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // postalcode
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // size
+          data['searchCriteria3'] = '';
+          break;
+        }
+      }
+      // searchData['account'] = name;
+      // searchData['searchType'] = 'Parcel ID';
+      // searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
+      // searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
+      // searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
       // merge the template date with the template
-      htmlFile = await this.getSearchResultsHtml(searchData, documentTemplate, authorizationToken.toString());
+      htmlFile = await this.getSearchResultsHtml(data, documentTemplate, authorizationToken.toString());
     }
 
     // build the email object
