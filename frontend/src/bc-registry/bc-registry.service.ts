@@ -77,7 +77,7 @@ export class BCRegistryService {
 
     switch (searchType) {
       case 'pid': {
-        data['searchType'] = 'Parcel ID';
+        data['searchType'] = 'Parcel Identifier (PID)';
         data['searchCriteria1'] = searchCriteria1; // parcel id
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
@@ -91,14 +91,14 @@ export class BCRegistryService {
         break;
       }
       case 'clp': {
-        data['searchType'] = 'Crown Lands PIN';
+        data['searchType'] = 'Crown Lands PIN Search';
         data['searchCriteria1'] = searchCriteria1; // crown lands pin
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'sid': {
-        data['searchType'] = 'Site ID';
+        data['searchType'] = 'Site Identifier';
         data['searchCriteria1'] = searchCriteria1; // siteid
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
@@ -179,7 +179,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
-    data['searchType'] = 'Site ID';
+    data['searchType'] = 'Site Identifier';
     data['siteId'] = siteId; // siteid
 
     const md = JSON.stringify({
@@ -516,16 +516,70 @@ export class BCRegistryService {
     let htmlFile: string;
     if (requestUrl !== '') {
       // construct the template data object
-      const searchData = await lastValueFrom(
+      const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
-      searchData['account'] = name;
-      searchData['searchType'] = 'Parcel ID';
-      searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
-      searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
-      searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
+      console.log('searchResultsJson')
+      console.log(searchResultsJson)
+      data['account'] = name;
+      switch (searchResultsJson.searchInfo.searchType) {
+        case 'pid': {
+          data['searchType'] = 'Parcel Identifier (PID) Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // parcel id
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'clf': {
+          data['searchType'] = 'Crown Lands File Number Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands file number
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'clp': {
+          data['searchType'] = 'Crown Lands PIN Search Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands pin
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'sid': {
+          data['searchType'] = 'Site Identifier Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // siteid
+          data['searchCriteria2'] = '';
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'adr': {
+          data['searchType'] = 'Address';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // address
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // city
+          data['searchCriteria3'] = '';
+          break;
+        }
+        case 'coords': {
+          data['searchType'] = 'Area Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // lat
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // lon
+          data['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3; // size
+          break;
+        }
+        case 'postal': {
+          data['searchType'] = 'Area Search';
+          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // postalcode
+          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // size
+          data['searchCriteria3'] = '';
+          break;
+        }
+      }
+      // searchData['account'] = name;
+      // searchData['searchType'] = 'Parcel ID';
+      // searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
+      // searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
+      // searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
       // merge the template date with the template
-      htmlFile = await this.getSearchResultsHtml(searchData, documentTemplate, authorizationToken.toString());
+      htmlFile = await this.getSearchResultsHtml(data, documentTemplate, authorizationToken.toString());
     }
 
     // build the email object
@@ -627,49 +681,6 @@ export class BCRegistryService {
 
     return htmlData;
   }
-
-  // async getPlainText(token?: string): Promise<string> {
-  //   const authorizationToken = token != null ? token : await this.getToken();
-  //   let plainTextData: string;
-  //   const data = '';
-
-  //   const md = JSON.stringify({
-  //     data,
-  //     formatters:
-  //       '{"myFormatter":"_function_myFormatter|function(data) { return data.slice(1); }","myOtherFormatter":"_function_myOtherFormatter|function(data) {return data.slice(2);}"}',
-  //     options: {
-  //       cacheReport: true,
-  //       convertTo: 'txt',
-  //       overwrite: true,
-  //       reportName: 'test-report.txt',
-  //     },
-  //     template: {
-  //       encodingType: 'base64',
-  //       fileType: 'html',
-  //       content: `${plainTextTemplate}`,
-  //     },
-  //   });
-
-  //   const config = {
-  //     method: 'post',
-  //     url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
-  //     headers: {
-  //       Authorization: `Bearer ${authorizationToken}`,
-  //       'Content-Type': 'application/json',
-  //     },
-  //     data: md,
-  //   };
-
-  //   await axios(config)
-  //     .then(function (response) {
-  //       plainTextData = response.data;
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-
-  //   return plainTextData;
-  // }
 
   // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
   buildDetailedTemplate(data): string {
@@ -938,7 +949,7 @@ export class BCRegistryService {
       template = template.concat('<h4>COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
       template = template.concat('<table>\n');
       template = template.concat(`<tr><td><b>Reference</b></td><td><b>Description</b></td></tr>`);
-      for (let item of data.landUse) {
+      for (const item of data.landUse) {
         template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
       }
       template = template.concat(`</table>`);
