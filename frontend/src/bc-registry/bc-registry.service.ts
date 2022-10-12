@@ -837,7 +837,7 @@ export class BCRegistryService {
     }
 
     template = template.concat('<p style="text-align: center">End of Synopsis Report</p>');
-    template = template.concat('<div class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</div></div></body></html>');
+    template = template.concat('<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
@@ -1235,7 +1235,7 @@ export class BCRegistryService {
     }
 
     template = template.concat('<p style="text-align: center">End of Detail Report</p>');
-    template = template.concat('<p class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
+    template = template.concat('<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
@@ -1269,7 +1269,7 @@ export class BCRegistryService {
     }
     template = template.concat('<hr />');
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
-    template = template.concat('<p class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
+    template = template.concat('<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
