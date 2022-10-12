@@ -50,18 +50,26 @@ map.on(L.Draw.Event.CREATED, function (e) {
   }
 });
 
-var circleOptions = {
+
+var radiusSmall = 500; // 500m area
+var radiusLarge = 5000; // 5 km
+var smallCircleOptions = {
   color: 'green',
   fillColor: '#3f0',
   fillOpacity: 0.25,
+  radius: radiusSmall,
 };
-var radiusSmall = 500; // 500m area
-var radiusLarge = 5000; // 5 km
+var largeCircleOptions = {
+  color: 'green',
+  fillColor: '#3f0',
+  fillOpacity: 0.25,
+  radius: radiusLarge,
+};
 var latlng = [48.428, -123.365]; // victoria - these coords arent actually used when drawing though
 // circles have to be instantiated here and not inside a function or you'll get a cryptic error
 // other objects like markers and rectangles can be created anywhere though
-var smallCircle = L.circle(latlng, radiusSmall, circleOptions);
-var largeCircle = L.circle(latlng, radiusLarge, circleOptions);
+var smallCircle = L.circle(latlng, smallCircleOptions);
+var largeCircle = L.circle(latlng, largeCircleOptions);
 
 // *************************
 // allow the user to manipulate the circle location + update lat/long

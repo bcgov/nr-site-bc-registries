@@ -368,51 +368,51 @@ function getSearchInfo() {
   let searchCriteria3;
   switch (searchType) {
     case 'pid': {
-      searchType = 'Parcel ID';
-      searchCriteria1 = 'Parcel ID: ' + localStorage.getItem('searchCriteria');
+      searchType = 'pid';
+      searchCriteria1 = localStorage.getItem('searchCriteria');
       searchCriteria2 = '';
       searchCriteria3 = '';
       break;
     }
     case 'clf': {
-      searchType = 'Crown Lands File Number';
-      searchCriteria1 = 'Crown Lands File Number: ' + localStorage.getItem('searchCriteria');
+      searchType = 'clf';
+      searchCriteria1 = localStorage.getItem('searchCriteria');
       searchCriteria2 = '';
       searchCriteria3 = '';
       break;
     }
     case 'clp': {
-      searchType = 'Crown Lands PIN';
-      searchCriteria1 = 'Crown Lands PIN: ' + localStorage.getItem('searchCriteria');
+      searchType = 'clp';
+      searchCriteria1 = localStorage.getItem('searchCriteria');
       searchCriteria2 = '';
       searchCriteria3 = '';
       break;
     }
     case 'sid': {
-      searchType = 'Site ID';
-      searchCriteria1 = 'Site ID: ' + localStorage.getItem('searchCriteria');
+      searchType = 'sid';
+      searchCriteria1 = localStorage.getItem('searchCriteria');
       searchCriteria2 = '';
       searchCriteria3 = '';
       break;
     }
     case 'adr': {
-      searchType = 'Address';
-      searchCriteria1 = 'Address: ' + localStorage.getItem('searchCriteria');
-      searchCriteria2 = 'City: ' + localStorage.getItem('searchCriteria2');
+      searchType = 'adr';
+      searchCriteria1 = localStorage.getItem('searchCriteria');
+      searchCriteria2 = localStorage.getItem('searchCriteria2');
       searchCriteria3 = '';
       break;
     }
     case 'coords': {
-      searchType = 'Area';
-      searchCriteria1 = 'Latitude: ' + localStorage.getItem('latDms');
-      searchCriteria2 = 'Longitude: ' + localStorage.getItem('lonDms');
-      searchCriteria3 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      searchType = 'coords';
+      searchCriteria1 = localStorage.getItem('latDms');
+      searchCriteria2 = localStorage.getItem('lonDms');
+      searchCriteria3 = localStorage.getItem('searchCriteria3');
       break;
     }
     case 'postal': {
-      searchType = 'Area';
-      searchCriteria1 = 'Postal Code: ' + localStorage.getItem('postalCode');
-      searchCriteria2 = 'Area Size: ' + localStorage.getItem('searchCriteria3');
+      searchType = 'postal';
+      searchCriteria1 = localStorage.getItem('postalCode');
+      searchCriteria2 = localStorage.getItem('searchCriteria3');
       searchCriteria3 = '';
       break;
     }

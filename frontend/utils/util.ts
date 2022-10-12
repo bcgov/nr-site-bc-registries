@@ -30,3 +30,9 @@ export function checkPostalCode(postalCode) {
     return false;
   }
 }
+
+export function newSiteProfileDate(completionDate: string) {
+  const testDate = new Date("2021-02-01");
+  const date = new Date(completionDate);
+  return (date >= testDate) ? true : false;
+}

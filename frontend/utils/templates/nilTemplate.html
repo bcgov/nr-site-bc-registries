@@ -11,29 +11,34 @@
         height: auto;
         font-family: Georgia, 'Times New Roman', Times, serif;
       }
+      .disclaimer {
+        font-size: 12px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-sm">As of: {d.downloaddate}</div>
-        <div class="col-sm text-right" style="text-align: right">{d.todaysDate}</div>
+        <div class="col-sm">Report data as of: {d.downloaddate}</div>
+        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{d.currentTime}</div>
+        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
       </div>
-      <h2 style="text-align: center; margin: 0.5rem">BC Registries and Online Services: Site Registry</h2>
-      <p style="text-align: center; margin: 0">For: {d.account}</p>
-      <!-- <p>Folio:</p> -->
-
-      <hr size="5" />
-      <h3 style="text-align: center">{d.searchType} Nil Search</h3>
+      <div class="row">
+        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
+      </div>
+      <h2 style="text-align: center">Site Registry - {d.searchType} Search</h2>
+      <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
+      <br />
       <hr />
       <br />
       <div class="row">
         <div class="col-sm-8 text-right">
-          As of {d.downloaddate}, no records from Site Registry match the given search criteria:
+          No records from the Site Registry that match the search criteria provided:
         </div>
+        <br>
         <div class="col-sm-4 text-left">
           <table>
             <tr>
@@ -57,6 +62,15 @@
           Sites may be revealed by searching with alternate search methods. For example, a site not revealed in an Area
           search may be revealed by searching with another piece of information such as PID, PIN, address, or Crown
           Lands File Number.
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-lg text-center">
+          Disclaimer: Site Registry information has been filed in accordance with the provisions of the 
+          <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries 
+          & Online Services and the province of British Columbia make no representation or warranty as to its 
+          accuracy or completeness. Persons using this information do so at their own risk.
         </div>
       </div>
     </div>

@@ -32,23 +32,27 @@
         width: 100%;
         text-align: right;
       }
+      .disclaimer {
+        font-size: 12px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-sm">As of: {d.downloaddate}</div>
-        <div class="col-sm text-right" style="text-align: right">{d.todaysDate}</div>
+        <div class="col-sm">Report data as of: {d.downloaddate}</div>
+        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{d.currentTime}</div>
+        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
       </div>
-      <h2 style="text-align: center; margin: 0.5rem">BC Registries and Online Services: Site Registry</h2>
-      <p style="text-align: center; margin: 0">For: {d.account}</p>
-      <!-- <p>Folio:</p> -->
-
-      <hr size="5" />
-      <h3 style="text-align: center">Detailed Report</h3>
+      <div class="row">
+        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
+      </div>
+      <h2 style="text-align: center">Site Registry - Site Details Report</h2>
+      <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
+      <br />
       <hr />
       <br />
       <h4>SITE LOCATION</h4>
@@ -128,13 +132,5 @@
         <tr>
           <th style="min-width: 22vw">Location Description:</th>
           <td style="min-width: 65vw">{d.locationDescription}</td>
-        </tr>
-        <tr>
-          <th>Status:</th>
-          <td>{d.status}</td>
-        </tr>
-        <tr>
-          <th>Fee Category:</th>
-          <td>{d.classification}</td>
         </tr>
       </table>
