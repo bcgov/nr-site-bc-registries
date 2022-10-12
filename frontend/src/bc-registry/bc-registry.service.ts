@@ -75,51 +75,51 @@ export class BCRegistryService {
 
     switch (searchType) {
       case 'pid': {
-        data['searchType'] = 'Parcel Identifier (PID)';
-        data['searchCriteria1'] = searchCriteria1; // parcel id
+        data['searchType'] = 'Land Title Parcel Identifier (PID)';
+        data['searchCriteria1'] = 'Parcel ID: '+searchCriteria1; // parcel id
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'clf': {
-        data['searchType'] = 'Crown Lands File Number';
-        data['searchCriteria1'] = searchCriteria1; // crown lands file number
+        data['searchType'] = 'Crown Land File Number';
+        data['searchCriteria1'] = 'Crown Land File Number: '+searchCriteria1; // crown lands file number
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'clp': {
-        data['searchType'] = 'Crown Lands PIN Search';
-        data['searchCriteria1'] = searchCriteria1; // crown lands pin
+        data['searchType'] = 'Crown Land Parcel Identification Number (PIN)';
+        data['searchCriteria1'] = 'Crown Land PIN: '+searchCriteria1; // crown lands pin
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'sid': {
-        data['searchType'] = 'Site Identifier';
-        data['searchCriteria1'] = searchCriteria1; // siteid
+        data['searchType'] = 'Site Identification Number';
+        data['searchCriteria1'] = 'Site ID: '+searchCriteria1; // siteid
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
       }
       case 'adr': {
         data['searchType'] = 'Address';
-        data['searchCriteria1'] = searchCriteria1; // address
-        data['searchCriteria2'] = searchCriteria2; // city
+        data['searchCriteria1'] = 'Address: '+searchCriteria1; // address
+        data['searchCriteria2'] = 'City: '+searchCriteria2; // city
         data['searchCriteria3'] = '';
         break;
       }
       case 'coords': {
         data['searchType'] = 'Area';
-        data['searchCriteria1'] = searchCriteria1; // lat
-        data['searchCriteria2'] = searchCriteria2; // lon
-        data['searchCriteria3'] = searchCriteria3; // size
+        data['searchCriteria1'] = 'Latitude: '+searchCriteria1; // lat
+        data['searchCriteria2'] = 'Longitude: '+searchCriteria2; // lon
+        data['searchCriteria3'] = 'Radius: '+searchCriteria3=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
         break;
       }
       case 'postal': {
         data['searchType'] = 'Area';
-        data['searchCriteria1'] = searchCriteria1; // postalcode
-        data['searchCriteria2'] = searchCriteria2; // size
+        data['searchCriteria1'] = 'Postal Code: '+searchCriteria1; // postalcode
+        data['searchCriteria2'] = 'Radius: '+searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius';
         data['searchCriteria3'] = '';
         break;
       }
@@ -177,8 +177,8 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
-    data['searchType'] = 'Site Identifier';
-    data['siteId'] = siteId; // siteid
+    data['searchType'] = 'Site Identification Number';
+    data['siteId'] = 'Site ID: '+siteId; // siteid
 
     const md = JSON.stringify({
       data,
@@ -517,65 +517,58 @@ export class BCRegistryService {
       const data = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
-      console.log('searchResultsJson')
-      console.log(searchResultsJson)
       data['account'] = name;
       switch (searchResultsJson.searchInfo.searchType) {
         case 'pid': {
-          data['searchType'] = 'Parcel Identifier (PID) Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // parcel id
+          data['searchType'] = 'Land Title Parcel Identifier (PID)';
+          data['searchCriteria1'] = 'Parcel ID: '+searchResultsJson.searchInfo.searchCriteria1; // parcel id
           data['searchCriteria2'] = '';
           data['searchCriteria3'] = '';
           break;
         }
         case 'clf': {
-          data['searchType'] = 'Crown Lands File Number Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands file number
+          data['searchType'] = 'Crown Land File Number';
+          data['searchCriteria1'] = 'Crown Land File Number: '+searchResultsJson.searchInfo.searchCriteria1; // crown lands file number
           data['searchCriteria2'] = '';
           data['searchCriteria3'] = '';
           break;
         }
         case 'clp': {
-          data['searchType'] = 'Crown Lands PIN Search Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // crown lands pin
+          data['searchType'] = 'Crown Land Parcel Identification Number (PIN)';
+          data['searchCriteria1'] = 'Crown Land PIN: '+searchResultsJson.searchInfo.searchCriteria1; // crown lands pin
           data['searchCriteria2'] = '';
           data['searchCriteria3'] = '';
           break;
         }
         case 'sid': {
-          data['searchType'] = 'Site Identifier Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // siteid
+          data['searchType'] = 'Site Identification Number';
+          data['searchCriteria1'] = 'Site ID: '+searchResultsJson.searchInfo.searchCriteria1; // siteid
           data['searchCriteria2'] = '';
           data['searchCriteria3'] = '';
           break;
         }
         case 'adr': {
           data['searchType'] = 'Address';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // address
-          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // city
+          data['searchCriteria1'] = 'Address: '+searchResultsJson.searchInfo.searchCriteria1; // address
+          data['searchCriteria2'] = 'City: '+searchResultsJson.searchInfo.searchCriteria2; // city
           data['searchCriteria3'] = '';
           break;
         }
         case 'coords': {
-          data['searchType'] = 'Area Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // lat
-          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // lon
-          data['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3; // size
+          data['searchType'] = 'Area';
+          data['searchCriteria1'] = 'Latitude: '+searchResultsJson.searchInfo.searchCriteria1; // lat
+          data['searchCriteria2'] = 'Longitude: '+searchResultsJson.searchInfo.searchCriteria2; // lon
+          data['searchCriteria3'] = 'Radius: '+searchResultsJson.searchInfo.searchCriteria3=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
           break;
         }
         case 'postal': {
-          data['searchType'] = 'Area Search';
-          data['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1; // postalcode
-          data['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2; // size
+          data['searchType'] = 'Area';
+          data['searchCriteria1'] = 'Postal Code: '+searchResultsJson.searchInfo.searchCriteria1; // postalcode
+          data['searchCriteria2'] = 'Radius: '+searchResultsJson.searchInfo.searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
           data['searchCriteria3'] = '';
           break;
         }
       }
-      // searchData['account'] = name;
-      // searchData['searchType'] = 'Parcel ID';
-      // searchData['searchCriteria1'] = searchResultsJson.searchInfo.searchCriteria1;
-      // searchData['searchCriteria2'] = searchResultsJson.searchInfo.searchCriteria2;
-      // searchData['searchCriteria3'] = searchResultsJson.searchInfo.searchCriteria3;
       // merge the template date with the template
       htmlFile = await this.getSearchResultsHtml(data, documentTemplate, authorizationToken.toString());
     }
@@ -704,8 +697,10 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
-        template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+        if (!newSiteProfileDate(entry.dateCompleted)) {
+          template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+        }
         template = template.concat(
           `<tr><th>Site Registrar Received:</th><td>${entry.dateRegistrar}</td></tr>`
         );
@@ -810,28 +805,28 @@ export class BCRegistryService {
           } 
         }
       }
-      // template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-      // template = template.concat('<table>');
-      // if (data.siteProfileData) {
-      //   template =
-      //     data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
-      //       ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
-      //       : template;
-      //   template =
-      //     data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
-      //       ? template.concat(
-      //           `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
-      //         )
-      //       : template;
-      //   template =
-      //     data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
-      //       ? template.concat(
-      //           `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
-      //         )
-      //       : template;
-      // }
-      // template = template.concat('</table>');
-      // template = template.concat('<hr size="2" color="black">');
+      template = template.concat('<h4>ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
+      template = template.concat('<table>');
+      if (data.siteProfileData) {
+        template =
+          data.siteProfileData.commentString != null && data.siteProfileData.commentString != ''
+            ? template.concat(`<tr><td>Comments</td><td>${data.siteProfileData.commentString}</td></tr>`)
+            : template;
+        template =
+          data.siteProfileData.plannedActivityComment != null && data.siteProfileData.plannedActivityComment != ''
+            ? template.concat(
+                `<tr><td>Planned Activity Comment</td><td>${data.siteProfileData.plannedActivityComment}</td></tr>`
+              )
+            : template;
+        template =
+          data.siteProfileData.govDocumentsComment != null && data.siteProfileData.govDocumentsComment != ''
+            ? template.concat(
+                `<tr><td>Government Documents Comment</td><td>${data.siteProfileData.govDocumentsComment}</td></tr>`
+              )
+            : template;
+      }
+      template = template.concat('</table>');
+      template = template.concat('<hr size="2" color="black">');
     } else {
       template = template.concat('<div style="page-break-inside: avoid">');
       template = template.concat(
@@ -842,9 +837,8 @@ export class BCRegistryService {
     }
 
     template = template.concat('<p style="text-align: center">End of Synopsis Report</p>');
-    template = template.concat('<div class="disclaimer">Site Registry information has been filed in accordance with the provisions of the Environmental Management Act. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</div></div></body></html>');
+    template = template.concat('<div class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</div></div></body></html>');
 
-    console.log(template);
     return Buffer.from(template).toString('base64');
   }
 
@@ -1053,10 +1047,10 @@ export class BCRegistryService {
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Date Noted:</th><td>${parcelDescription.dateNoted}</td></tr>`);
-        template = template.concat(`<tr><th>Crown Lands PIN:</th><td>${parcelDescription.pin}</td></tr>`);
+        template = template.concat(`<tr><th>Crown Land PIN:</th><td>${parcelDescription.pin}</td></tr>`);
         template = template.concat(`<tr><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`);
         template = template.concat(
-          `<tr><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+          `<tr><th>Crown Land File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
         );
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
@@ -1097,8 +1091,10 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
-        template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+        if (!newSiteProfileDate(entry.dateCompleted)) {
+          template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+        }
         template = template.concat(
           `<tr><th>Site Registrar Received:</th><td>${entry.dateRegistrar}</td></tr>`
         );
@@ -1239,7 +1235,7 @@ export class BCRegistryService {
     }
 
     template = template.concat('<p style="text-align: center">End of Detail Report</p>');
-    template = template.concat('<p class="disclaimer">Site Registry information has been filed in accordance with the provisions of the Environmental Management Act. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
+    template = template.concat('<p class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
@@ -1254,7 +1250,6 @@ export class BCRegistryService {
 
   buildSearchResultsTemplate(data: [SearchResultsJsonObject]): string {
     let template: string = searchResultsTemplate;
-    template = template.concat('<hr size="3" color="black">');
     // search results
     const searchResultsLength = data.length;
     if (searchResultsLength > 0) {
@@ -1274,7 +1269,7 @@ export class BCRegistryService {
     }
     template = template.concat('<hr />');
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
-    template = template.concat('</div></body></html>');
+    template = template.concat('<p class="disclaimer">Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries & Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>');
 
     return Buffer.from(template).toString('base64');
   }
