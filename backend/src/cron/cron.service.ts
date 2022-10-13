@@ -192,25 +192,11 @@ export class CronService {
     await this.updateSrsitpar(await csv().fromString(CSV_HEADERS.SRSITPAR + rawData.srsitpar));
   }
 
-  async updateTable<T>(array: any[]) {
-    try {
-      console.log(`Removing old  data`);
-      await this.srassocsService.removeAll();
-      console.log(`Adding new  data`);
-      for (let i = 0; i < array.length; i += chunkSize) {
-        const chunk = array.slice(i, i + chunkSize);
-        await getConnection().createQueryBuilder().insert().into(Srassoc).values(chunk).execute();
-      }
-      console.log('');
-    } catch (err) {
-      console.log('Error updating  table');
-    }
-  }
-
   async updateSrassocs(array: any[]) {
     try {
       console.log(`Removing old srassocs data`);
-      await this.srassocsService.removeAll();
+      const repository = await getConnection().getRepository(Srassoc);
+      await repository.query(`TRUNCATE srassoc RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srassocs data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -225,7 +211,8 @@ export class CronService {
   async updateSrdate(array: any[]) {
     try {
       console.log(`Removing old srdate data`);
-      await this.srdatesService.removeAll();
+      const repository = await getConnection().getRepository(Srdate);
+      await repository.query(`TRUNCATE srdate RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srdate data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -240,7 +227,8 @@ export class CronService {
   async updateSrdocpar(array: any[]) {
     try {
       console.log(`Removing old srdocpar data`);
-      await this.srdocparsService.removeAll();
+      const repository = await getConnection().getRepository(Srdocpar);
+      await repository.query(`TRUNCATE srdocpar RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srdocpar data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -255,7 +243,8 @@ export class CronService {
   async updateSrevents(array: any[]) {
     try {
       console.log(`Removing old srevent data`);
-      await this.sreventsService.removeAll();
+      const repository = await getConnection().getRepository(Srevent);
+      await repository.query(`TRUNCATE srevent RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srevent data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -270,7 +259,8 @@ export class CronService {
   async updateSrevpart(array: any[]) {
     try {
       console.log(`Removing old srevpart data`);
-      await this.srevpartsService.removeAll();
+      const repository = await getConnection().getRepository(Srevpart);
+      await repository.query(`TRUNCATE srevpart RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srevpart data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -285,7 +275,8 @@ export class CronService {
   async updateSrlands(array: any[]) {
     try {
       console.log(`Removing old srlands data`);
-      await this.srlandsService.removeAll();
+      const repository = await getConnection().getRepository(Srland);
+      await repository.query(`TRUNCATE srland RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srlands data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -300,7 +291,8 @@ export class CronService {
   async updateSrparrol(array: any[]) {
     try {
       console.log(`Removing old srparrol data`);
-      await this.srparrolsService.removeAll();
+      const repository = await getConnection().getRepository(Srparrol);
+      await repository.query(`TRUNCATE srparrol RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srparrol data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -315,7 +307,8 @@ export class CronService {
   async updateSrpinpid(array: any[]) {
     try {
       console.log(`Removing old srpinpid data`);
-      await this.srpinpidsService.removeAll();
+      const repository = await getConnection().getRepository(Srpinpid);
+      await repository.query(`TRUNCATE srpinpid RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srpinpid data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -330,7 +323,8 @@ export class CronService {
   async updateSrprfans(array: any[]) {
     try {
       console.log(`Removing old srprfans data`);
-      await this.srprfansService.removeAll();
+      const repository = await getConnection().getRepository(Srprfan);
+      await repository.query(`TRUNCATE srprfan RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srprfans data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -345,7 +339,8 @@ export class CronService {
   async updateSrprfcat(array: any[]) {
     try {
       console.log(`Removing old srprfcat data`);
-      await this.srprfcatsService.removeAll();
+      const repository = await getConnection().getRepository(Srprfcat);
+      await repository.query(`TRUNCATE srprfcat RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srprfcat data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -360,7 +355,8 @@ export class CronService {
   async updateSrprfque(array: any[]) {
     try {
       console.log(`Removing old srprfque data`);
-      await this.srprfquesService.removeAll();
+      const repository = await getConnection().getRepository(Srprfque);
+      await repository.query(`TRUNCATE srprfque RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srprfque data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -375,7 +371,8 @@ export class CronService {
   async updateSrprfuse(array: any[]) {
     try {
       console.log(`Removing old srprfuse data`);
-      await this.srprfusesService.removeAll();
+      const repository = await getConnection().getRepository(Srprfuse);
+      await repository.query(`TRUNCATE srprfuse RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srprfuse data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -390,7 +387,8 @@ export class CronService {
   async updateSrprofil(array: any[]) {
     try {
       console.log(`Removing old srprofil data`);
-      await this.srprofilsService.removeAll();
+      const repository = await getConnection().getRepository(Srprofil);
+      await repository.query(`TRUNCATE srprofil RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srprofil data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -405,7 +403,8 @@ export class CronService {
   async updateSrsitdoc(array: any[]) {
     try {
       console.log(`Removing old srsitdoc data`);
-      await this.srsitdocsService.removeAll();
+      const repository = await getConnection().getRepository(Srsitdoc);
+      await repository.query(`TRUNCATE srsitdoc RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srsitdoc data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -420,7 +419,8 @@ export class CronService {
   async updateSrsite(array: any[]) {
     try {
       console.log(`Removing old srsite data`);
-      await this.srsitesService.removeAll();
+      const repository = await getConnection().getRepository(Srsite);
+      await repository.query(`TRUNCATE srsite RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srsite data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
@@ -435,7 +435,8 @@ export class CronService {
   async updateSrsitpar(array: any[]) {
     try {
       console.log(`Removing old srsitpar data`);
-      await this.srsitparsService.removeAll();
+      const repository = await getConnection().getRepository(Srsitpar);
+      await repository.query(`TRUNCATE srsitpar RESTART IDENTITY CASCADE;`);
       console.log(`Adding new srsitpar data`);
       for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);

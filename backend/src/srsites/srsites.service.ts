@@ -7,7 +7,14 @@ import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { findMostRecentDate, getCurrentTime, getTodaysDate, isInsideArea, sortJsonArrayAsc, sortJsonArrayDesc } from '../../utils/util';
+import {
+  filterSrprofil,
+  getCurrentTime,
+  getTodaysDate,
+  isInsideArea,
+  sortJsonArrayAsc,
+  sortJsonArrayDesc,
+} from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
@@ -310,18 +317,19 @@ export class SrsitesService {
       landUse.push(landUseObject);
     }
 
-    const recentDate = findMostRecentDate(srprofil);
-    const filteredSrprofil = srprofil.filter(function (x) {
-      return x.dateCompleted == recentDate;
-    })
+    // filter out all but the most recent site profile
+    const filteredSrprofil = filterSrprofil(srprofil);
     let profiles = [];
     for (let entry of filteredSrprofil) {
       // get questions and answers, question id determines array index
       let qna = Array(30);
+      for (let i = 0; i < 30; i++) {
+        qna[i] = { question: '', answer: '' };
+      }
       srprfques.sort(sortJsonArrayDesc('questionId'));
       for (let entry of srprfques) {
         let qnaObject = {};
-        let questionDescription = entry.questionDescription;
+        let questionDescription = entry.questionDescription ? entry.questionDescription : '';
         qnaObject['question'] = questionDescription;
         qnaObject['answer'] = '';
         const index = parseInt(entry.questionId) - 1;
@@ -480,10 +488,13 @@ export class SrsitesService {
     for (let entry of srprofil) {
       // get questions and answers, question id determines array index
       let qna = Array(30);
+      for (let i = 0; i < 30; i++) {
+        qna[i] = { question: '', answer: '' };
+      }
       srprfques.sort(sortJsonArrayDesc('questionId'));
       for (let entry of srprfques) {
         let qnaObject = {};
-        let questionDescription = entry.questionDescription;
+        let questionDescription = entry.questionDescription ? entry.questionDescription : '';
         qnaObject['question'] = questionDescription;
         qnaObject['answer'] = '';
         const index = parseInt(entry.questionId) - 1;

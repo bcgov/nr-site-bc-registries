@@ -1,4 +1,4 @@
-import { Srprofil } from "src/srprofil/entities/srprofil.entity";
+import { Srprofil } from '../src/srprofil/entities/srprofil.entity';
 
 type latlng = { lat: number; lng: number };
 
@@ -46,36 +46,40 @@ export function delay(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-export function sortJsonArrayAsc(prop) {    
-  return function(a, b) {    
-      if (a[prop] > b[prop]) {    
-          return 1;    
-      } else if (a[prop] < b[prop]) {    
-          return -1;    
-      }    
-      return 0;    
-  }    
+export function sortJsonArrayAsc(prop) {
+  return function (a, b) {
+    if (a[prop] > b[prop]) {
+      return 1;
+    } else if (a[prop] < b[prop]) {
+      return -1;
+    }
+    return 0;
+  };
 }
 
-export function sortJsonArrayDesc(prop) {    
-  return function(a, b) {    
-      if (b[prop] > a[prop]) {
-          return 1;    
-      } else if (b[prop] < a[prop]) {    
-          return -1;    
-      }    
-      return 0;    
-  }    
+export function sortJsonArrayDesc(prop) {
+  return function (a, b) {
+    if (b[prop] > a[prop]) {
+      return 1;
+    } else if (b[prop] < a[prop]) {
+      return -1;
+    }
+    return 0;
+  };
 }
 
-export function findMostRecentDate(srprofil: Srprofil[]): string {
+export function filterSrprofil(srprofil: Srprofil[]): Srprofil[] {
   let newestDate = '1900-01-01';
   let currentDate: string;
+  let filteredSrprofil: Srprofil[];
   for (const entry of srprofil) {
-    currentDate = entry.dateCompleted;
+    currentDate = entry.dateReceived;
     if (new Date(currentDate) > new Date(newestDate)) {
       newestDate = currentDate;
     }
   }
-  return newestDate;
+  filteredSrprofil = srprofil.filter(function (x) {
+    return x.dateReceived == newestDate;
+  });
+  return filteredSrprofil;
 }

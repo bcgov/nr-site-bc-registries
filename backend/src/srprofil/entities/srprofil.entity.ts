@@ -8,7 +8,7 @@ export class Srprofil {
   @Column('varchar', { length: 10 })
   siteId: string;
   @Column('varchar', { length: 10 })
-  dateReceived: string;
+  dateCompleted: string;
   @Column('varchar', { length: 10 })
   ownerParticipantId: string; // *always 0
   @Column('varchar', { length: 10 })
@@ -16,7 +16,7 @@ export class Srprofil {
   @Column('varchar', { length: 10 })
   completorParticipantId: string; // *always 0
   @Column('varchar', { length: 10 })
-  dateCompleted: string;
+  dateReceived: string;
   @Column('varchar', { length: 10 })
   dateLocalAuthority: string;
   @Column('varchar', { length: 10 })

@@ -32,7 +32,7 @@ export function checkPostalCode(postalCode) {
 }
 
 export function newSiteProfileDate(completionDate: string) {
-  const testDate = new Date("2021-02-01");
+  const testDate = new Date('2021-02-01');
   const date = new Date(completionDate);
-  return (date >= testDate) ? true : false;
+  return date >= testDate ? true : false;
 }
