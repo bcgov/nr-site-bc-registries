@@ -323,10 +323,13 @@ export class SrsitesService {
     for (let entry of filteredSrprofil) {
       // get questions and answers, question id determines array index
       let qna = Array(30);
+      for (let i = 0; i < 30; i++) {
+        qna[i] = { question: '', answer: '' };
+      }
       srprfques.sort(sortJsonArrayDesc('questionId'));
       for (let entry of srprfques) {
         let qnaObject = {};
-        let questionDescription = entry.questionDescription;
+        let questionDescription = entry.questionDescription ? entry.questionDescription : '';
         qnaObject['question'] = questionDescription;
         qnaObject['answer'] = '';
         const index = parseInt(entry.questionId) - 1;
@@ -485,10 +488,13 @@ export class SrsitesService {
     for (let entry of srprofil) {
       // get questions and answers, question id determines array index
       let qna = Array(30);
+      for (let i = 0; i < 30; i++) {
+        qna[i] = { question: '', answer: '' };
+      }
       srprfques.sort(sortJsonArrayDesc('questionId'));
       for (let entry of srprfques) {
         let qnaObject = {};
-        let questionDescription = entry.questionDescription;
+        let questionDescription = entry.questionDescription ? entry.questionDescription : '';
         qnaObject['question'] = questionDescription;
         qnaObject['answer'] = '';
         const index = parseInt(entry.questionId) - 1;

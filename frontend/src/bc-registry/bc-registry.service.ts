@@ -1274,122 +1274,230 @@ export class BCRegistryService {
         // site profile questions and answers
         if (entry.qna) {
           if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
-            template = template.concat(`<tr><td>${entry.qna[0].question}............${entry.qna[0].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[1].question}............${entry.qna[1].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[2].question}............${entry.qna[2].answer}</td></tr>`);
-            template = template.concat(
-              `<tr><td>${entry.qna[19].question}............${entry.qna[19].answer}</td></tr>`
-            );
+            template =
+              entry.qna[0].answer != ''
+                ? template.concat(`<tr><td>${entry.qna[0].question}............${entry.qna[0].answer}</td></tr>`)
+                : template;
+            template =
+              entry.qna[1].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[1].question}............${entry.qna[1].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[2].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[2].question}............${entry.qna[2].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[19].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[19].question}............${entry.qna[19].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
 
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>FILL MATERIALS</h4>\n');
             template = template.concat('<table>\n');
-            template = template.concat(`<tr><td>${entry.qna[3].question}............${entry.qna[3].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[4].question}............${entry.qna[4].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[5].question}............${entry.qna[5].answer}</td></tr>`);
+            template =
+              entry.qna[3].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[3].question}............${entry.qna[3].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[4].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[4].question}............${entry.qna[4].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[5].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[5].question}............${entry.qna[5].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
 
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
             template = template.concat('<table>\n');
 
-            template = template.concat(`<tr><td>${entry.qna[6].question}............${entry.qna[6].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[7].question}............${entry.qna[7].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[8].question}............${entry.qna[8].answer}</td></tr>`);
-            template = template.concat(`<tr><td>${entry.qna[9].question}............${entry.qna[9].answer}</td></tr>`);
-            template = template.concat(
-              `<tr><td>${entry.qna[10].question}............${entry.qna[10].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[20].question}............${entry.qna[20].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[21].question}............${entry.qna[21].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[22].question}............${entry.qna[22].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[23].question}............${entry.qna[23].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[24].question}............${entry.qna[24].answer}</td></tr>`
-            );
+            template =
+              entry.qna[6].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[6].question}............${entry.qna[6].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[7].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[7].question}............${entry.qna[7].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[8].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[8].question}............${entry.qna[8].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[9].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[9].question}............${entry.qna[9].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[10].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[10].question}............${entry.qna[10].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[20].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[20].question}............${entry.qna[20].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[21].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[21].question}............${entry.qna[21].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[22].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[22].question}............${entry.qna[22].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[23].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[23].question}............${entry.qna[23].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[24].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[24].question}............${entry.qna[24].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
 
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
             template = template.concat('<table>\n');
-            template = template.concat(
-              `<tr><td>${entry.qna[11].question}............${entry.qna[11].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[12].question}............${entry.qna[12].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[25].question}............${entry.qna[25].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[26].question}............${entry.qna[26].answer}</td></tr>`
-            );
+            template =
+              entry.qna[11].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[11].question}............${entry.qna[11].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[12].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[12].question}............${entry.qna[12].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[25].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[25].question}............${entry.qna[25].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[26].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[26].question}............${entry.qna[26].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
 
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
             template = template.concat('<table>\n');
-            template = template.concat(
-              `<tr><td>${entry.qna[13].question}............${entry.qna[13].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[14].question}............${entry.qna[14].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[15].question}............${entry.qna[15].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[27].question}............${entry.qna[27].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[28].question}............${entry.qna[28].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[29].question}............${entry.qna[29].answer}</td></tr>`
-            );
+            template =
+              entry.qna[13].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[13].question}............${entry.qna[13].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[14].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[14].question}............${entry.qna[14].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[15].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[15].question}............${entry.qna[15].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[27].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[27].question}............${entry.qna[27].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[28].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[28].question}............${entry.qna[28].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[29].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[29].question}............${entry.qna[29].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
 
-            template = template.concat('<div style="page-break-inside: avoid">');
+            // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
             template = template.concat('<table>\n');
-            template = template.concat(
-              `<tr><td>${entry.qna[16].question}............${entry.qna[16].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[17].question}............${entry.qna[17].answer}</td></tr>`
-            );
-            template = template.concat(
-              `<tr><td>${entry.qna[18].question}............${entry.qna[18].answer}</td></tr>`
-            );
+            template =
+              entry.qna[16].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[16].question}............${entry.qna[16].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[17].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[17].question}............${entry.qna[17].answer}</td></tr>`
+                  ))
+                : template;
+            template =
+              entry.qna[18].answer != ''
+                ? (template = template.concat(
+                    `<tr><td>${entry.qna[18].question}............${entry.qna[18].answer}</td></tr>`
+                  ))
+                : template;
             template = template.concat(`</table>`);
-            template = template.concat('</div>');
+            // template = template.concat('</div>');
 
             template = template.concat('<hr>');
           }
@@ -1462,7 +1570,7 @@ export class BCRegistryService {
         `<div style="text-align: center">No sites were found with the given search criteria</div>`
       );
     }
-    template = template.concat('<hr size="1" color="black">');
+    template = template.concat('<hr />');
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
     template = template.concat(
       '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
