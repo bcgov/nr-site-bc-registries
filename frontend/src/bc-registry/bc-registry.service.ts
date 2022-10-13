@@ -1236,6 +1236,8 @@ export class BCRegistryService {
           } else {
             template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
           }
+        } else {
+          template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Site Profile Completion Date:</th><td>${entry.dateCompleted}</td></tr>`);

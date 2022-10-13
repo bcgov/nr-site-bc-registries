@@ -483,7 +483,7 @@ export class SrsitesService {
       landUse.push(landUseObject);
     }
 
-    srprofil.sort(sortJsonArrayDesc('dateCompleted'));
+    srprofil.sort(sortJsonArrayDesc('dateReceived'));
     let profiles = [];
     for (let entry of srprofil) {
       // get questions and answers, question id determines array index
