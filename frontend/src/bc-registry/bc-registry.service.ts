@@ -693,19 +693,19 @@ export class BCRegistryService {
           }
         }
         template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Site Profile Completion Date:</th><td>${entry.dateCompleted}</td></tr>`);
+        template = template.concat(`<tr><th>Date Received:</th><td>${entry.dateReceived}</td></tr>`);
+        template = template.concat(`<tr><th>Date Completed:</th><td>${entry.dateCompleted}</td></tr>`);
         template = template.concat(
           `<tr><th>Date Local Authority Received:</th><td>${entry.dateLocalAuthority}</td></tr>`
         );
-        template = template.concat(
-          `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
-        );
+        template = template.concat(`<tr><th>Date Registrar:</th><td>${entry.dateRegistrar}</td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Date Decision:</th><td>${entry.dateDecision}</td></tr>`);
+        }
+        template = template.concat(`<tr><th>Date Entered:</th><td>${entry.dateEntered}</td></tr>`);
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
-        template = template.concat(`<tr><th>Site Registrar Received:</th><td>${entry.dateRegistrar}</td></tr>`);
-        template = template.concat(`<tr><th>Entry Date:</th><td>${entry.dateEntered}</td></tr>`);
         template = template.concat(`</table>`);
         // template = template.concat('</div>');
         template = template.concat('<hr>');
@@ -956,28 +956,28 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateReceived)) {
-            template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          } else {
-            template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          }
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+          template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
         } else {
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
         }
         template = template.concat('<table>');
         template =
           entry.commentString != ''
-            ? template.concat(`<tr><td>Comments</td><td>${entry.commentString}</td></tr>`)
-            : template.concat(`<tr><td>Comments</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Additional Comments:</td><td>${entry.commentString}</td></tr>`)
+            : template.concat(`<tr><td>Additional Comments:</td><td></td></tr>`);
         template =
           entry.plannedActivityComment != ''
-            ? template.concat(`<tr><td>Planned Activity Comment</td><td>${entry.plannedActivityComment}</td></tr>`)
-            : template.concat(`<tr><td>Planned Activity Comment</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Planned Activity Comments:</td><td>${entry.plannedActivityComment}</td></tr>`)
+            : template.concat(`<tr><td>Planned Activity Comments:</td><td></td></tr>`);
+        template =
+          entry.siteDisclosureComment != ''
+            ? template.concat(`<tr><td>Site Disclosure Statement:</td><td>${entry.siteDisclosureComment}</td></tr>`)
+            : template.concat(`<tr><td>Site Disclosure Statement:</td><td></td></tr>`);
         template =
           entry.govDocumentsComment != ''
-            ? template.concat(`<tr><td>Government Documents Comment</td><td>${entry.govDocumentsComment}</td></tr>`)
-            : template.concat(`<tr><td>Government Documents Comment</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Government Documents Comments:</td><td>${entry.govDocumentsComment}</td></tr>`)
+            : template.concat(`<tr><td>Government Documents Comments:</td><td></td></tr>`);
         template = template.concat('</table>');
         template = template.concat('<hr size="1" color="black">');
       }
@@ -1205,7 +1205,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Crown Land PIN:</th><td>${parcelDescription.pin}</td></tr>`);
         template = template.concat(`<tr><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`);
         template = template.concat(
-          `<tr><th>Crown Land File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+          `<tr><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
         );
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
@@ -1236,21 +1236,23 @@ export class BCRegistryService {
           } else {
             template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
           }
+        } else {
+          template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
         }
         template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Site Profile Completion Date:</th><td>${entry.dateCompleted}</td></tr>`);
+        template = template.concat(`<tr><th>Date Received:</th><td>${entry.dateReceived}</td></tr>`);
+        template = template.concat(`<tr><th>Date Completed:</th><td>${entry.dateCompleted}</td></tr>`);
         template = template.concat(
           `<tr><th>Date Local Authority Received:</th><td>${entry.dateLocalAuthority}</td></tr>`
         );
-        template = template.concat(
-          `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
-        );
+        template = template.concat(`<tr><th>Date Registrar:</th><td>${entry.dateRegistrar}</td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Date Decision:</th><td>${entry.dateDecision}</td></tr>`);
+        }
+        template = template.concat(`<tr><th>Date Entered:</th><td>${entry.dateEntered}</td></tr>`);
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
-        template = template.concat(`<tr><th>Site Registrar Received:</th><td>${entry.dateRegistrar}</td></tr>`);
-        template = template.concat(`<tr><th>Entry Date:</th><td>${entry.dateEntered}</td></tr>`);
         template = template.concat(`</table>`);
         template = template.concat('</div>');
         counter++;
@@ -1503,28 +1505,28 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateReceived)) {
-            template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          } else {
-            template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          }
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+          template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
         } else {
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
         }
         template = template.concat('<table>');
         template =
           entry.commentString != ''
-            ? template.concat(`<tr><td>Comments</td><td>${entry.commentString}</td></tr>`)
-            : template.concat(`<tr><td>Comments</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Additional Comments:</td><td>${entry.commentString}</td></tr>`)
+            : template.concat(`<tr><td>Additional Comments:</td><td></td></tr>`);
         template =
           entry.plannedActivityComment != ''
-            ? template.concat(`<tr><td>Planned Activity Comment</td><td>${entry.plannedActivityComment}</td></tr>`)
-            : template.concat(`<tr><td>Planned Activity Comment</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Planned Activity Comments:</td><td>${entry.plannedActivityComment}</td></tr>`)
+            : template.concat(`<tr><td>Planned Activity Comments:</td><td></td></tr>`);
+        template =
+          entry.siteDisclosureComment != ''
+            ? template.concat(`<tr><td>Site Disclosure Statement:</td><td>${entry.siteDisclosureComment}</td></tr>`)
+            : template.concat(`<tr><td>Site Disclosure Statement:</td><td></td></tr>`);
         template =
           entry.govDocumentsComment != ''
-            ? template.concat(`<tr><td>Government Documents Comment</td><td>${entry.govDocumentsComment}</td></tr>`)
-            : template.concat(`<tr><td>Government Documents Comment</td><td></td></tr>`);
+            ? template.concat(`<tr><td>Government Documents Comments:</td><td>${entry.govDocumentsComment}</td></tr>`)
+            : template.concat(`<tr><td>Government Documents Comments:</td><td></td></tr>`);
         template = template.concat('</table>');
         template = template.concat('<hr size="1" color="black">');
       }
