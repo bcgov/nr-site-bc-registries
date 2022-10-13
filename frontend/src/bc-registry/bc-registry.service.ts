@@ -430,7 +430,7 @@ export class BCRegistryService {
       data: data,
     };
 
-    return axios(config)
+    return await axios(config)
       .then(() => {
         return 'Email Sent';
       })
@@ -606,7 +606,7 @@ export class BCRegistryService {
     };
 
     // send the email
-    return axios(config)
+    return await axios(config)
       .then(() => {
         return 'Email Sent';
       })
