@@ -681,7 +681,7 @@ export class BCRegistryService {
     let template: string = synopsisTemplate;
     template = template.concat('<hr size="1" color="black">');
     // site profile
-    if (data.siteProfileData != undefined) {
+    if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       for (const entry of data.siteProfileData) {
         // there will only be one site profile in the data
         // template = template.concat('<div style="page-break-inside: avoid">');
@@ -1000,7 +1000,7 @@ export class BCRegistryService {
   // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
   buildDetailedTemplate(data): string {
     let template: string = detailedPartialTemplate;
-    template = template.concat('<hr size="3" color="black">');
+    template = template.concat('<hr size="1" color="black">');
     // notations
     const notationsLength = data.notationsArray.length;
     let counter = 0;
@@ -1226,7 +1226,7 @@ export class BCRegistryService {
     }
 
     // site profile
-    if (data.siteProfileData != undefined) {
+    if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       for (const entry of data.siteProfileData) {
         template = template.concat('<div style="page-break-inside: avoid">');
         if (entry.dateReceived) {
