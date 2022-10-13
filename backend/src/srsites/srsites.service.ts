@@ -7,7 +7,14 @@ import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
 
-import { findMostRecentDate, getCurrentTime, getTodaysDate, isInsideArea, sortJsonArrayAsc, sortJsonArrayDesc } from '../../utils/util';
+import {
+  filterSrprofil,
+  getCurrentTime,
+  getTodaysDate,
+  isInsideArea,
+  sortJsonArrayAsc,
+  sortJsonArrayDesc,
+} from '../../utils/util';
 import { Srevent } from '../srevents/entities/srevent.entity';
 import { Srsitpar } from '../srsitpar/entities/srsitpar.entity';
 import { Srland } from '../srlands/entities/srland.entity';
@@ -310,10 +317,8 @@ export class SrsitesService {
       landUse.push(landUseObject);
     }
 
-    const recentDate = findMostRecentDate(srprofil);
-    const filteredSrprofil = srprofil.filter(function (x) {
-      return x.dateCompleted == recentDate;
-    })
+    // filter out all but the most recent site profile
+    const filteredSrprofil = filterSrprofil(srprofil);
     let profiles = [];
     for (let entry of filteredSrprofil) {
       // get questions and answers, question id determines array index

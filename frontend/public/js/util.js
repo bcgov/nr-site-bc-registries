@@ -464,12 +464,12 @@ async function getNilPdf() {
     case 'coords': {
       searchCriteria1 = localStorage.getItem('latDms');
       searchCriteria2 = localStorage.getItem('lonDms');
-      searchCriteria3 = localStorage.getItem('searchCriteria3') + ' Area';
+      searchCriteria3 = localStorage.getItem('searchCriteria3');
       break;
     }
     case 'postal': {
       searchCriteria1 = localStorage.getItem('postalCode');
-      searchCriteria2 = localStorage.getItem('searchCriteria3') + ' Area';
+      searchCriteria2 = localStorage.getItem('searchCriteria3');
       searchCriteria3 = 'null';
       break;
     }
