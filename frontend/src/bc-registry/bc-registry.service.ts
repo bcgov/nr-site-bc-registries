@@ -1462,7 +1462,7 @@ export class BCRegistryService {
         `<div style="text-align: center">No sites were found with the given search criteria</div>`
       );
     }
-    template = template.concat('<hr />');
+    template = template.concat('<hr size="1" color="black">');
     template = template.concat('<div style="text-align: center">End of Search Results</div>');
     template = template.concat(
       '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
