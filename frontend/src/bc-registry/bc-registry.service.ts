@@ -76,7 +76,7 @@ export class BCRegistryService {
     switch (searchType) {
       case 'pid': {
         data['searchType'] = 'Land Title Parcel Identifier (PID)';
-        data['searchCriteria1'] = 'Parcel ID: ' + searchCriteria1; // parcel id
+        data['searchCriteria1'] = 'Land Title PID: ' + searchCriteria1; // parcel id
         data['searchCriteria2'] = '';
         data['searchCriteria3'] = '';
         break;
@@ -523,7 +523,7 @@ export class BCRegistryService {
       switch (searchResultsJson.searchInfo.searchType) {
         case 'pid': {
           data['searchType'] = 'Land Title Parcel Identifier (PID)';
-          data['searchCriteria1'] = 'Parcel ID: ' + searchResultsJson.searchInfo.searchCriteria1; // parcel id
+          data['searchCriteria1'] = 'Land Title ID: ' + searchResultsJson.searchInfo.searchCriteria1; // parcel id
           data['searchCriteria2'] = '';
           data['searchCriteria3'] = '';
           break;
@@ -1227,6 +1227,7 @@ export class BCRegistryService {
 
     // site profile
     if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
+      template = template.concat('<h4>SITE PROFILE/SITE DISCLOSURE STATEMENT HISTORY</h4>\n');
       for (const entry of data.siteProfileData) {
         template = template.concat('<div style="page-break-inside: avoid">');
         if (entry.dateReceived) {
