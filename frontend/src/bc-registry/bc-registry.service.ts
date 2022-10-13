@@ -113,14 +113,19 @@ export class BCRegistryService {
         data['searchType'] = 'Area';
         data['searchCriteria1'] = 'Latitude: '+searchCriteria1; // lat
         data['searchCriteria2'] = 'Longitude: '+searchCriteria2; // lon
-        data['searchCriteria3'] = 'Radius: '+searchCriteria3=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
+        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        data['searchCriteria3'] = 'Radius: '+rad; // size
         break;
       }
       case 'postal': {
         data['searchType'] = 'Area';
-        data['searchCriteria1'] = 'Postal Code: '+searchCriteria1; // postalcode
-        data['searchCriteria2'] = 'Radius: '+searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius';
-        data['searchCriteria3'] = '';
+        data['searchCriteria1'] = 'Latitude: '+searchCriteria1; // lat
+        data['searchCriteria2'] = 'Longitude: '+searchCriteria2; // lon
+        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        data['searchCriteria3'] = 'Radius: '+rad; // size
+        // data['searchCriteria1'] = 'Postal Code: '+searchCriteria1; // postalcode
+        // data['searchCriteria2'] = 'Radius: '+searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius';
+        // data['searchCriteria3'] = '';
         break;
       }
     }
@@ -555,20 +560,30 @@ export class BCRegistryService {
           break;
         }
         case 'coords': {
+          console.log('coords')
+          console.log(searchResultsJson.searchInfo)
           data['searchType'] = 'Area';
           data['searchCriteria1'] = 'Latitude: '+searchResultsJson.searchInfo.searchCriteria1; // lat
           data['searchCriteria2'] = 'Longitude: '+searchResultsJson.searchInfo.searchCriteria2; // lon
-          data['searchCriteria3'] = 'Radius: '+searchResultsJson.searchInfo.searchCriteria3=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
+          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          data['searchCriteria3'] = 'Radius: '+rad; // size
           break;
         }
-        case 'postal': {
+        case 'postal': { // will display the same as coords search
+          console.log('postal')
+          console.log(searchResultsJson.searchInfo)
           data['searchType'] = 'Area';
-          data['searchCriteria1'] = 'Postal Code: '+searchResultsJson.searchInfo.searchCriteria1; // postalcode
-          data['searchCriteria2'] = 'Radius: '+searchResultsJson.searchInfo.searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
-          data['searchCriteria3'] = '';
+          // data['searchCriteria1'] = 'Postal Code: '+searchResultsJson.searchInfo.searchCriteria1; // postalcode
+          // data['searchCriteria2'] = 'Radius: '+searchResultsJson.searchInfo.searchCriteria2=='Small Area' ? '0.5km Radius' : '5.0km Radius'; // size
+          // data['searchCriteria3'] = '';
+          data['searchCriteria1'] = 'Latitude: '+searchResultsJson.searchInfo.searchCriteria1; // lat
+          data['searchCriteria2'] = 'Longitude: '+searchResultsJson.searchInfo.searchCriteria2; // lon
+          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          data['searchCriteria3'] = 'Radius: '+rad; // size
           break;
         }
       }
+      console.log(data);
       // merge the template date with the template
       htmlFile = await this.getSearchResultsHtml(data, documentTemplate, authorizationToken.toString());
     }
@@ -680,8 +695,8 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined) {
       for (const entry of data.siteProfileData) {
         template = template.concat('<div style="page-break-inside: avoid">');
-        if (entry.dateCompleted) {
-          if (newSiteProfileDate(entry.dateCompleted)) {
+        if (entry.dateReceived) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>SITE DISCLOSURE STATEMENT</h4>\n');
           } else {
             template = template.concat('<h4>SITE PROFILE</h4>\n');
@@ -697,7 +712,7 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        if (!newSiteProfileDate(entry.dateCompleted)) {
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
@@ -725,7 +740,7 @@ export class BCRegistryService {
 
         // site profile questions and answers
         if (entry.qna) {
-          if ((entry && entry.dateCompleted && !newSiteProfileDate(entry.dateCompleted))) {
+          if ((entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived))) {
             template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
@@ -1074,8 +1089,8 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined) {
       for (const entry of data.siteProfileData) {
         template = template.concat('<div style="page-break-inside: avoid">');
-        if (entry.dateCompleted) {
-          if (newSiteProfileDate(entry.dateCompleted)) {
+        if (entry.dateReceived) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>SITE DISCLOSURE STATEMENT</h4>\n');
           } else {
             template = template.concat('<h4>SITE PROFILE</h4>\n');
@@ -1091,7 +1106,7 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        if (!newSiteProfileDate(entry.dateCompleted)) {
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
@@ -1121,7 +1136,7 @@ export class BCRegistryService {
 
         // site profile questions and answers
         if (entry.qna) {
-          if ((entry && entry.dateCompleted && !newSiteProfileDate(entry.dateCompleted))) {
+          if ((entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived))) {
             template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');

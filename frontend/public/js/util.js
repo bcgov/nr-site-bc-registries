@@ -91,6 +91,9 @@ async function searchArea() {
       if (checkPostalCode(document.getElementById('postalCodeInput').value)) {
         localStorage.setItem('searchType', 'postal');
         localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+        const dms = getDMS(latLon.lat, latLon.lon);
+        localStorage.setItem('latDms', dms.latDeg + 'deg ' + dms.latMin + 'min ' + dms.latSec + 'sec');
+        localStorage.setItem('lonDms', dms.lonDeg + 'deg ' + dms.lonMin + 'min ' + dms.lonSec + 'sec');
       } else {
         hideViewResultsSpinner();
         document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
@@ -411,9 +414,15 @@ function getSearchInfo() {
     }
     case 'postal': {
       searchType = 'postal';
-      searchCriteria1 = localStorage.getItem('postalCode');
-      searchCriteria2 = localStorage.getItem('searchCriteria3');
-      searchCriteria3 = '';
+      searchCriteria1 = localStorage.getItem('latDms');
+      searchCriteria2 = localStorage.getItem('lonDms');
+      searchCriteria3 = localStorage.getItem('searchCriteria3');
+      console.log('searchCriteria1: '+searchCriteria1)
+      console.log('searchCriteria2: '+searchCriteria2)
+      console.log('searchCriteria3: '+searchCriteria3)
+      // searchCriteria1 = localStorage.getItem('postalCode');
+      // searchCriteria2 = localStorage.getItem('searchCriteria3');
+      // searchCriteria3 = '';
       break;
     }
   }
@@ -426,6 +435,7 @@ function getSearchInfo() {
 }
 
 async function getNilPdf() {
+  console.log('getting nil pdf')
   let searchType = localStorage.getItem('searchType');
   let searchCriteria1;
   let searchCriteria2;
@@ -464,13 +474,18 @@ async function getNilPdf() {
     case 'coords': {
       searchCriteria1 = localStorage.getItem('latDms');
       searchCriteria2 = localStorage.getItem('lonDms');
-      searchCriteria3 = localStorage.getItem('searchCriteria3') + ' Area';
+      searchCriteria3 = localStorage.getItem('searchCriteria3');
       break;
     }
     case 'postal': {
-      searchCriteria1 = localStorage.getItem('postalCode');
-      searchCriteria2 = localStorage.getItem('searchCriteria3') + ' Area';
-      searchCriteria3 = 'null';
+      searchCriteria1 = localStorage.getItem('latDms');
+      searchCriteria2 = localStorage.getItem('lonDms');
+      console.log('searchCriteria1: '+searchCriteria1)
+      console.log('searchCriteria2: '+searchCriteria2)
+      searchCriteria3 = localStorage.getItem('searchCriteria3');
+      // searchCriteria1 = localStorage.getItem('postalCode');
+      // searchCriteria2 = localStorage.getItem('searchCriteria3');
+      // searchCriteria3 = 'null';
       break;
     }
   }
