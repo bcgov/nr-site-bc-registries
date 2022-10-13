@@ -71,31 +71,15 @@ export function sortJsonArrayDesc(prop) {
 export function filterSrprofil(srprofil: Srprofil[]): Srprofil[] {
   let newestDate = '1900-01-01';
   let currentDate: string;
-  let isDateReceived: boolean;
   let filteredSrprofil: Srprofil[];
   for (const entry of srprofil) {
-    if (entry.dateReceived == '') {
-      currentDate = entry.dateCompleted;
-      if (new Date(currentDate) > new Date(newestDate)) {
-        isDateReceived = false;
-        newestDate = currentDate;
-      }
-    } else {
-      currentDate = entry.dateReceived;
-      if (new Date(currentDate) > new Date(newestDate)) {
-        isDateReceived = true;
-        newestDate = currentDate;
-      }
+    currentDate = entry.dateReceived;
+    if (new Date(currentDate) > new Date(newestDate)) {
+      newestDate = currentDate;
     }
   }
-  if (isDateReceived) {
-    filteredSrprofil = srprofil.filter(function (x) {
-      return x.dateReceived == newestDate;
-    });
-  } else {
-    filteredSrprofil = srprofil.filter(function (x) {
-      return x.dateCompleted == newestDate;
-    });
-  }
+  filteredSrprofil = srprofil.filter(function (x) {
+    return x.dateReceived == newestDate;
+  });
   return filteredSrprofil;
 }

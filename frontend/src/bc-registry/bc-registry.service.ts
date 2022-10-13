@@ -686,7 +686,7 @@ export class BCRegistryService {
         // there will only be one site profile in the data
         // template = template.concat('<div style="page-break-inside: avoid">');
         if (entry.dateCompleted || entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateCompleted) || newSiteProfileDate(entry.dateReceived)) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>CURRENT SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
           } else {
             template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
@@ -700,7 +700,7 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        if (!newSiteProfileDate(entry.dateCompleted) && !newSiteProfileDate(entry.dateReceived)) {
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
@@ -727,10 +727,7 @@ export class BCRegistryService {
 
         // site profile questions and answers
         if (entry.qna) {
-          if (
-            (entry && entry.dateCompleted && !newSiteProfileDate(entry.dateCompleted)) ||
-            (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived))
-          ) {
+          if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
             // template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
@@ -959,8 +956,8 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateCompleted || entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateCompleted) || newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           } else {
             template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
@@ -1232,8 +1229,8 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined) {
       for (const entry of data.siteProfileData) {
         template = template.concat('<div style="page-break-inside: avoid">');
-        if (entry.dateCompleted || entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateCompleted) || newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
           } else {
             template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
@@ -1247,7 +1244,7 @@ export class BCRegistryService {
         template = template.concat(
           `<tr><th>Ministry Regional Manager Received:</th><td>${entry.dateReceived}</td></tr>`
         );
-        if (!newSiteProfileDate(entry.dateCompleted) && !newSiteProfileDate(entry.dateReceived)) {
+        if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision Date:</th><td>${entry.dateDecision}</td></tr>`);
           template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
         }
@@ -1276,10 +1273,7 @@ export class BCRegistryService {
 
         // site profile questions and answers
         if (entry.qna) {
-          if (
-            (entry && entry.dateCompleted && !newSiteProfileDate(entry.dateCompleted)) ||
-            (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived))
-          ) {
+          if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<div style="page-break-inside: avoid">');
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
@@ -1400,8 +1394,8 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateCompleted || entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateCompleted) || newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived) {
+          if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           } else {
             template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
