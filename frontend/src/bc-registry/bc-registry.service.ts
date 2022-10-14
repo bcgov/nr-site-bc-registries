@@ -684,35 +684,37 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       for (const entry of data.siteProfileData) {
         // there will only be one site profile in the data
-        // template = template.concat('<div style="page-break-inside: avoid">');
-        if (entry.dateCompleted || entry.dateReceived) {
-          if (newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>CURRENT SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
-          } else {
+        } else {
             template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
-          }
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Date Received:</th><td>${entry.dateReceived}</td></tr>`);
-        template = template.concat(`<tr><th>Date Completed:</th><td>${entry.dateCompleted}</td></tr>`);
-        template = template.concat(
-          `<tr><th>Date Local Authority Received:</th><td>${entry.dateLocalAuthority}</td></tr>`
-        );
-        template = template.concat(`<tr><th>Date Registrar:</th><td>${entry.dateRegistrar}</td></tr>`);
+        template = template.concat('<hr color="white">');
+        template = template.concat('<table>');
+        template = template.concat(`<tr><th>Date Received:</th>`);
+        template = entry.dateReceived ? template.concat(`<td>${entry.dateReceived}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Completed:</th>`);
+        template = entry.dateCompleted ? template.concat(`<td>${entry.dateCompleted}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Local Authority Received:</th>`);
+        template = entry.dateLocalAuthority ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Registrar:</th>`);
+        template = entry.dateRegistrar ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`) : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Date Decision:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Date Decision:</th>`);
+          template = entry.dateDecision ? template.concat(`<td>${entry.dateDecision}</td></tr>`) : template.concat(`<td></td></tr>`);
         }
-        template = template.concat(`<tr><th>Date Entered:</th><td>${entry.dateEntered}</td></tr>`);
+        template = template.concat(`<tr><th>Date Entered:</th>`);
+        template = entry.dateEntered ? template.concat(`<td>${entry.dateEntered}</td></tr>`) : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+          template = template.concat(`<tr><th>Decision:</th>`);
+          template = entry.decisionText ? template.concat(`<td>${entry.decisionText}</td></tr>`) : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`</table>`);
-        // template = template.concat('</div>');
         template = template.concat('<hr>');
 
         // site profile land use
         if (data.landUse != undefined && data.landUse.length != 0) {
-          // template = template.concat('<div style="page-break-inside: avoid">');
+          
           template = template.concat('<h4>III   COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
           template = template.concat('<table>\n');
           template = template.concat(`<tr><td><b>Schedule 2</b></td><td></td></tr>`);
@@ -721,14 +723,14 @@ export class BCRegistryService {
             template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
           }
           template = template.concat(`</table>`);
-          // template = template.concat('</div>');
+          
           template = template.concat('<hr>');
         }
 
         // site profile questions and answers
         if (entry.qna) {
           if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -754,11 +756,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>FILL MATERIALS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -780,11 +782,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
             template = template.concat('<table>\n');
 
@@ -849,11 +851,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -881,11 +883,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -925,11 +927,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -951,7 +953,7 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
           }
@@ -989,11 +991,11 @@ export class BCRegistryService {
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Synopsis Report</p>');
@@ -1014,11 +1016,11 @@ export class BCRegistryService {
     if (notationsLength > 0) {
       // sort notations chronologically
       data.notationsArray.sort(this.sortByProperty('eventDate'));
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>NOTATIONS</h4>\n');
       for (const notation of data.notationsArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Notation Type:</th><td>${notation.eventType}</td></tr>`);
@@ -1040,7 +1042,7 @@ export class BCRegistryService {
           }
           template = template.concat(`</table>`);
         }
-        template = template.concat('</div>');
+        
         counter++;
         if (counter < notationsLength) {
           template = template.concat('<hr>');
@@ -1048,11 +1050,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No notations have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
     // participants
@@ -1061,11 +1063,11 @@ export class BCRegistryService {
     if (participantsLength > 0) {
       // sort participants chronologically
       data.participantsArray.sort(this.sortByProperty('effectiveDate'));
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
       for (const participant of data.participantsArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Participant:</th><td>${participant.nameString}</td></tr>`);
@@ -1073,7 +1075,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Start Date:</th><td>${participant.effectiveDate}</td></tr>`);
         template = template.concat(`<tr><th>End Date:</th><td>${participant.endDate}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${participant.noteString}</td></tr>`);
-        template = template.concat(`</table></div>`);
+        template = template.concat(`</table>`);
         counter++;
         if (counter < participantsLength) {
           template = template.concat('<hr>');
@@ -1081,11 +1083,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No participants have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
     // documents
@@ -1094,11 +1096,11 @@ export class BCRegistryService {
     if (documentsLength > 0) {
       // sort documents chronologically
       data.documentsArray.sort(this.sortByProperty('documentDate'));
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>DOCUMENTS</h4>\n');
       for (const document of data.documentsArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Title:</th><td>${document.titleString}</td></tr>`);
@@ -1116,7 +1118,7 @@ export class BCRegistryService {
           }
           template = template.concat(`</table>`);
         }
-        template = template.concat('</div>');
+        
         counter++;
         if (counter < documentsLength) {
           template = template.concat('<hr>');
@@ -1124,11 +1126,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No documents have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1138,18 +1140,18 @@ export class BCRegistryService {
     if (assocSitesLength > 0) {
       // sort associated sites chronologically
       data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
       for (const associatedSite of data.associatedSitesArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Site ID:</th><td>${associatedSite.siteId}</td></tr>`);
         template = template.concat(`<tr><th>Effect Date:</th><td>${associatedSite.effectDate}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
         template = template.concat(`</table>`);
-        template = template.concat('</div>');
+        
         counter++;
         if (counter < assocSitesLength) {
           template = template.concat('<hr>');
@@ -1157,11 +1159,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No associated sites have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1169,17 +1171,17 @@ export class BCRegistryService {
     const suspectLandUsesLength = data.suspectLandUsesArray.length;
     counter = 0;
     if (suspectLandUsesLength > 0) {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
       for (const suspectLandUse of data.suspectLandUsesArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Land Use:</th><td>${suspectLandUse.landUse}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${suspectLandUse.noteString}</td></tr>`);
         template = template.concat(`</table>`);
-        template = template.concat('</div>');
+        
         counter++;
         if (counter < suspectLandUsesLength) {
           template = template.concat('<hr>');
@@ -1187,11 +1189,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No suspect land uses have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1201,11 +1203,11 @@ export class BCRegistryService {
     if (parcelDescriptionsLength > 0) {
       // sort parcel descriptions chronologically
       data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
       for (const parcelDescription of data.parcelDescriptionsArray) {
         if (counter > 0) {
-          template = template.concat('<div style="page-break-inside: avoid">\n');
+          // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Date Noted:</th><td>${parcelDescription.dateNoted}</td></tr>`);
@@ -1216,7 +1218,7 @@ export class BCRegistryService {
         );
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
-        template = template.concat('</div>');
+        
         counter++;
         if (counter < parcelDescriptionsLength) {
           template = template.concat('<hr>');
@@ -1224,11 +1226,11 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No parcel descriptions have been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1236,7 +1238,7 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       template = template.concat('<h4>SITE PROFILE/SITE DISCLOSURE STATEMENT HISTORY</h4>\n');
       for (const entry of data.siteProfileData) {
-        template = template.concat('<div style="page-break-inside: avoid">');
+        
         if (entry.dateReceived) {
           if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
@@ -1246,28 +1248,33 @@ export class BCRegistryService {
         } else {
           template = template.concat('<h4>SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Date Received:</th><td>${entry.dateReceived}</td></tr>`);
-        template = template.concat(`<tr><th>Date Completed:</th><td>${entry.dateCompleted}</td></tr>`);
-        template = template.concat(
-          `<tr><th>Date Local Authority Received:</th><td>${entry.dateLocalAuthority}</td></tr>`
-        );
-        template = template.concat(`<tr><th>Date Registrar:</th><td>${entry.dateRegistrar}</td></tr>`);
+        template = template.concat('<hr color="white">');
+        template = template.concat('<table>');
+        template = template.concat(`<tr><th>Date Received:</th>`);
+        template = entry.dateReceived ? template.concat(`<td>${entry.dateReceived}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Completed:</th>`);
+        template = entry.dateCompleted ? template.concat(`<td>${entry.dateCompleted}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Local Authority Received:</th>`);
+        template = entry.dateLocalAuthority ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = template.concat(`<tr><th>Date Registrar:</th>`);
+        template = entry.dateRegistrar ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`) : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Date Decision:</th><td>${entry.dateDecision}</td></tr>`);
+          template = template.concat(`<tr><th>Date Decision:</th>`);
+          template = entry.dateDecision ? template.concat(`<td>${entry.dateDecision}</td></tr>`) : template.concat(`<td></td></tr>`);
         }
-        template = template.concat(`<tr><th>Date Entered:</th><td>${entry.dateEntered}</td></tr>`);
+        template = template.concat(`<tr><th>Date Entered:</th>`);
+        template = entry.dateEntered ? template.concat(`<td>${entry.dateEntered}</td></tr>`) : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
-          template = template.concat(`<tr><th>Decision:</th><td>${entry.decisionText}</td></tr>`);
+          template = template.concat(`<tr><th>Decision:</th>`);
+          template = entry.decisionText ? template.concat(`<td>${entry.decisionText}</td></tr>`) : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`</table>`);
-        template = template.concat('</div>');
         counter++;
         template = template.concat('<hr>');
 
         // site profile land use
         if (data.landUse != undefined && data.landUse.length != 0) {
-          template = template.concat('<div style="page-break-inside: avoid">');
+          
           template = template.concat('<h4>III   COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
           template = template.concat('<table>\n');
           template = template.concat(`<tr><td><b>Schedule 2</b></td><td></td></tr>`);
@@ -1276,7 +1283,7 @@ export class BCRegistryService {
             template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
           }
           template = template.concat(`</table>`);
-          template = template.concat('</div>');
+          
           counter++;
           template = template.concat('<hr>');
         }
@@ -1284,7 +1291,7 @@ export class BCRegistryService {
         // site profile questions and answers
         if (entry.qna) {
           if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1310,11 +1317,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>FILL MATERIALS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1336,11 +1343,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
             template = template.concat('<table>\n');
 
@@ -1405,11 +1412,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1437,11 +1444,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1481,11 +1488,11 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
 
-            // template = template.concat('<div style="page-break-inside: avoid">');
+            
             template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1507,7 +1514,7 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            // template = template.concat('</div>');
+            
 
             template = template.concat('<hr>');
           }
@@ -1545,11 +1552,11 @@ export class BCRegistryService {
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
-      template = template.concat('<div style="page-break-inside: avoid">');
+      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
-      template = template.concat('</div>');
+      
       template = template.concat('<hr size="1" color="black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Details Report</p>');
