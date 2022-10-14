@@ -113,14 +113,14 @@ export class BCRegistryService {
         data['searchType'] = 'Area';
         data['searchCriteria1'] = 'Latitude: ' + searchCriteria1; // lat
         data['searchCriteria2'] = 'Longitude: ' + searchCriteria2; // lon
-        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        const rad = searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
         data['searchCriteria3'] = 'Radius: ' + rad; // size
         break;
       }
       case 'postal': {
         data['searchType'] = 'Area';
         data['searchCriteria1'] = 'Postal Code: ' + searchCriteria1; // postalcode
-        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        const rad = searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
         data['searchCriteria2'] = 'Radius: ' + rad; // size
         data['searchCriteria3'] = '';
         break;
@@ -560,14 +560,14 @@ export class BCRegistryService {
           data['searchType'] = 'Area';
           data['searchCriteria1'] = 'Latitude: ' + searchResultsJson.searchInfo.searchCriteria1; // lat
           data['searchCriteria2'] = 'Longitude: ' + searchResultsJson.searchInfo.searchCriteria2; // lon
-          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
           data['searchCriteria3'] = 'Radius: ' + rad; // size
           break;
         }
         case 'postal': {
           data['searchType'] = 'Area';
           data['searchCriteria1'] = 'Postal Code: ' + searchResultsJson.searchInfo.searchCriteria1; // postalcode
-          const rad = searchResultsJson.searchInfo.searchCriteria2 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          const rad = searchResultsJson.searchInfo.searchCriteria2 == 'Small' ? '0.5km' : '5.0km';
           data['searchCriteria2'] = 'Radius: ' + rad; // size
           data['searchCriteria3'] = '';
           break;
@@ -956,29 +956,36 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) { // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-        } else {
+          template = template.concat(`<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`);
+          template =
+            entry.plannedActivityComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>');
+          template =
+            entry.siteDisclosureComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>');
+          template =
+            entry.govDocumentsComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+        } else { // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>')
+          template =
+            entry.govDocumentsComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>')
+          template =
+            entry.commentString != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
         }
-        template = template.concat('<table>');
-        template =
-          entry.commentString != ''
-            ? template.concat(`<tr><td>Additional Comments:</td><td>${entry.commentString}</td></tr>`)
-            : template.concat(`<tr><td>Additional Comments:</td><td></td></tr>`);
-        template =
-          entry.plannedActivityComment != ''
-            ? template.concat(`<tr><td>Planned Activity Comments:</td><td>${entry.plannedActivityComment}</td></tr>`)
-            : template.concat(`<tr><td>Planned Activity Comments:</td><td></td></tr>`);
-        template =
-          entry.siteDisclosureComment != ''
-            ? template.concat(`<tr><td>Site Disclosure Statement:</td><td>${entry.siteDisclosureComment}</td></tr>`)
-            : template.concat(`<tr><td>Site Disclosure Statement:</td><td></td></tr>`);
-        template =
-          entry.govDocumentsComment != ''
-            ? template.concat(`<tr><td>Government Documents Comments:</td><td>${entry.govDocumentsComment}</td></tr>`)
-            : template.concat(`<tr><td>Government Documents Comments:</td><td></td></tr>`);
-        template = template.concat('</table>');
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
@@ -989,7 +996,7 @@ export class BCRegistryService {
       template = template.concat('</div>');
       template = template.concat('<hr size="1" color="black">');
     }
-    template = template.concat('<p style="text-align: center">End of Site Synopsis Report</p>');
+    template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Synopsis Report</p>');
     template = template.concat(
       '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
@@ -1505,29 +1512,36 @@ export class BCRegistryService {
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) { // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-        } else {
+          template = template.concat(`<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`);
+          template =
+            entry.plannedActivityComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>');
+          template =
+            entry.siteDisclosureComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>');
+          template =
+            entry.govDocumentsComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+        } else { // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>')
+          template =
+            entry.govDocumentsComment != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
+          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>')
+          template =
+            entry.commentString != ''
+              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
+              : template.concat(`<p style="font-size: 18px"></p>`);
         }
-        template = template.concat('<table>');
-        template =
-          entry.commentString != ''
-            ? template.concat(`<tr><td>Additional Comments:</td><td>${entry.commentString}</td></tr>`)
-            : template.concat(`<tr><td>Additional Comments:</td><td></td></tr>`);
-        template =
-          entry.plannedActivityComment != ''
-            ? template.concat(`<tr><td>Planned Activity Comments:</td><td>${entry.plannedActivityComment}</td></tr>`)
-            : template.concat(`<tr><td>Planned Activity Comments:</td><td></td></tr>`);
-        template =
-          entry.siteDisclosureComment != ''
-            ? template.concat(`<tr><td>Site Disclosure Statement:</td><td>${entry.siteDisclosureComment}</td></tr>`)
-            : template.concat(`<tr><td>Site Disclosure Statement:</td><td></td></tr>`);
-        template =
-          entry.govDocumentsComment != ''
-            ? template.concat(`<tr><td>Government Documents Comments:</td><td>${entry.govDocumentsComment}</td></tr>`)
-            : template.concat(`<tr><td>Government Documents Comments:</td><td></td></tr>`);
-        template = template.concat('</table>');
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
@@ -1538,7 +1552,7 @@ export class BCRegistryService {
       template = template.concat('</div>');
       template = template.concat('<hr size="1" color="black">');
     }
-    template = template.concat('<p style="text-align: center">End of Site Details Report</p>');
+    template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Details Report</p>');
     template = template.concat(
       '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
@@ -1566,15 +1580,15 @@ export class BCRegistryService {
         template = template.concat(`<td>${entry.city}</td>`);
         template = template.concat(`<td>${entry.updatedDate}</td></tr>`);
       }
-      template = template.concat(`</tr></table>`);
+      template = template.concat(`</table>`);
     } else {
-      template = template.concat(`</tr></table>`);
+      template = template.concat(`</table>`);
       template = template.concat(
         `<div style="text-align: center">No sites were found with the given search criteria</div>`
       );
     }
     template = template.concat('<hr />');
-    template = template.concat('<div style="text-align: center">End of Search Results</div>');
+    template = template.concat('<div style="text-align: center; font-size: 18px">End of Search Results</div>');
     template = template.concat(
       '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
