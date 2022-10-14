@@ -33,8 +33,7 @@ export function getTodaysDate() {
   const year = today.getFullYear();
   const dStr = day < 10 ? '0' + day : day.toString();
   const mStr = month < 10 ? '0' + month : month.toString();
-  const yStr = year.toString().slice(2);
-  return dStr + '-' + mStr + '-' + yStr;
+  return year + '-' + mStr + '-' + dStr;
 }
 
 function convertTZ(date, tzString) {
