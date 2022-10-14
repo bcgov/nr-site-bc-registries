@@ -113,14 +113,14 @@ export class BCRegistryService {
         data['searchType'] = 'Area';
         data['searchCriteria1'] = 'Latitude: ' + searchCriteria1; // lat
         data['searchCriteria2'] = 'Longitude: ' + searchCriteria2; // lon
-        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        const rad = searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
         data['searchCriteria3'] = 'Radius: ' + rad; // size
         break;
       }
       case 'postal': {
         data['searchType'] = 'Area';
         data['searchCriteria1'] = 'Postal Code: ' + searchCriteria1; // postalcode
-        const rad = searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+        const rad = searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
         data['searchCriteria2'] = 'Radius: ' + rad; // size
         data['searchCriteria3'] = '';
         break;
@@ -560,14 +560,14 @@ export class BCRegistryService {
           data['searchType'] = 'Area';
           data['searchCriteria1'] = 'Latitude: ' + searchResultsJson.searchInfo.searchCriteria1; // lat
           data['searchCriteria2'] = 'Longitude: ' + searchResultsJson.searchInfo.searchCriteria2; // lon
-          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          const rad = searchResultsJson.searchInfo.searchCriteria3 == 'Small' ? '0.5km' : '5.0km';
           data['searchCriteria3'] = 'Radius: ' + rad; // size
           break;
         }
         case 'postal': {
           data['searchType'] = 'Area';
           data['searchCriteria1'] = 'Postal Code: ' + searchResultsJson.searchInfo.searchCriteria1; // postalcode
-          const rad = searchResultsJson.searchInfo.searchCriteria2 == 'Small' ? '0.5km Radius' : '5.0km Radius';
+          const rad = searchResultsJson.searchInfo.searchCriteria2 == 'Small' ? '0.5km' : '5.0km';
           data['searchCriteria2'] = 'Radius: ' + rad; // size
           data['searchCriteria3'] = '';
           break;
@@ -1580,9 +1580,9 @@ export class BCRegistryService {
         template = template.concat(`<td>${entry.city}</td>`);
         template = template.concat(`<td>${entry.updatedDate}</td></tr>`);
       }
-      template = template.concat(`</tr></table>`);
+      template = template.concat(`</table>`);
     } else {
-      template = template.concat(`</tr></table>`);
+      template = template.concat(`</table>`);
       template = template.concat(
         `<div style="text-align: center">No sites were found with the given search criteria</div>`
       );
