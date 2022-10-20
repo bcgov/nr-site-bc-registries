@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { Srsite } from './entities/srsite.entity';
-
+import { In, Not } from 'typeorm';
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
@@ -283,15 +283,24 @@ export class SrsitesService {
         numParcelDescs++;
       }
     }
+
+    // site associations array grabs from srassocs table & other sites with the same pid
     let addedAssocSites: string[] = [];
+    for (let entry of srassocs[0]) {
+      addedAssocSites.push(entry.associatedSiteId);
+    }
+    let allPids = [];
     for (let entry of srpinpids[0]) {
+      allPids.push(entry.pid);
+    }
+    const sameParcelId = await this.srpinpidsRepository.find({
+      where: { pid: In(allPids), siteId: Not(siteId) },
+    });
+    for (let entry of sameParcelId) {
       if (entry.pid != '') {
-        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
-        for (let pinpid of sameParcelId) {
-          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
-            numAssocs++;
-            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
-          }
+        if (!addedAssocSites.includes(entry.siteId)) {
+          numAssocs++;
+          addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
         }
       }
     }
@@ -416,27 +425,33 @@ export class SrsitesService {
 
     // site associations array grabs from srassocs table & other sites with the same pid
     let associatedSitesArray = [];
+    let addedAssocSites: string[] = [];
     for (let entry of srassocs[0]) {
+      addedAssocSites.push(entry.associatedSiteId);
       let assocObject = {};
       assocObject['siteId'] = entry.associatedSiteId;
       assocObject['effectDate'] = entry.effectDate;
       assocObject['noteString'] = entry.noteString;
       associatedSitesArray.push(assocObject);
     }
-    let addedAssocSites: string[] = [];
+
+    let allPids = [];
     for (let entry of srpinpids) {
+      allPids.push(entry.pid);
+    }
+    const sameParcelId = await this.srpinpidsRepository.find({
+      where: { pid: In(allPids), siteId: Not(siteId) },
+    });
+    for (let entry of sameParcelId) {
       if (entry.pid != '') {
-        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
-        for (let pinpid of sameParcelId) {
-          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
-            numAssocs++;
-            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
-            let assocObject = {};
-            assocObject['siteId'] = pinpid.siteId;
-            assocObject['effectDate'] = pinpid.dateNoted;
-            assocObject['noteString'] = 'Same Parcel ID';
-            associatedSitesArray.push(assocObject);
-          }
+        if (!addedAssocSites.includes(entry.siteId)) {
+          numAssocs++;
+          addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
+          let assocObject = {};
+          assocObject['siteId'] = entry.siteId;
+          assocObject['effectDate'] = entry.dateNoted;
+          assocObject['noteString'] = 'Same Parcel ID';
+          associatedSitesArray.push(assocObject);
         }
       }
     }
