@@ -12,7 +12,7 @@ import { newSiteProfileDate } from 'utils/util';
 const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HTML5ToPDF = require('html5-to-pdf');
-
+//
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
 let nilTemplate: string;
