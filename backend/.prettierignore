@@ -1,6 +1,0 @@
-.env
-.env.example
-node_modules/
-dist/
-utils/templates/detailedPartialTemplate.html
-utils/templates/searchResultsPartialTemplate.html

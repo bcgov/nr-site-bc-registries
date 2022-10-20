@@ -6,6 +6,12 @@
       @page {
         margin: 1cm;
       }
+      @top-right {
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 2em;
+        content: counter(page);
+      }
       .container {
         width: 595px;
         height: auto;
@@ -13,20 +19,21 @@
       }
       th {
         text-align: right;
-        padding-right: 20px;
+        padding-right: 5px;
         width: 10em;
-        font-size: 18px;
+        font-size: 21px;
         background-color: white;
         font-family: Arial, Helvetica, sans-serif;
       }
       td {
         text-align: left;
-        padding-right: 20px;
-        min-width: 5em;
-        font-size: 18px;
+        padding-right: 5px;
+        min-width: 8em;
+        font-size: 21px;
         font-family: Arial, Helvetica, sans-serif;
       }
       table {
+        padding-left: 30px;
         width: 100%;
       }
       .rightalign {
@@ -34,27 +41,34 @@
         text-align: right;
       }
       .disclaimer {
-        font-size: 12px;
+        font-size: 16px;
         font-family: Arial, Helvetica, sans-serif;
+      }
+      h1, h2, h3, h4 {
+        font-weight: bold;
+      }
+      .header {
+        font-size: 21px;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-sm">Report data as of: {d.downloaddate}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
+        <div class="col-sm header">Report data as of: {d.downloaddate}</div>
+        <div class="col-sm text-right header" style="text-align: right">Report run: {d.todaysDate}</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
+        <div class="col-sm text-right header" style="text-align: right">{d.currentTime} PST</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
+        <div class="col-sm text-right header" style="text-align: right">For: {d.account}</div>
       </div>
+      <br>
       <h2 style="text-align: center">Site Registry - Site Details Report</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
       <br />
-      <hr size="1" color="black">
+      <hr style="border: 1px solid black">
       <br />
       <h4>SITE LOCATION</h4>
       <table>

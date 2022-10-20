@@ -36,3 +36,8 @@ export function newSiteProfileDate(completionDate: string) {
   const date = new Date(completionDate);
   return date >= testDate ? true : false;
 }
+
+export function delay(milliseconds: number) {
+  console.log('Delaying for ' + milliseconds + ' milliseconds');
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}

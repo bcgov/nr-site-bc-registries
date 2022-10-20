@@ -8,7 +8,7 @@ import { AuthenticationGuard } from './authentication.guard';
 @UseGuards(AuthenticationGuard)
 export class AuthenticationController {
   @Post('setAccount')
-  async postAreaSearch(
+  async setAccount(
     @Body() data: { label: string },
     @Session() session: { data?: SessionData }
   ): Promise<{ message: string }> {

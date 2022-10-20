@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
+import { delay } from '../utils/util';
 
 let downloadDate: string;
 let requestUrl: string;
@@ -26,8 +27,22 @@ export class AppService {
   }
 
   // this runs on startup
-  async initDownloadDate(): Promise<void> {
-    await this.refreshDownloadDate();
+  async initDownloadDate(attempts?: number): Promise<void> {
+    let numAttempts = 0;
+    if (attempts) {
+      numAttempts = attempts;
+    }
+    if (numAttempts < 10) {
+      try {
+        await this.refreshDownloadDate();
+        console.log('Database connection successful!');
+      } catch (err) {
+        console.log('Failed to connect to the database, retrying in 5s...' + (numAttempts + 1) + '/10');
+        await delay(5000);
+        numAttempts++;
+        this.initDownloadDate(numAttempts);
+      }
+    }
   }
 
   @Cron('0 0 0 * * *')
