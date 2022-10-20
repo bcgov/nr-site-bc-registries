@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { Srsite } from './entities/srsite.entity';
-
+import { In, Not } from 'typeorm';
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
 import { UpdateSrsiteDto } from './dto/update-srsite.dto';
 import { Srpinpid } from '../srpinpid/entities/srpinpid.entity';
@@ -283,15 +283,24 @@ export class SrsitesService {
         numParcelDescs++;
       }
     }
+
+    // site associations array grabs from srassocs table & other sites with the same pid
     let addedAssocSites: string[] = [];
+    for (let entry of srassocs[0]) {
+      addedAssocSites.push(entry.associatedSiteId);
+    }
+    let allPids = [];
     for (let entry of srpinpids[0]) {
+      allPids.push(entry.pid);
+    }
+    const sameParcelId = await this.srpinpidsRepository.find({
+      where: { pid: In(allPids), siteId: Not(siteId) },
+    });
+    for (let entry of sameParcelId) {
       if (entry.pid != '') {
-        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
-        for (let pinpid of sameParcelId) {
-          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
-            numAssocs++;
-            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
-          }
+        if (!addedAssocSites.includes(entry.siteId)) {
+          numAssocs++;
+          addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
         }
       }
     }
@@ -344,46 +353,6 @@ export class SrsitesService {
       entry['qna'] = qna; // add the qna portion for each individual site profile
       profiles.push(entry);
     }
-
-    // logging site data being returned
-    const siteDataLog = {
-      siteId: parseInt(siteId),
-      account: 'user_account',
-      downloaddate: srdate[0].downloaddate,
-      todaysDate: getTodaysDate(),
-      currentTime: getCurrentTime(),
-      victoriaFileNumber: srsite.victoriaFileNumber,
-      regionalFileNumber: srsite.regionalFileNumber,
-      region: srsite.region,
-      lat: lat,
-      lon: lon,
-      commonName: srsite.commonName,
-      address_1: srsite.address_1,
-      address_2: srsite.address_2,
-      city: srsite.city,
-      postalCode: srsite.postalCode,
-      provState: srsite.provState,
-      registeredDate: srsite.registeredDate,
-      modifiedDate: srsite.modifiedDate,
-      detailRemovedDate: srsite.detailRemovedDate,
-      notations: srevents[1],
-      participants: srsitpars[1],
-      assocSites: numAssocs,
-      documents: srsitdoc[1],
-      suspLandUse: srlands[1],
-      parcelDesc: numParcelDescs,
-      locationDescription: srsite.locationDescription,
-      status: srsite.status,
-      classification: srsite.classification,
-      siteProfileData: profiles, // site profile information
-      landUse: landUse, // land use information
-    }
-    console.log('~~~~~~~~~~~~~~~~')
-    console.log('Synopsis report data for site '+parseInt(siteId))
-    console.log('----------------')
-    console.log(siteDataLog);
-    console.log('~~~~~~~~~~~~~~~~')
-    // end of logging
 
     return {
       siteId: parseInt(siteId),
@@ -456,27 +425,33 @@ export class SrsitesService {
 
     // site associations array grabs from srassocs table & other sites with the same pid
     let associatedSitesArray = [];
+    let addedAssocSites: string[] = [];
     for (let entry of srassocs[0]) {
+      addedAssocSites.push(entry.associatedSiteId);
       let assocObject = {};
       assocObject['siteId'] = entry.associatedSiteId;
       assocObject['effectDate'] = entry.effectDate;
       assocObject['noteString'] = entry.noteString;
       associatedSitesArray.push(assocObject);
     }
-    let addedAssocSites: string[] = [];
+
+    let allPids = [];
     for (let entry of srpinpids) {
+      allPids.push(entry.pid);
+    }
+    const sameParcelId = await this.srpinpidsRepository.find({
+      where: { pid: In(allPids), siteId: Not(siteId) },
+    });
+    for (let entry of sameParcelId) {
       if (entry.pid != '') {
-        let sameParcelId = await this.srpinpidsRepository.find({ pid: entry.pid });
-        for (let pinpid of sameParcelId) {
-          if (pinpid.siteId != siteId && !addedAssocSites.includes(pinpid.siteId)) {
-            numAssocs++;
-            addedAssocSites.push(pinpid.siteId); // don't add the associated site multiple times
-            let assocObject = {};
-            assocObject['siteId'] = pinpid.siteId;
-            assocObject['effectDate'] = pinpid.dateNoted;
-            assocObject['noteString'] = 'Same Parcel ID';
-            associatedSitesArray.push(assocObject);
-          }
+        if (!addedAssocSites.includes(entry.siteId)) {
+          numAssocs++;
+          addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
+          let assocObject = {};
+          assocObject['siteId'] = entry.siteId;
+          assocObject['effectDate'] = entry.dateNoted;
+          assocObject['noteString'] = 'Same Parcel ID';
+          associatedSitesArray.push(assocObject);
         }
       }
     }
@@ -549,52 +524,6 @@ export class SrsitesService {
       entry['qna'] = qna; // add the qna portion for each individual site profile
       profiles.push(entry);
     }
-
-    // logging site data being returned
-    const siteDataLog = {
-      siteId: parseInt(siteId),
-      account: 'user_account',
-      downloaddate: srdate[0].downloaddate,
-      todaysDate: getTodaysDate(),
-      currentTime: getCurrentTime(),
-      victoriaFileNumber: srsite.victoriaFileNumber,
-      regionalFileNumber: srsite.regionalFileNumber,
-      region: srsite.region,
-      lat: lat,
-      lon: lon,
-      commonName: srsite.commonName,
-      address_1: srsite.address_1,
-      address_2: srsite.address_2,
-      city: srsite.city,
-      postalCode: srsite.postalCode,
-      provState: srsite.provState,
-      registeredDate: srsite.registeredDate,
-      modifiedDate: srsite.modifiedDate,
-      detailRemovedDate: srsite.detailRemovedDate,
-      notations: srevents[1],
-      participants: srsitpars[1],
-      assocSites: numAssocs,
-      documents: srsitdoc[1],
-      suspLandUse: srlands[1],
-      parcelDesc: numParcelDescs,
-      locationDescription: srsite.locationDescription,
-      status: srsite.status,
-      classification: srsite.classification,
-      notationsArray: srevents[0],
-      participantsArray: srsitpars[0],
-      documentsArray: srsitdoc[0],
-      associatedSitesArray: associatedSitesArray, // for now, just sites with the same parcel-id & those included in srassocs (there's only 1 entry)
-      suspectLandUsesArray: suspectLandUsesArray, // description+notes array
-      parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
-      siteProfileData: profiles, // site profile information
-      landUse: landUse, // land use information
-    }
-    console.log('~~~~~~~~~~~~~~~~')
-    console.log('Details report data for site '+parseInt(siteId))
-    console.log('----------------')
-    console.log(siteDataLog);
-    console.log('~~~~~~~~~~~~~~~~')
-    // end of logging
 
     return {
       siteId: parseInt(siteId),
