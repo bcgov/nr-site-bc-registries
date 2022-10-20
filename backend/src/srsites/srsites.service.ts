@@ -345,6 +345,46 @@ export class SrsitesService {
       profiles.push(entry);
     }
 
+    // logging site data being returned
+    const siteDataLog = {
+      siteId: parseInt(siteId),
+      account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+      victoriaFileNumber: srsite.victoriaFileNumber,
+      regionalFileNumber: srsite.regionalFileNumber,
+      region: srsite.region,
+      lat: lat,
+      lon: lon,
+      commonName: srsite.commonName,
+      address_1: srsite.address_1,
+      address_2: srsite.address_2,
+      city: srsite.city,
+      postalCode: srsite.postalCode,
+      provState: srsite.provState,
+      registeredDate: srsite.registeredDate,
+      modifiedDate: srsite.modifiedDate,
+      detailRemovedDate: srsite.detailRemovedDate,
+      notations: srevents[1],
+      participants: srsitpars[1],
+      assocSites: numAssocs,
+      documents: srsitdoc[1],
+      suspLandUse: srlands[1],
+      parcelDesc: numParcelDescs,
+      locationDescription: srsite.locationDescription,
+      status: srsite.status,
+      classification: srsite.classification,
+      siteProfileData: profiles, // site profile information
+      landUse: landUse, // land use information
+    }
+    console.log('~~~~~~~~~~~~~~~~')
+    console.log('Synopsis report data for site '+parseInt(siteId))
+    console.log('----------------')
+    console.log(siteDataLog);
+    console.log('~~~~~~~~~~~~~~~~')
+    // end of logging
+
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
@@ -509,6 +549,52 @@ export class SrsitesService {
       entry['qna'] = qna; // add the qna portion for each individual site profile
       profiles.push(entry);
     }
+
+    // logging site data being returned
+    const siteDataLog = {
+      siteId: parseInt(siteId),
+      account: 'user_account',
+      downloaddate: srdate[0].downloaddate,
+      todaysDate: getTodaysDate(),
+      currentTime: getCurrentTime(),
+      victoriaFileNumber: srsite.victoriaFileNumber,
+      regionalFileNumber: srsite.regionalFileNumber,
+      region: srsite.region,
+      lat: lat,
+      lon: lon,
+      commonName: srsite.commonName,
+      address_1: srsite.address_1,
+      address_2: srsite.address_2,
+      city: srsite.city,
+      postalCode: srsite.postalCode,
+      provState: srsite.provState,
+      registeredDate: srsite.registeredDate,
+      modifiedDate: srsite.modifiedDate,
+      detailRemovedDate: srsite.detailRemovedDate,
+      notations: srevents[1],
+      participants: srsitpars[1],
+      assocSites: numAssocs,
+      documents: srsitdoc[1],
+      suspLandUse: srlands[1],
+      parcelDesc: numParcelDescs,
+      locationDescription: srsite.locationDescription,
+      status: srsite.status,
+      classification: srsite.classification,
+      notationsArray: srevents[0],
+      participantsArray: srsitpars[0],
+      documentsArray: srsitdoc[0],
+      associatedSitesArray: associatedSitesArray, // for now, just sites with the same parcel-id & those included in srassocs (there's only 1 entry)
+      suspectLandUsesArray: suspectLandUsesArray, // description+notes array
+      parcelDescriptionsArray: parcelDescriptionsArray, //date added,registrydate, clp, legal description
+      siteProfileData: profiles, // site profile information
+      landUse: landUse, // land use information
+    }
+    console.log('~~~~~~~~~~~~~~~~')
+    console.log('Details report data for site '+parseInt(siteId))
+    console.log('----------------')
+    console.log(siteDataLog);
+    console.log('~~~~~~~~~~~~~~~~')
+    // end of logging
 
     return {
       siteId: parseInt(siteId),
