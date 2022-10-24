@@ -12,7 +12,7 @@ import { newSiteProfileDate } from 'utils/util';
 const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HTML5ToPDF = require('html5-to-pdf');
-
+//
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
 let nilTemplate: string;
@@ -712,7 +712,7 @@ export class BCRegistryService {
 
   buildSynopsisTemplate(data): string {
     let template: string = synopsisTemplate;
-    template = template.concat('<hr size="1" color="black">');
+    template = template.concat('<hr style="border: 1px solid black">');
     // site profile
     if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       for (const entry of data.siteProfileData) {
@@ -780,24 +780,24 @@ export class BCRegistryService {
             template = template.concat('<table>\n');
             template =
               entry.qna[0].answer != ''
-                ? template.concat(`<tr><td>${entry.qna[0].question}............${entry.qna[0].answer}</td></tr>`)
+                ? template.concat(`<tr><td>${entry.qna[0].question}............<b>${entry.qna[0].answer}</b></td></tr>`)
                 : template;
             template =
               entry.qna[1].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[1].question}............${entry.qna[1].answer}</td></tr>`
+                    `<tr><td>${entry.qna[1].question}............<b>${entry.qna[1].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[2].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[2].question}............${entry.qna[2].answer}</td></tr>`
+                    `<tr><td>${entry.qna[2].question}............<b>${entry.qna[2].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[19].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[19].question}............${entry.qna[19].answer}</td></tr>`
+                    `<tr><td>${entry.qna[19].question}............<b>${entry.qna[19].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -809,19 +809,19 @@ export class BCRegistryService {
             template =
               entry.qna[3].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[3].question}............${entry.qna[3].answer}</td></tr>`
+                    `<tr><td>${entry.qna[3].question}............<b>${entry.qna[3].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[4].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[4].question}............${entry.qna[4].answer}</td></tr>`
+                    `<tr><td>${entry.qna[4].question}............<b>${entry.qna[4].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[5].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[5].question}............${entry.qna[5].answer}</td></tr>`
+                    `<tr><td>${entry.qna[5].question}............<b>${entry.qna[5].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -834,61 +834,61 @@ export class BCRegistryService {
             template =
               entry.qna[6].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[6].question}............${entry.qna[6].answer}</td></tr>`
+                    `<tr><td>${entry.qna[6].question}............<b>${entry.qna[6].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[7].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[7].question}............${entry.qna[7].answer}</td></tr>`
+                    `<tr><td>${entry.qna[7].question}............<b>${entry.qna[7].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[8].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[8].question}............${entry.qna[8].answer}</td></tr>`
+                    `<tr><td>${entry.qna[8].question}............<b>${entry.qna[8].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[9].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[9].question}............${entry.qna[9].answer}</td></tr>`
+                    `<tr><td>${entry.qna[9].question}............<b>${entry.qna[9].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[10].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[10].question}............${entry.qna[10].answer}</td></tr>`
+                    `<tr><td>${entry.qna[10].question}............<b>${entry.qna[10].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[20].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[20].question}............${entry.qna[20].answer}</td></tr>`
+                    `<tr><td>${entry.qna[20].question}............<b>${entry.qna[20].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[21].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[21].question}............${entry.qna[21].answer}</td></tr>`
+                    `<tr><td>${entry.qna[21].question}............<b>${entry.qna[21].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[22].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[22].question}............${entry.qna[22].answer}</td></tr>`
+                    `<tr><td>${entry.qna[22].question}............<b>${entry.qna[22].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[23].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[23].question}............${entry.qna[23].answer}</td></tr>`
+                    `<tr><td>${entry.qna[23].question}............<b>${entry.qna[23].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[24].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[24].question}............${entry.qna[24].answer}</td></tr>`
+                    `<tr><td>${entry.qna[24].question}............<b>${entry.qna[24].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -900,25 +900,25 @@ export class BCRegistryService {
             template =
               entry.qna[11].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[11].question}............${entry.qna[11].answer}</td></tr>`
+                    `<tr><td>${entry.qna[11].question}............<b>${entry.qna[11].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[12].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[12].question}............${entry.qna[12].answer}</td></tr>`
+                    `<tr><td>${entry.qna[12].question}............<b>${entry.qna[12].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[25].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[25].question}............${entry.qna[25].answer}</td></tr>`
+                    `<tr><td>${entry.qna[25].question}............<b>${entry.qna[25].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[26].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[26].question}............${entry.qna[26].answer}</td></tr>`
+                    `<tr><td>${entry.qna[26].question}............<b>${entry.qna[26].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -930,37 +930,37 @@ export class BCRegistryService {
             template =
               entry.qna[13].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[13].question}............${entry.qna[13].answer}</td></tr>`
+                    `<tr><td>${entry.qna[13].question}............<b>${entry.qna[13].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[14].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[14].question}............${entry.qna[14].answer}</td></tr>`
+                    `<tr><td>${entry.qna[14].question}............<b>${entry.qna[14].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[15].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[15].question}............${entry.qna[15].answer}</td></tr>`
+                    `<tr><td>${entry.qna[15].question}............<b>${entry.qna[15].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[27].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[27].question}............${entry.qna[27].answer}</td></tr>`
+                    `<tr><td>${entry.qna[27].question}............<b>${entry.qna[27].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[28].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[28].question}............${entry.qna[28].answer}</td></tr>`
+                    `<tr><td>${entry.qna[28].question}............<b>${entry.qna[28].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[29].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[29].question}............${entry.qna[29].answer}</td></tr>`
+                    `<tr><td>${entry.qna[29].question}............<b>${entry.qna[29].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -972,19 +972,19 @@ export class BCRegistryService {
             template =
               entry.qna[16].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[16].question}............${entry.qna[16].answer}</td></tr>`
+                    `<tr><td>${entry.qna[16].question}............<b>${entry.qna[16].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[17].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[17].question}............${entry.qna[17].answer}</td></tr>`
+                    `<tr><td>${entry.qna[17].question}............<b>${entry.qna[17].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[18].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[18].question}............${entry.qna[18].answer}</td></tr>`
+                    `<tr><td>${entry.qna[18].question}............<b>${entry.qna[18].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1034,14 +1034,14 @@ export class BCRegistryService {
               ? template.concat(`<p style="font-size: 21px">${entry.commentString}</p>`)
               : template.concat(`<p style="font-size: 21px"></p>`);
         }
-        template = template.concat('<hr size="1" color="black">');
+        template = template.concat('<hr style="border: 1px solid black">');
       }
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 21px">End of Site Synopsis Report</p>');
     template = template.concat(
@@ -1054,7 +1054,7 @@ export class BCRegistryService {
   // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
   buildDetailedTemplate(data): string {
     let template: string = detailedPartialTemplate;
-    template = template.concat('<hr size="1" color="black">');
+    template = template.concat('<hr style="border: 1px solid black">');
     // notations
     const notationsLength = data.notationsArray.length;
     let counter = 0;
@@ -1093,13 +1093,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No notations have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
     // participants
     const participantsLength = data.participantsArray.length;
@@ -1125,13 +1125,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No participants have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
     // documents
     const documentsLength = data.documentsArray.length;
@@ -1167,13 +1167,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No documents have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
 
     // associated sites
@@ -1199,13 +1199,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No associated sites have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
 
     // suspect land uses
@@ -1227,13 +1227,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No suspect land uses have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
 
     // parcel descriptions
@@ -1263,13 +1263,13 @@ export class BCRegistryService {
           template = template.concat('<hr>');
         }
       }
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No parcel descriptions have been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
 
     // site profile
@@ -1345,24 +1345,24 @@ export class BCRegistryService {
             template = template.concat('<table>\n');
             template =
               entry.qna[0].answer != ''
-                ? template.concat(`<tr><td>${entry.qna[0].question}............${entry.qna[0].answer}</td></tr>`)
+                ? template.concat(`<tr><td>${entry.qna[0].question}............<b>${entry.qna[0].answer}</b></td></tr>`)
                 : template;
             template =
               entry.qna[1].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[1].question}............${entry.qna[1].answer}</td></tr>`
+                    `<tr><td>${entry.qna[1].question}............<b>${entry.qna[1].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[2].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[2].question}............${entry.qna[2].answer}</td></tr>`
+                    `<tr><td>${entry.qna[2].question}............<b>${entry.qna[2].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[19].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[19].question}............${entry.qna[19].answer}</td></tr>`
+                    `<tr><td>${entry.qna[19].question}............<b>${entry.qna[19].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1374,19 +1374,19 @@ export class BCRegistryService {
             template =
               entry.qna[3].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[3].question}............${entry.qna[3].answer}</td></tr>`
+                    `<tr><td>${entry.qna[3].question}............<b>${entry.qna[3].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[4].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[4].question}............${entry.qna[4].answer}</td></tr>`
+                    `<tr><td>${entry.qna[4].question}............<b>${entry.qna[4].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[5].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[5].question}............${entry.qna[5].answer}</td></tr>`
+                    `<tr><td>${entry.qna[5].question}............<b>${entry.qna[5].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1399,61 +1399,61 @@ export class BCRegistryService {
             template =
               entry.qna[6].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[6].question}............${entry.qna[6].answer}</td></tr>`
+                    `<tr><td>${entry.qna[6].question}............<b>${entry.qna[6].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[7].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[7].question}............${entry.qna[7].answer}</td></tr>`
+                    `<tr><td>${entry.qna[7].question}............<b>${entry.qna[7].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[8].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[8].question}............${entry.qna[8].answer}</td></tr>`
+                    `<tr><td>${entry.qna[8].question}............<b>${entry.qna[8].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[9].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[9].question}............${entry.qna[9].answer}</td></tr>`
+                    `<tr><td>${entry.qna[9].question}............<b>${entry.qna[9].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[10].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[10].question}............${entry.qna[10].answer}</td></tr>`
+                    `<tr><td>${entry.qna[10].question}............<b>${entry.qna[10].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[20].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[20].question}............${entry.qna[20].answer}</td></tr>`
+                    `<tr><td>${entry.qna[20].question}............<b>${entry.qna[20].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[21].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[21].question}............${entry.qna[21].answer}</td></tr>`
+                    `<tr><td>${entry.qna[21].question}............<b>${entry.qna[21].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[22].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[22].question}............${entry.qna[22].answer}</td></tr>`
+                    `<tr><td>${entry.qna[22].question}............<b>${entry.qna[22].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[23].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[23].question}............${entry.qna[23].answer}</td></tr>`
+                    `<tr><td>${entry.qna[23].question}............<b>${entry.qna[23].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[24].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[24].question}............${entry.qna[24].answer}</td></tr>`
+                    `<tr><td>${entry.qna[24].question}............<b>${entry.qna[24].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1465,25 +1465,25 @@ export class BCRegistryService {
             template =
               entry.qna[11].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[11].question}............${entry.qna[11].answer}</td></tr>`
+                    `<tr><td>${entry.qna[11].question}............<b>${entry.qna[11].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[12].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[12].question}............${entry.qna[12].answer}</td></tr>`
+                    `<tr><td>${entry.qna[12].question}............<b>${entry.qna[12].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[25].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[25].question}............${entry.qna[25].answer}</td></tr>`
+                    `<tr><td>${entry.qna[25].question}............<b>${entry.qna[25].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[26].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[26].question}............${entry.qna[26].answer}</td></tr>`
+                    `<tr><td>${entry.qna[26].question}............<b>${entry.qna[26].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1495,37 +1495,37 @@ export class BCRegistryService {
             template =
               entry.qna[13].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[13].question}............${entry.qna[13].answer}</td></tr>`
+                    `<tr><td>${entry.qna[13].question}............<b>${entry.qna[13].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[14].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[14].question}............${entry.qna[14].answer}</td></tr>`
+                    `<tr><td>${entry.qna[14].question}............<b>${entry.qna[14].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[15].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[15].question}............${entry.qna[15].answer}</td></tr>`
+                    `<tr><td>${entry.qna[15].question}............<b>${entry.qna[15].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[27].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[27].question}............${entry.qna[27].answer}</td></tr>`
+                    `<tr><td>${entry.qna[27].question}............<b>${entry.qna[27].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[28].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[28].question}............${entry.qna[28].answer}</td></tr>`
+                    `<tr><td>${entry.qna[28].question}............<b>${entry.qna[28].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[29].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[29].question}............${entry.qna[29].answer}</td></tr>`
+                    `<tr><td>${entry.qna[29].question}............<b>${entry.qna[29].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1537,19 +1537,19 @@ export class BCRegistryService {
             template =
               entry.qna[16].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[16].question}............${entry.qna[16].answer}</td></tr>`
+                    `<tr><td>${entry.qna[16].question}............<b>${entry.qna[16].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[17].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[17].question}............${entry.qna[17].answer}</td></tr>`
+                    `<tr><td>${entry.qna[17].question}............<b>${entry.qna[17].answer}</b></td></tr>`
                   ))
                 : template;
             template =
               entry.qna[18].answer != ''
                 ? (template = template.concat(
-                    `<tr><td>${entry.qna[18].question}............${entry.qna[18].answer}</td></tr>`
+                    `<tr><td>${entry.qna[18].question}............<b>${entry.qna[18].answer}</b></td></tr>`
                   ))
                 : template;
             template = template.concat(`</table>`);
@@ -1599,14 +1599,14 @@ export class BCRegistryService {
               ? template.concat(`<p style="font-size: 21px">${entry.commentString}</p>`)
               : template.concat(`<p style="font-size: 21px"></p>`);
         }
-        template = template.concat('<hr size="1" color="black">');
+        template = template.concat('<hr style="border: 1px solid black">');
       }
     } else {
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
 
-      template = template.concat('<hr size="1" color="black">');
+      template = template.concat('<hr style="border: 1px solid black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 21px">End of Site Details Report</p>');
     template = template.concat(
