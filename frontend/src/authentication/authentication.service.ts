@@ -15,6 +15,7 @@ export class AuthenticationService {
   private readonly secret: string;
   private readonly grant_type: string;
   private readonly bc_registry_base_url: string;
+  private readonly bc_registry_host: string;
   private readonly xapikey: string;
   private redirect_uri: string;
 
@@ -26,6 +27,7 @@ export class AuthenticationService {
     this.grant_type = 'authorization_code';
     this.xapikey = process.env.KEYCLOAK_XAPIKEY;
     this.bc_registry_base_url = process.env.BC_REGISTRY_BASE_URL;
+    this.bc_registry_host = process.env.BC_REGISTRY_HOST;
   }
 
   // includes contacts list which the token doesn't contain
@@ -36,7 +38,7 @@ export class AuthenticationService {
         'x-apikey': this.xapikey,
         Authorization: `Bearer ${token}`,
         Accept: '*/*',
-        Host: `${this.bc_registry_base_url}`,
+        Host: `${this.bc_registry_host}`,
         'Accept-Encoding': 'gzip, deflate, br',
         Connection: 'keep-alive',
       },
@@ -76,7 +78,7 @@ export class AuthenticationService {
         'x-apikey': this.xapikey,
         Authorization: `Bearer ${token}`,
         Accept: '*/*',
-        Host: `${this.bc_registry_base_url}`,
+        Host: `${this.bc_registry_host}`,
         'Accept-Encoding': 'gzip, deflate, br',
         Connection: 'keep-alive',
       },
