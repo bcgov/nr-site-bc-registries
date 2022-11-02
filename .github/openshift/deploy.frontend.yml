@@ -104,10 +104,6 @@ objects:
                   value: '0'
                 - name: BACKEND_URL
                   value: http://${NAME}-${ZONE}-backend
-                - name: BC_REGISTRY_BASE_URL
-                  value: https://bcregistry-test.apigee.net
-                - name: baseUrl
-                  value: https://bcregistry-test.apigee.net/pay/api/v1/payment-requests
                 - name: site_environment
                   value: TEST
                 - name: SESSION_PATH
@@ -117,6 +113,21 @@ objects:
                     secretKeyRef:
                       name: esra-sessions
                       key: COOKIE_SECRET
+                - name: BC_REGISTRY_BASE_URL
+                  valueFrom:
+                    secretKeyRef: 
+                      name: bc-registry-config
+                      key: BC_REGISTRY_BASE_URL
+                - name: baseUrl
+                  valueFrom:
+                    secretKeyRef: 
+                      name: bc-registry-config
+                      key: baseUrl
+                - name: API_KEY_HOST
+                  valueFrom:
+                    secretKeyRef: 
+                      name: bc-registry-config
+                      key: API_KEY_HOST
                 - name: SESSION_SECRET
                   valueFrom:
                     secretKeyRef: 
