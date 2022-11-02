@@ -18,7 +18,10 @@ export class AppController {
   async root(@Session() session: { data?: SessionData }) {
     const username = session.data.name;
     const label =
-      session.data.activeAccount !== null && session.data.activeAccount !== undefined
+      session.data.activeAccount !== null &&
+      session.data.activeAccount !== undefined &&
+      session.data.accounts &&
+      session.data.accounts.length <= 1
         ? session.data.activeAccount.label
         : session.data.accounts.length == 0
         ? '~'
