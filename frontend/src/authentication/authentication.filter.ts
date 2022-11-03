@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, ImATeapotException, HttpStatus } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common';
-import { response } from 'express';
+import e, { response } from 'express';
 import { URL } from 'url';
 
 let keycloak_login_fullurl, keycloak_login_baseurl, keycloak_login_params;
@@ -12,7 +12,10 @@ export class AuthenticationFilter implements ExceptionFilter {
     keycloak_login_fullurl = keycloak_login_baseurl + '?' + keycloak_login_params;
   }
   catch(exception: any, host: ArgumentsHost) {
-    if (exception.status == HttpStatus.UNAUTHORIZED) {
+    if (exception.status == HttpStatus.UNAUTHORIZED || exception.status == HttpStatus.BAD_REQUEST) {
+      if (exception.status == HttpStatus.BAD_REQUEST) {
+        console.log('BAD REQUEST');
+      }
       const ctx = host.switchToHttp();
       const response = ctx.getResponse();
       const request = ctx.getRequest();
@@ -23,6 +26,7 @@ export class AuthenticationFilter implements ExceptionFilter {
       keycloak_login_params = `?response_type=code&client_id=${process.env.KEYCLOAK_CLIENT_ID}&redirect_uri=${redirect}`;
       keycloak_login_fullurl = keycloak_login_baseurl + keycloak_login_params;
       const status = exception.getStatus();
+      console.log(keycloak_login_fullurl);
       response.status(status).redirect(keycloak_login_fullurl);
     } else if (exception.status == HttpStatus.I_AM_A_TEAPOT) {
       const ctx = host.switchToHttp();

@@ -23,6 +23,7 @@ export type AccountObject = {
   id: number;
   label: string;
   type: string;
+  guid: string;
 };
 
 type savedReport = [string, string];

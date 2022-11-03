@@ -1,4 +1,4 @@
-import { ImATeapotException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ImATeapotException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as base64 from 'base-64';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
@@ -154,6 +154,9 @@ export class AuthenticationService {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
+          if (error.response.status == 400) {
+            throw new BadRequestException('Session/Code Error, redirecting');
+          }
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -170,10 +173,35 @@ export class AuthenticationService {
       });
   }
 
-  async getHealthCheck(token: string): Promise<string> {
-    let decodedToken: { name: string; exp: number; auth_time: number };
+  async getHealthCheck(token: string, activeAccount?: AccountObject, accounts?: AccountObject[]): Promise<string> {
+    console.log('~~~~~~~~~~');
+    console.log('~~~~~~~~~~');
+    console.log('HEALTH CHECK');
+    console.log('~~~~~~~~~~');
+    console.log('~~~~~~~~~~');
+    let decodedToken: { name: string; exp: number; auth_time: number; sub: string };
     try {
       decodedToken = jwt_decode(token);
+      if (activeAccount && activeAccount.guid != decodedToken.sub) {
+        console.log('WEIRD ACTIVE ACCOUNT');
+        return 'new';
+      } else if (!activeAccount) {
+        console.log('NO ACTIVE ACCOUNT');
+        const userSettings = await this.getUserSettings(token, decodedToken.sub);
+        const actualAccounts = this.getPremiumUsers(userSettings);
+        let correctAccount = false;
+        for (const a of actualAccounts) {
+          for (const b of accounts) {
+            if (a.id == b.id) {
+              correctAccount = true;
+            }
+          }
+        }
+        if (!correctAccount) {
+          console.log('account is CORRECT');
+          return 'new';
+        }
+      }
     } catch (err) {
       return 'bad';
     }
@@ -220,6 +248,7 @@ export class AuthenticationService {
     if (accounts.length > 1) {
       activeAccount = null;
     } else {
+      accounts[0]['guid'] = decodedToken.sub;
       activeAccount = accounts[0];
     }
     return {
@@ -261,6 +290,7 @@ export class AuthenticationService {
     return axios
       .post(url, params, config)
       .then((res) => {
+        console.log(res.data);
         return res.data;
       })
       .catch((error) => {
