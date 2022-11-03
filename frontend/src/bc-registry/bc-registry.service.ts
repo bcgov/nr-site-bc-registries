@@ -146,7 +146,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      url: `${process.env.cdogs_url}`,
       headers: {
         Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      url: `${process.env.cdogs_url}`,
       headers: {
         Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ export class BCRegistryService {
 
       const config = {
         method: 'post',
-        url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+        url: `${process.env.cdogs_url}`,
         headers: {
           Authorization: `Bearer ${authorizationToken}`,
           'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ export class BCRegistryService {
 
       const config = {
         method: 'post',
-        url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+        url: `${process.env.cdogs_url}`,
         headers: {
           Authorization: `Bearer ${authorizationToken}`,
           'Content-Type': 'application/json',
@@ -422,7 +422,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      url: `${process.env.ches_url}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authorizationToken}`,
@@ -482,7 +482,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      url: `${process.env.cdogs_url}`,
       headers: {
         Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
@@ -597,7 +597,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://ches-dev.apps.silver.devops.gov.bc.ca/api/v1/emailMerge',
+      url: `${process.env.ches_url}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authorizationToken}`,
@@ -658,7 +658,7 @@ export class BCRegistryService {
 
     const config = {
       method: 'post',
-      url: 'https://cdogs-dev.apps.silver.devops.gov.bc.ca/api/v2/template/render',
+      url: `${process.env.cdogs_url}`,
       headers: {
         Authorization: `Bearer ${authorizationToken}`,
         'Content-Type': 'application/json',
@@ -1606,7 +1606,7 @@ export class BCRegistryService {
   // get token for use with CDOGS
   // eslint-disable-next-line @typescript-eslint/ban-types
   getToken(): Promise<Object> {
-    const url = `https://dev.oidc.gov.bc.ca/auth/realms/${process.env.service_realm}/protocol/openid-connect/token`;
+    const url = `${process.env.common_service_keycloak_base_url}${process.env.service_realm}/protocol/openid-connect/token`;
     const service_client_id = process.env.service_client_id;
     const service_client_secret = process.env.service_client_secret;
     const token = `${service_client_id}:${service_client_secret}`;

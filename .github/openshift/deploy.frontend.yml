@@ -158,6 +158,21 @@ objects:
                     secretKeyRef: 
                       name: keycloak
                       key: KEYCLOAK_XAPIKEY
+                - name: common_service_keycloak_base_url
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: common_service_keycloak_base_url
+                - name: cdogs_url
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: cdogs_url
+                - name: ches_url
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: ches_url
                 - name: service_realm
                   valueFrom:
                     secretKeyRef: 
