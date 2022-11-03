@@ -30,7 +30,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 
@@ -49,7 +49,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 
@@ -68,7 +68,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 
@@ -87,7 +87,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 
@@ -100,7 +100,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 
@@ -126,7 +126,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus };
+      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
     }
   }
 }
