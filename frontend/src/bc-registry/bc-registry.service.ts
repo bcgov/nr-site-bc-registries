@@ -59,7 +59,7 @@ export class BCRegistryService {
     searchCriteria3: string,
     name: string
   ) {
-    const authorizationToken = await this.getToken();
+    const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate;
     const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
@@ -166,7 +166,7 @@ export class BCRegistryService {
   }
 
   async requestNilSiteIdPdf(siteId: string, name: string) {
-    const authorizationToken = await this.getToken();
+    const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate2;
     const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
@@ -222,7 +222,7 @@ export class BCRegistryService {
 
   // builds the pdf report to be sent back to the frontend
   async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getToken();
+    const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -293,7 +293,7 @@ export class BCRegistryService {
   }
 
   async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getToken();
+    const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -369,7 +369,8 @@ export class BCRegistryService {
 
   // sends an email formatted with html that has all the report data
   async emailHTML(reportType: string, email: string, siteId: string, name: string): Promise<string> {
-    const authorizationToken = await this.getToken();
+    const cdogsToken = await this.getCdogsToken();
+    const chesToken = await this.getChesToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -396,7 +397,7 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
-      htmlFile = await this.getHtml(siteData, documentTemplate, authorizationToken.toString());
+      htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
 
     const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
@@ -425,7 +426,7 @@ export class BCRegistryService {
       url: `${process.env.ches_url}`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authorizationToken}`,
+        Authorization: `Bearer ${chesToken}`,
       },
       data: data,
     };
@@ -458,9 +459,9 @@ export class BCRegistryService {
       });
   }
 
-  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  // sends preset data + base64 encoded html template to cdogs and returns an html document with the data inserted
   async getHtml(data: any, template: string, token?: string): Promise<string> {
-    const authorizationToken = token != null ? token : await this.getToken();
+    const authorizationToken = token != null ? token : await this.getCdogsToken();
     let htmlData: string;
 
     const md = JSON.stringify({
@@ -503,7 +504,8 @@ export class BCRegistryService {
 
   // sends an email formatted with html that has search results data
   async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string): Promise<string> {
-    const authorizationToken = await this.getToken();
+    const cdogsToken = await this.getCdogsToken();
+    const chesToken = await this.getChesToken();
 
     const requestUrl = `${hostname}:${port}/srsites/getSearchResultsData/1`;
     const requestConfig: AxiosRequestConfig = {
@@ -574,7 +576,7 @@ export class BCRegistryService {
         }
       }
       // merge the template data with the template
-      htmlFile = await this.getSearchResultsHtml(data, documentTemplate, authorizationToken.toString());
+      htmlFile = await this.getSearchResultsHtml(data, documentTemplate, cdogsToken.toString());
     }
 
     // build the email object
@@ -600,7 +602,7 @@ export class BCRegistryService {
       url: `${process.env.ches_url}`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authorizationToken}`,
+        Authorization: `Bearer ${chesToken}`,
       },
       data: data,
     };
@@ -634,9 +636,9 @@ export class BCRegistryService {
       });
   }
 
-  // sends preset data + base64 encoded html template and returns an html document with the data inserted
+  // sends preset data + base64 encoded html template to cdogs and returns an html document with the data inserted
   async getSearchResultsHtml(data: any, template: string, token?: string): Promise<string> {
-    const authorizationToken = token != null ? token : await this.getToken();
+    const authorizationToken = token != null ? token : await this.getCdogsToken();
     let htmlData: string;
 
     const md = JSON.stringify({
@@ -685,36 +687,49 @@ export class BCRegistryService {
       for (const entry of data.siteProfileData) {
         // there will only be one site profile in the data
         if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
-            template = template.concat('<h4>CURRENT SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
+          template = template.concat('<h4>CURRENT SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
         } else {
-            template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
+          template = template.concat('<h4>CURRENT SITE PROFILE INFORMATION (SEC. III AND X)</h4>\n');
         }
         template = template.concat('<hr color="white">');
         template = template.concat('<table>');
         template = template.concat(`<tr><th>Date Received:</th>`);
-        template = entry.dateReceived ? template.concat(`<td>${entry.dateReceived}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateReceived
+          ? template.concat(`<td>${entry.dateReceived}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Completed:</th>`);
-        template = entry.dateCompleted ? template.concat(`<td>${entry.dateCompleted}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateCompleted
+          ? template.concat(`<td>${entry.dateCompleted}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Local Authority Received:</th>`);
-        template = entry.dateLocalAuthority ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateLocalAuthority
+          ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Registrar:</th>`);
-        template = entry.dateRegistrar ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateRegistrar
+          ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Date Decision:</th>`);
-          template = entry.dateDecision ? template.concat(`<td>${entry.dateDecision}</td></tr>`) : template.concat(`<td></td></tr>`);
+          template = entry.dateDecision
+            ? template.concat(`<td>${entry.dateDecision}</td></tr>`)
+            : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`<tr><th>Date Entered:</th>`);
-        template = entry.dateEntered ? template.concat(`<td>${entry.dateEntered}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateEntered
+          ? template.concat(`<td>${entry.dateEntered}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision:</th>`);
-          template = entry.decisionText ? template.concat(`<td>${entry.decisionText}</td></tr>`) : template.concat(`<td></td></tr>`);
+          template = entry.decisionText
+            ? template.concat(`<td>${entry.decisionText}</td></tr>`)
+            : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`</table>`);
         template = template.concat('<hr>');
 
         // site profile land use
         if (data.landUse != undefined && data.landUse.length != 0) {
-          
           template = template.concat('<h4>III   COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
           template = template.concat('<table>\n');
           template = template.concat(`<tr><td><b>Schedule 2</b></td><td></td></tr>`);
@@ -723,14 +738,13 @@ export class BCRegistryService {
             template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
           }
           template = template.concat(`</table>`);
-          
+
           template = template.concat('<hr>');
         }
 
         // site profile questions and answers
         if (entry.qna) {
           if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
-            
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -756,11 +770,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>FILL MATERIALS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -782,11 +794,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
             template = template.concat('<table>\n');
 
@@ -851,11 +861,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -883,11 +891,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -927,11 +933,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -953,36 +957,47 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) { // site disclosure comments
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+          // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          template = template.concat(`<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`);
+          template = template.concat(
+            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+          );
           template =
             entry.plannedActivityComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>');
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+          );
           template =
             entry.siteDisclosureComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>');
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+          );
           template =
             entry.govDocumentsComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-        } else { // site profile comments
+        } else {
+          // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>')
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+          );
           template =
             entry.govDocumentsComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>')
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+          );
           template =
             entry.commentString != ''
               ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
@@ -991,11 +1006,10 @@ export class BCRegistryService {
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Synopsis Report</p>');
@@ -1016,7 +1030,7 @@ export class BCRegistryService {
     if (notationsLength > 0) {
       // sort notations chronologically
       data.notationsArray.sort(this.sortByProperty('eventDate'));
-      
+
       template = template.concat('<h4>NOTATIONS</h4>\n');
       for (const notation of data.notationsArray) {
         if (counter > 0) {
@@ -1042,7 +1056,7 @@ export class BCRegistryService {
           }
           template = template.concat(`</table>`);
         }
-        
+
         counter++;
         if (counter < notationsLength) {
           template = template.concat('<hr>');
@@ -1050,11 +1064,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No notations have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
     // participants
@@ -1063,7 +1076,7 @@ export class BCRegistryService {
     if (participantsLength > 0) {
       // sort participants chronologically
       data.participantsArray.sort(this.sortByProperty('effectiveDate'));
-      
+
       template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
       for (const participant of data.participantsArray) {
         if (counter > 0) {
@@ -1083,11 +1096,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No participants have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
     // documents
@@ -1096,7 +1108,7 @@ export class BCRegistryService {
     if (documentsLength > 0) {
       // sort documents chronologically
       data.documentsArray.sort(this.sortByProperty('documentDate'));
-      
+
       template = template.concat('<h4>DOCUMENTS</h4>\n');
       for (const document of data.documentsArray) {
         if (counter > 0) {
@@ -1118,7 +1130,7 @@ export class BCRegistryService {
           }
           template = template.concat(`</table>`);
         }
-        
+
         counter++;
         if (counter < documentsLength) {
           template = template.concat('<hr>');
@@ -1126,11 +1138,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No documents have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1140,7 +1151,7 @@ export class BCRegistryService {
     if (assocSitesLength > 0) {
       // sort associated sites chronologically
       data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
-      
+
       template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
       for (const associatedSite of data.associatedSitesArray) {
         if (counter > 0) {
@@ -1151,7 +1162,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Effect Date:</th><td>${associatedSite.effectDate}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
         template = template.concat(`</table>`);
-        
+
         counter++;
         if (counter < assocSitesLength) {
           template = template.concat('<hr>');
@@ -1159,11 +1170,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No associated sites have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1171,7 +1181,6 @@ export class BCRegistryService {
     const suspectLandUsesLength = data.suspectLandUsesArray.length;
     counter = 0;
     if (suspectLandUsesLength > 0) {
-      
       template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
       for (const suspectLandUse of data.suspectLandUsesArray) {
         if (counter > 0) {
@@ -1181,7 +1190,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Land Use:</th><td>${suspectLandUse.landUse}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${suspectLandUse.noteString}</td></tr>`);
         template = template.concat(`</table>`);
-        
+
         counter++;
         if (counter < suspectLandUsesLength) {
           template = template.concat('<hr>');
@@ -1189,11 +1198,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No suspect land uses have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1203,7 +1211,7 @@ export class BCRegistryService {
     if (parcelDescriptionsLength > 0) {
       // sort parcel descriptions chronologically
       data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
-      
+
       template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
       for (const parcelDescription of data.parcelDescriptionsArray) {
         if (counter > 0) {
@@ -1218,7 +1226,7 @@ export class BCRegistryService {
         );
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
-        
+
         counter++;
         if (counter < parcelDescriptionsLength) {
           template = template.concat('<hr>');
@@ -1226,11 +1234,10 @@ export class BCRegistryService {
       }
       template = template.concat('<hr size="1" color="black">');
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No parcel descriptions have been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
 
@@ -1238,7 +1245,6 @@ export class BCRegistryService {
     if (data.siteProfileData != undefined && data.siteProfileData.length != 0) {
       template = template.concat('<h4>SITE PROFILE/SITE DISCLOSURE STATEMENT HISTORY</h4>\n');
       for (const entry of data.siteProfileData) {
-        
         if (entry.dateReceived) {
           if (newSiteProfileDate(entry.dateReceived)) {
             template = template.concat('<h4>SITE DISCLOSURE STATEMENT (SEC. III AND IV)</h4>\n');
@@ -1251,22 +1257,36 @@ export class BCRegistryService {
         template = template.concat('<hr color="white">');
         template = template.concat('<table>');
         template = template.concat(`<tr><th>Date Received:</th>`);
-        template = entry.dateReceived ? template.concat(`<td>${entry.dateReceived}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateReceived
+          ? template.concat(`<td>${entry.dateReceived}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Completed:</th>`);
-        template = entry.dateCompleted ? template.concat(`<td>${entry.dateCompleted}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateCompleted
+          ? template.concat(`<td>${entry.dateCompleted}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Local Authority Received:</th>`);
-        template = entry.dateLocalAuthority ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateLocalAuthority
+          ? template.concat(`<td>${entry.dateLocalAuthority}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         template = template.concat(`<tr><th>Date Registrar:</th>`);
-        template = entry.dateRegistrar ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateRegistrar
+          ? template.concat(`<td>${entry.dateRegistrar}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Date Decision:</th>`);
-          template = entry.dateDecision ? template.concat(`<td>${entry.dateDecision}</td></tr>`) : template.concat(`<td></td></tr>`);
+          template = entry.dateDecision
+            ? template.concat(`<td>${entry.dateDecision}</td></tr>`)
+            : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`<tr><th>Date Entered:</th>`);
-        template = entry.dateEntered ? template.concat(`<td>${entry.dateEntered}</td></tr>`) : template.concat(`<td></td></tr>`);
+        template = entry.dateEntered
+          ? template.concat(`<td>${entry.dateEntered}</td></tr>`)
+          : template.concat(`<td></td></tr>`);
         if (!newSiteProfileDate(entry.dateReceived)) {
           template = template.concat(`<tr><th>Decision:</th>`);
-          template = entry.decisionText ? template.concat(`<td>${entry.decisionText}</td></tr>`) : template.concat(`<td></td></tr>`);
+          template = entry.decisionText
+            ? template.concat(`<td>${entry.decisionText}</td></tr>`)
+            : template.concat(`<td></td></tr>`);
         }
         template = template.concat(`</table>`);
         counter++;
@@ -1274,7 +1294,6 @@ export class BCRegistryService {
 
         // site profile land use
         if (data.landUse != undefined && data.landUse.length != 0) {
-          
           template = template.concat('<h4>III   COMMERCIAL AND INDUSTRIAL PURPOSES OR ACTIVITIES ON SITE</h4>\n');
           template = template.concat('<table>\n');
           template = template.concat(`<tr><td><b>Schedule 2</b></td><td></td></tr>`);
@@ -1283,7 +1302,7 @@ export class BCRegistryService {
             template = template.concat(`<tr><td>${item.code}</td><td>${item.codeString}</td></tr>`);
           }
           template = template.concat(`</table>`);
-          
+
           counter++;
           template = template.concat('<hr>');
         }
@@ -1291,7 +1310,6 @@ export class BCRegistryService {
         // site profile questions and answers
         if (entry.qna) {
           if (entry && entry.dateReceived && !newSiteProfileDate(entry.dateReceived)) {
-            
             template = template.concat('<h4>AREAS OF POTENTIAL CONCERN</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1317,11 +1335,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>FILL MATERIALS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1343,11 +1359,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>WASTE DISPOSAL</h4>\n');
             template = template.concat('<table>\n');
 
@@ -1412,11 +1426,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>TANKS OR CONTAINERS USED OR STORED</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1444,11 +1456,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>SPECIAL (HAZARDOUS) WASTES OR SUBSTANCES</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1488,11 +1498,9 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
 
-            
             template = template.concat('<h4>LEGAL OR REGULATORY ACTIONS OR CONSTRAINTS</h4>\n');
             template = template.concat('<table>\n');
             template =
@@ -1514,36 +1522,47 @@ export class BCRegistryService {
                   ))
                 : template;
             template = template.concat(`</table>`);
-            
 
             template = template.concat('<hr>');
           }
         }
-        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) { // site disclosure comments
+        if (entry.dateReceived && newSiteProfileDate(entry.dateReceived)) {
+          // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          template = template.concat(`<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`);
+          template = template.concat(
+            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+          );
           template =
             entry.plannedActivityComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>');
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+          );
           template =
             entry.siteDisclosureComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>');
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+          );
           template =
             entry.govDocumentsComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-        } else { // site profile comments
+        } else {
+          // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>')
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+          );
           template =
             entry.govDocumentsComment != ''
               ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
               : template.concat(`<p style="font-size: 18px"></p>`);
-          template = template.concat('<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>')
+          template = template.concat(
+            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+          );
           template =
             entry.commentString != ''
               ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
@@ -1552,11 +1571,10 @@ export class BCRegistryService {
         template = template.concat('<hr size="1" color="black">');
       }
     } else {
-      
       template = template.concat(
         '<div class="row"><div class="col-sm text-center">No site profile has been submitted for this site</div></div>'
       );
-      
+
       template = template.concat('<hr size="1" color="black">');
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Details Report</p>');
@@ -1605,12 +1623,55 @@ export class BCRegistryService {
 
   // get token for use with CDOGS
   // eslint-disable-next-line @typescript-eslint/ban-types
-  getToken(): Promise<Object> {
+  async getCdogsToken(): Promise<Object> {
     const url = `${process.env.common_service_keycloak_base_url}${process.env.service_realm}/protocol/openid-connect/token`;
-    const service_client_id = process.env.service_client_id;
-    const service_client_secret = process.env.service_client_secret;
-    const token = `${service_client_id}:${service_client_secret}`;
-    const encodedToken = Buffer.from(token).toString('base64');
+    const encodedToken = Buffer.from(
+      `${process.env.cdogs_service_client_id}:${process.env.cdogs_service_client_secret}`
+    ).toString('base64');
+    const config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic ' + encodedToken,
+      },
+    };
+    const grantTypeParam = new URLSearchParams();
+    grantTypeParam.append('grant_type', 'client_credentials');
+    return axios
+      .post(url, grantTypeParam, config)
+      .then((response) => {
+        return response.data.access_token;
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log('Response:');
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log('Request:');
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+        console.log('Error config:');
+        console.log(error.config);
+        console.log(error);
+      });
+  }
+
+  // get token for use with CHES
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async getChesToken(): Promise<Object> {
+    const url = `${process.env.common_service_keycloak_base_url}${process.env.service_realm}/protocol/openid-connect/token`;
+    const encodedToken = Buffer.from(
+      `${process.env.ches_service_client_id}:${process.env.ches_service_client_secret}`
+    ).toString('base64');
     const config = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
