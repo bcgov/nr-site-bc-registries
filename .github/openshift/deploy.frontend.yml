@@ -178,16 +178,26 @@ objects:
                     secretKeyRef: 
                       name: common-services
                       key: service_realm
-                - name: service_client_id
+                - name: cdogs_service_client_id
                   valueFrom:
                     secretKeyRef: 
                       name: common-services
-                      key: service_client_id
-                - name: service_client_secret
+                      key: cdogs_service_client_id
+                - name: cdogs_service_client_secret
                   valueFrom:
                     secretKeyRef: 
                       name: common-services
-                      key: service_client_secret
+                      key: cdogs_service_client_secret
+                - name: ches_service_client_id
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: ches_service_client_id
+                - name: ches_service_client_secret
+                  valueFrom:
+                    secretKeyRef: 
+                      name: common-services
+                      key: ches_service_client_secret
               ports:
                 - containerPort: 3000
                   protocol: TCP
