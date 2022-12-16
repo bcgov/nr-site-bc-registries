@@ -11,8 +11,6 @@ import {
   Body,
   Res,
   HttpStatus,
-  BadRequestException,
-  HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthenticationFilter } from 'src/authentication/authentication.filter';
@@ -42,18 +40,14 @@ export class BCRegistryController {
     let fileBuffer: any;
     try {
       fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name);
-      response.status(200).send(fileBuffer);
-      throw new BadRequestException();
-      return fileBuffer;
-      // return new StreamableFile(fileBuffer);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
-      // throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      return err;
+      return null;
     }
     if (isSaved) {
-      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
+      response.status(200).send(fileBuffer);
+      return null;
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -70,7 +64,8 @@ export class BCRegistryController {
       }
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
-        return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
+        response.status(200).send(fileBuffer);
+        return null;
       } else {
         return null;
       }
@@ -88,9 +83,7 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<StreamableFile | null> {
     siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
-    console.log(siteId);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
-    console.log(isSaved);
     let paymentStatus: string;
     let fileBuffer: any;
     try {
@@ -100,10 +93,9 @@ export class BCRegistryController {
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
       return err;
     }
-    console.log('fileBuffer saved');
     if (isSaved) {
-      console.log('isSaved');
-      return new StreamableFile(fileBuffer);
+      response.status(200).send(fileBuffer);
+      return null;
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -120,9 +112,9 @@ export class BCRegistryController {
       }
       console.log('paymentStatus: ' + paymentStatus);
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-        console.log('returning the file');
         session.data.savedReports.push([siteId, reportType]);
-        return new StreamableFile(fileBuffer);
+        response.status(200).send(fileBuffer);
+        return null;
       } else {
         return null;
       }
@@ -148,9 +140,11 @@ export class BCRegistryController {
       return err;
     }
     if (isSaved) {
-      return {
+      const emailSent = {
         message: await this.bcRegistryService.sendEmailHTML(reportType, email, siteId, reportHtml),
       };
+      response.status(200).send(emailSent);
+      return null;
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -163,15 +157,19 @@ export class BCRegistryController {
           session.data.activeAccount.id
         );
       } else {
-        return { message: 'Report type error' };
+        response.status(200).send({ message: 'Report type error' });
+        return null;
       }
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
-        return {
+        const emailSent = {
           message: await this.bcRegistryService.sendEmailHTML(reportType, email, siteId, reportHtml),
         };
+        response.status(200).send(emailSent);
+        return null;
       } else {
-        return { message: 'Payment Error' };
+        response.status(200).send({ message: 'Payment Error' });
+        return null;
       }
     }
   }

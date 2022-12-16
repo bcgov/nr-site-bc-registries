@@ -357,7 +357,6 @@ export class BCRegistryService {
       const response = await axios(config)
         .then((response) => {
           console.log('Generated File');
-          console.log(response);
           return response.data;
         })
         .catch((error) => {

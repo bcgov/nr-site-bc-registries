@@ -210,7 +210,13 @@ async function getPdfSynopsis() {
   fetch(`/bc-registry/download-pdf2/synopsis/${siteId}`, {
     method: 'GET',
   })
-    .then((res) => res.blob())
+    .then((res) => {
+      if (res.ok) {
+        return res.blob();
+      } else {
+        throw Error(res.status);
+      }
+    })
     .then((blob) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -223,8 +229,12 @@ async function getPdfSynopsis() {
       hideSynDownloadSpinner();
       $(':button').prop('disabled', false);
     })
-    .catch(() => {
-      alert('Something went wrong');
+    .catch((err) => {
+      if (err.status == 400) {
+        alert('Failed to generate the report. You have not been charged.');
+      } else {
+        alert('Something went wrong');
+      }
       hideSynDownloadSpinner();
       $(':button').prop('disabled', false);
     });
@@ -236,7 +246,13 @@ async function getPdfDetailed() {
   fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
     method: 'GET',
   })
-    .then((res) => res.blob())
+    .then((res) => {
+      if (res.ok) {
+        return res.blob();
+      } else {
+        throw res.status;
+      }
+    })
     .then((blob) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -249,8 +265,12 @@ async function getPdfDetailed() {
       hideDetDownloadSpinner();
       $(':button').prop('disabled', false);
     })
-    .catch(() => {
-      alert('Something went wrong');
+    .catch((err) => {
+      if (err == 400) {
+        alert('Failed to generate the report. You have not been charged.');
+      } else {
+        alert('Something went wrong');
+      }
       hideDetDownloadSpinner();
       $(':button').prop('disabled', false);
     });
@@ -264,7 +284,13 @@ async function getPdf(siteId) {
     fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
       method: 'GET',
     })
-      .then((res) => res.blob())
+      .then((res) => {
+        if (res.ok) {
+          return res.blob();
+        } else {
+          throw res.status;
+        }
+      })
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -277,8 +303,12 @@ async function getPdf(siteId) {
         hideDownloadSpinner(siteId);
         $(':button').prop('disabled', false);
       })
-      .catch(() => {
-        alert('Something went wrong');
+      .catch((err) => {
+        if (err == 400) {
+          alert('Failed to generate the report. You have not been charged.');
+        } else {
+          alert('Something went wrong');
+        }
         hideDownloadSpinner(siteId);
         $(':button').prop('disabled', false);
       });
@@ -297,21 +327,29 @@ async function emailPdf() {
       ? $('#reportEmailSelect').val()
       : $('#reportEmailInput').val();
     if (email !== null && email.match(/^\S+@\S+\.\S+$/) !== null) {
-      fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
+      const response = await fetch(`/bc-registry/email-pdf/${reportType}/${encodeURI(email)}/${siteId}`, {
         method: 'GET',
         responseType: 'application/json',
       })
-        .then((res) => res.json())
-        .then((resJson) => {
-          alert(resJson.message);
-          hideReportEmailSpinner();
-          $(':button').prop('disabled', false);
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw res.status;
+          }
         })
-        .catch(() => {
-          alert('Something went wrong');
+        .catch((err) => {
+          if (err == 400) {
+            alert('Failed to generate the report. You have not been charged.');
+          } else {
+            alert('Something went wrong');
+          }
           hideReportEmailSpinner();
           $(':button').prop('disabled', false);
         });
+      alert(response.message);
+      hideReportEmailSpinner();
+      $(':button').prop('disabled', false);
     } else {
       alert('Please enter a valid email');
       hideReportEmailSpinner();
