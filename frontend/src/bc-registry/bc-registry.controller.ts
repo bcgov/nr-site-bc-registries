@@ -9,7 +9,10 @@ import {
   StreamableFile,
   Post,
   Body,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthenticationFilter } from 'src/authentication/authentication.filter';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
@@ -29,12 +32,21 @@ export class BCRegistryController {
   async getPdf(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
-    @Session() session: { data?: SessionData }
+    @Session() session: { data?: SessionData },
+    @Res() response: Response
   ): Promise<StreamableFile | null> {
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
+    let fileBuffer: any;
+    try {
+      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name);
+    } catch (err) {
+      console.log(err);
+      response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
+      return err;
+    }
     if (isSaved) {
-      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
+      return new StreamableFile(fileBuffer);
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -51,7 +63,7 @@ export class BCRegistryController {
       }
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
-        return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
+        return new StreamableFile(fileBuffer);
       } else {
         return null;
       }
@@ -65,13 +77,26 @@ export class BCRegistryController {
   async getPdfSiteId(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
-    @Session() session: { data?: SessionData }
+    @Session() session: { data?: SessionData },
+    @Res() response: Response
   ): Promise<StreamableFile | null> {
     siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
+    console.log(siteId);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
+    console.log(isSaved);
     let paymentStatus: string;
+    let fileBuffer: any;
+    try {
+      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name);
+    } catch (err) {
+      console.log(err);
+      response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
+      return err;
+    }
+    console.log('fileBuffer saved');
     if (isSaved) {
-      return new StreamableFile(await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name));
+      console.log('isSaved');
+      return new StreamableFile(fileBuffer);
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -86,11 +111,11 @@ export class BCRegistryController {
       } else {
         return null; // report type error, payment api does not get called
       }
+      console.log('paymentStatus: ' + paymentStatus);
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
+        console.log('returning the file');
         session.data.savedReports.push([siteId, reportType]);
-        return new StreamableFile(
-          await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name)
-        );
+        return new StreamableFile(fileBuffer);
       } else {
         return null;
       }
@@ -102,13 +127,22 @@ export class BCRegistryController {
     @Param('reportType') reportType: string,
     @Param('email') email: string,
     @Param('siteId') siteId: string,
-    @Session() session: { data?: SessionData }
+    @Session() session: { data?: SessionData },
+    @Res() response: Response
   ): Promise<{ message: string }> {
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
+    let reportHtml: string;
+    try {
+      reportHtml = await this.bcRegistryService.generateEmailHTML(reportType, siteId, session.data.name);
+    } catch (err) {
+      console.log(err);
+      response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE EMAIL');
+      return err;
+    }
     if (isSaved) {
       return {
-        message: await this.bcRegistryService.emailHTML(reportType, email, siteId, session.data.name),
+        message: await this.bcRegistryService.sendEmailHTML(reportType, email, siteId, reportHtml),
       };
     } else {
       if (reportType == 'synopsis') {
@@ -127,7 +161,7 @@ export class BCRegistryController {
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
         return {
-          message: await this.bcRegistryService.emailHTML(reportType, email, siteId, session.data.name),
+          message: await this.bcRegistryService.sendEmailHTML(reportType, email, siteId, reportHtml),
         };
       } else {
         return { message: 'Payment Error' };

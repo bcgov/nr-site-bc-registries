@@ -285,6 +285,7 @@ export class BCRegistryService {
         })
         .catch((error) => {
           console.log(error.response);
+          throw error;
         });
       return response;
     } else {
@@ -356,10 +357,12 @@ export class BCRegistryService {
       const response = await axios(config)
         .then((response) => {
           console.log('Generated File');
+          console.log(response);
           return response.data;
         })
         .catch((error) => {
           console.log(error.response);
+          throw error;
         });
       return response;
     } else {
@@ -367,10 +370,8 @@ export class BCRegistryService {
     }
   }
 
-  // sends an email formatted with html that has all the report data
-  async emailHTML(reportType: string, email: string, siteId: string, name: string): Promise<string> {
+  async generateEmailHTML(reportType: string, siteId: string, name: string): Promise<any> {
     const cdogsToken = await this.getCdogsToken();
-    const chesToken = await this.getChesToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -399,6 +400,12 @@ export class BCRegistryService {
       }
       htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
+    return htmlFile;
+  }
+
+  // sends an email formatted with html that has all the report data
+  async sendEmailHTML(reportType: string, email: string, siteId: string, htmlFile: string): Promise<string> {
+    const chesToken = await this.getChesToken();
 
     const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
     const data = JSON.stringify({
@@ -497,6 +504,7 @@ export class BCRegistryService {
       })
       .catch(function (error) {
         console.log(error);
+        throw error;
       });
 
     return htmlData;
