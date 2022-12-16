@@ -11,6 +11,8 @@ import {
   Body,
   Res,
   HttpStatus,
+  BadRequestException,
+  HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthenticationFilter } from 'src/authentication/authentication.filter';
@@ -34,19 +36,24 @@ export class BCRegistryController {
     @Param('siteId') siteId: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
-  ): Promise<StreamableFile | null> {
+  ): Promise<any> {
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let fileBuffer: any;
     try {
       fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name);
+      response.status(200).send(fileBuffer);
+      throw new BadRequestException();
+      return fileBuffer;
+      // return new StreamableFile(fileBuffer);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
+      // throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
       return err;
     }
     if (isSaved) {
-      return new StreamableFile(fileBuffer);
+      return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
     } else {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
@@ -63,7 +70,7 @@ export class BCRegistryController {
       }
       if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
         session.data.savedReports.push([siteId, reportType]);
-        return new StreamableFile(fileBuffer);
+        return new StreamableFile(await this.bcRegistryService.getPdf(reportType, siteId, session.data.name));
       } else {
         return null;
       }
