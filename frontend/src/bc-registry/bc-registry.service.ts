@@ -10,6 +10,8 @@ import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
+    const html_to_pdf = require('html-pdf-node');
+    const Mustache = require('mustache');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -157,7 +159,7 @@ export class BCRegistryService {
 
     return await axios(config)
       .then((response) => {
-        console.log('Generated File');
+        console.log('Generated File 1');
         return response.data;
       })
       .catch((error) => {
@@ -212,7 +214,7 @@ export class BCRegistryService {
 
     return await axios(config)
       .then((response) => {
-        console.log('Generated File');
+        console.log('Generated File 2');
         return response.data;
       })
       .catch((error) => {
@@ -250,6 +252,26 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
+      let buff = Buffer.from(documentTemplate, 'base64');  
+      let text = buff.toString('utf-8');
+
+      const filledDocumentTemplate = Mustache.render(text, data);
+
+      let options = { format: 'A4' };
+
+      let file = { content: filledDocumentTemplate };
+
+
+      //might be a more elegant way to do this
+      let returnBuffer: any;
+      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+        //console.log('pdfBuffer: ' + pdfBuffer);
+        returnBuffer = pdfBuffer;
+      });
+      return returnBuffer;
+      /*
+      former CDAWGS method
+
       const md = JSON.stringify({
         data,
         formatters:
@@ -280,14 +302,15 @@ export class BCRegistryService {
 
       const response = await axios(config)
         .then((response) => {
-          console.log('Generated File');
-          return response.data;
+          console.log('Generated File 3');
+          //return response.data;
         })
         .catch((error) => {
           console.log(error.response);
           throw error;
         });
-      return response;
+        
+      return response;*/
     } else {
       return Error('No report type selected');
     }
@@ -319,13 +342,33 @@ export class BCRegistryService {
         return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
       }
       data['account'] = name;
-
       let documentTemplate: string;
       if (reportType == 'detailed') {
         documentTemplate = this.buildDetailedTemplate(data);
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
+
+      let buff = Buffer.from(documentTemplate, 'base64');  
+      let text = buff.toString('utf-8');
+
+      const filledDocumentTemplate = Mustache.render(text, data);
+
+      let options = { format: 'A4' };
+
+      let file = { content: filledDocumentTemplate };
+
+
+      //might be a more elegant way to do this
+      let returnBuffer: any;
+      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+        //console.log('pdfBuffer: ' + pdfBuffer);
+        returnBuffer = pdfBuffer;
+      });
+      return returnBuffer;
+      /*
+      former CDAWGS method
+
       const md = JSON.stringify({
         data,
         formatters:
@@ -356,14 +399,15 @@ export class BCRegistryService {
 
       const response = await axios(config)
         .then((response) => {
-          console.log('Generated File');
-          return response.data;
+          console.log('Generated File 4');
+          //return response.data;
         })
         .catch((error) => {
           console.log(error.response);
           throw error;
         });
-      return response;
+        
+      return response;*/
     } else {
       return Error('No report type selected');
     }
@@ -469,7 +513,7 @@ export class BCRegistryService {
   async getHtml(data: any, template: string, token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getCdogsToken();
     let htmlData: string;
-
+	console.log('Report Data: ' + data);
     const md = JSON.stringify({
       data,
       formatters:

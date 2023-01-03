@@ -5,14 +5,16 @@ services:
   database:
     container_name: database
     environment:
-      POSTGRES_USER: default
-      POSTGRES_PASSWORD: default
-      POSTGRES_DB: default
+      POSTGRES_USER: site_db_user
+      POSTGRES_PASSWORD: jy0s1G9
+      POSTGRES_DB: site_db
     hostname: database
     image: postgres:12
     restart: always
     volumes:
       - /pgdata
+    ports:
+      - "5432:5432"
 
   backend:
     container_name: backend
