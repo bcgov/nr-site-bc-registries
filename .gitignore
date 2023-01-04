@@ -111,3 +111,4 @@ snyk.sarif
 
 # Docker/Podman volumes
 .volumes
+creds.txt
