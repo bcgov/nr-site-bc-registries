@@ -5,9 +5,9 @@ services:
   database:
     container_name: database
     environment:
-      POSTGRES_USER: site_db_user
-      POSTGRES_PASSWORD: jy0s1G9
-      POSTGRES_DB: site_db
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: default
+      POSTGRES_DB: default
     hostname: database
     image: postgres:12
     restart: always
@@ -24,14 +24,13 @@ services:
       - "npm i && npm run start"
     environment:
       NODE_ENV: development
-      POSTGRESQL_HOST: database
-      POSTGRESQL_USER: site_db_user
-      POSTGRESQL_PASSWORD: jy0s1G9
-      POSTGRESQL_DATABASE: site_db
+      POSTGRESQL_USER: default
+      POSTGRESQL_PASSWORD: default
+      POSTGRESQL_DATABASE: default
       object_store_bucket: epdsbx
       object_store_host: nrs.objectstore.gov.bc.ca
-      object_store_secret: e1TSCgr2fxcjZQUDcaKjcTLgTLUvV0An4TWf8EJI
-      object_store_userid: nr-site-sbx
+      object_store_secret: ${object_store_secret}
+      object_store_userid: ${object_store_userid}
       object_store_env: prod
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]

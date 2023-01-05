@@ -112,3 +112,5 @@ snyk.sarif
 # Docker/Podman volumes
 .volumes
 creds.txt
+backend/.env.bak
+docker-compose.yml.bak
