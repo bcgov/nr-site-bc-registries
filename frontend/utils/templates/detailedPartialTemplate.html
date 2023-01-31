@@ -42,14 +42,14 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-sm">Report data as of: {{ downloaddate }}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {{ todaysDate }}</div>
+        <div class="col-sm">Report data as of: {d.downloaddate}</div>
+        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{{ currentTime }} PST</div>
+        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {{ account }}</div>
+        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
       </div>
       <h2 style="text-align: center">Site Registry - Site Details Report</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
@@ -60,23 +60,23 @@
       <table>
         <tr>
           <th>Site ID:</th>
-          <td>{{ siteId }}</td>
+          <td>{d.siteId}</td>
           <th>Latitude:</th>
-          <td style="min-width: 10em">{{ lat }}</td>
+          <td style="min-width: 10em">{d.lat}</td>
         </tr>
         <tr>
           <th>Victoria File:</th>
-          <td>{{ victoriaFileNumber }}</td>
+          <td>{d.victoriaFileNumber}</td>
           <th>Longitude:</th>
-          <td style="min-width: 10em">{{ lon }}</td>
+          <td style="min-width: 10em">{d.lon}</td>
         </tr>
         <tr>
           <th>Regional File:</th>
-          <td>{{ regionalFileNumber ]}</td>
+          <td>{d.regionalFileNumber}</td>
         </tr>
         <tr>
           <th>Region:</th>
-          <td>{{ region }}</td>
+          <td>{d.region}</td>
         </tr>
         <tr>
           <th>&nbsp;</th>
@@ -84,54 +84,54 @@
         </tr>
         <tr>
           <th>Common Name:</th>
-          <td>{{ commonName }}</td>
+          <td>{d.commonName}</td>
           <th>Prov/State:</th>
-          <td>{{ provState }}</td>
+          <td>{d.provState}</td>
         </tr>
         <tr>
           <th>Site Address:</th>
-          <td>{{ address_1 }} {{ address_2 }}</td>
+          <td>{d.address_1} {d.address_2}</td>
         </tr>
         <tr>
           <th>City:</th>
-          <td>{{ city }}</td>
+          <td>{d.city}</td>
         </tr>
         <tr>
           <th>Postal Code:</th>
-          <td>{{ postalCode }}</td>
+          <td>{d.postalCode}</td>
         </tr>
       </table>
       <hr size="1" color="black">
       <table>
         <tr>
           <th>Registered:</th>
-          <td>{{ registeredDate }}</td>
+          <td>{d.registeredDate}</td>
           <th>Updated:</th>
-          <td>{{ modifiedDate }}</td>
+          <td>{d.modifiedDate}</td>
           <th>Detail Removed:</th>
-          <td>{{ detailRemovedDate }}</td>
+          <td>{d.detailRemovedDate}</td>
         </tr>
         <tr>
           <th>Notations:</th>
-          <td>{{ notations }}</td>
+          <td>{d.notations}</td>
           <th>Participants:</th>
-          <td>{{ participants }}</td>
+          <td>{d.participants}</td>
           <th>Associated Sites:</th>
-          <td>{{ assocSites }}</td>
+          <td>{d.assocSites}</td>
         </tr>
         <tr>
           <th>Documents:</th>
-          <td>{{ documents }}</td>
+          <td>{d.documents}</td>
           <th>Susp. Land Use:</th>
-          <td>{{ suspLandUse }}</td>
+          <td>{d.suspLandUse}</td>
           <th>Parcel Descriptions:</th>
-          <td>{{ parcelDesc }}</td>
+          <td>{d.parcelDesc}</td>
         </tr>
       </table>
       <hr size="1" color="black">
       <table>
         <tr>
           <th style="min-width: 22vw">Location Description:</th>
-          <td style="min-width: 65vw">{{ locationDescription }}</td>
+          <td style="min-width: 65vw">{d.locationDescription}</td>
         </tr>
       </table>
