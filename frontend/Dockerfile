@@ -10,7 +10,7 @@ ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-RUN chmod -R 777 /root/.nvm/versions/node/v${NODE_VERSION}/bin
+RUN chmod -R 777 /root/.nvm/versions/node/v${NODE_VERSION}
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 # Install packages, build and keep only prod packages
@@ -66,4 +66,4 @@ ENV NODE_ENV production
 EXPOSE 3000
 
 # Start up command
-CMD ["sh", "-c", "sudo node dist/src/main"]
+ENTRYPOINT ["node", "dist/src/main"]
