@@ -13,8 +13,6 @@ services:
     restart: always
     volumes:
       - /pgdata
-    ports:
-      - "5432:5432"
 
   backend:
     container_name: backend
@@ -24,6 +22,7 @@ services:
       - "npm i && npm run start"
     environment:
       NODE_ENV: development
+      POSTGRESQL_HOST: database
       POSTGRESQL_USER: default
       POSTGRESQL_PASSWORD: default
       POSTGRESQL_DATABASE: default
@@ -31,7 +30,6 @@ services:
       object_store_host: nrs.objectstore.gov.bc.ca
       object_store_secret: ${object_store_secret}
       object_store_userid: ${object_store_userid}
-      object_store_env: prod
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 1m30s
@@ -58,8 +56,8 @@ services:
     environment:
       NODE_ENV: development
       BACKEND_URL: http://backend
-      COOKIE_SECRET: 23489f9ausdfgkhu
-      SESSION_SECRET: sdfg789374ew89
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 1m30s
@@ -67,13 +65,7 @@ services:
       retries: 3
       start_period: 40s
     hostname: frontend
-    depends_on:
-        backend:
-          condition: service_healthy
-    image: esra-frontend/image:latest
-    build:
-      context: frontend
-      dockerfile: Dockerfile
+    image: node:14
     links:
       - backend
     ports:
