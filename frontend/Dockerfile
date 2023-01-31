@@ -65,4 +65,4 @@ ENV NODE_ENV production
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT ["echo", "${PATH}"]
+CMD ["sh", "-c", "echo $PATH"]
