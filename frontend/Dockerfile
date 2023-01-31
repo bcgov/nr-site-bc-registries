@@ -65,4 +65,4 @@ ENV NODE_ENV production
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT ["node", "dist/src/main"]
+ENTRYPOINT ["echo", "${PATH}"]
