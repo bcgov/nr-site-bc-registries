@@ -40,14 +40,14 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-sm">Report data as of: {d.downloaddate}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
+        <div class="col-sm">Report data as of: {{ downloaddate }}</div>
+        <div class="col-sm text-right" style="text-align: right">Report run: {{ todaysDate }}</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
+        <div class="col-sm text-right" style="text-align: right">{{ currentTime }} PST</div>
       </div>
       <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
+        <div class="col-sm text-right" style="text-align: right">For: {{ account }}</div>
       </div>
       <h2 style="text-align: center">Site Registry - Site Synopsis Report</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
@@ -58,23 +58,23 @@
       <table>
         <tr>
           <th>Site ID:</th>
-          <td>{d.siteId}</td>
+          <td>{{ siteId }}</td>
           <th>Latitude:</th>
-          <td style="min-width: 10em">{d.lat}</td>
+          <td style="min-width: 10em">{{ lat }}</td>
         </tr>
         <tr>
           <th>Victoria File:</th>
-          <td>{d.victoriaFileNumber}</td>
+          <td>{{ victoriaFileNumber }}</td>
           <th>Longitude:</th>
-          <td style="min-width: 10em">{d.lon}</td>
+          <td style="min-width: 10em">{{ lon }}</td>
         </tr>
         <tr>
           <th>Regional File:</th>
-          <td>{d.regionalFileNumber}</td>
+          <td>{{ regionalFileNumber }}</td>
         </tr>
         <tr>
           <th>Region:</th>
-          <td>{d.region}</td>
+          <td>{{ region }}</td>
         </tr>
         <tr>
           <th>&nbsp;</th>
@@ -82,21 +82,21 @@
         </tr>
         <tr>
           <th>Common Name:</th>
-          <td>{d.commonName}</td>
+          <td>{{ commonName }}</td>
           <th>Prov/State:</th>
-          <td>{d.provState}</td>
+          <td>{{ provState }}</td>
         </tr>
         <tr>
           <th>Site Address:</th>
-          <td><div style="width: 50px">{d.address_1} {d.address_2}</div></td>
+          <td><div style="width: 50px">{{ address_1 }} {{ address_2 }}</div></td>
         </tr>
         <tr>
           <th>City:</th>
-          <td>{d.city}</td>
+          <td>{{ city }}</td>
         </tr>
         <tr>
           <th>Postal Code:</th>
-          <td>{d.postalCode}</td>
+          <td>{{ postalCode }}</td>
         </tr>
       </table>
 
@@ -105,27 +105,27 @@
       <table>
         <tr>
           <th>Registered:</th>
-          <td>{d.registeredDate}</td>
+          <td>{{ registeredDate }}</td>
           <th>Updated:</th>
-          <td>{d.modifiedDate}</td>
+          <td>{{ modifiedDate }}</td>
           <th>Detail Removed:</th>
-          <td>{d.detailRemovedDate}</td>
+          <td>{{ detailRemovedDate }}</td>
         </tr>
         <tr>
           <th>Notations:</th>
-          <td>{d.notations}</td>
+          <td>{{ notations }}</td>
           <th>Participants:</th>
-          <td>{d.participants}</td>
+          <td>{{ participants }}</td>
           <th>Associated Sites:</th>
-          <td>{d.assocSites}</td>
+          <td>{{ assocSites }}</td>
         </tr>
         <tr>
           <th>Documents:</th>
-          <td>{d.documents}</td>
+          <td>{{ documents }}</td>
           <th>Susp. Land Use:</th>
-          <td>{d.suspLandUse}</td>
+          <td>{{ suspLandUse }}</td>
           <th>Parcel Descriptions:</th>
-          <td>{d.parcelDesc}</td>
+          <td>{{ parcelDesc }}</td>
         </tr>
       </table>
 
@@ -134,6 +134,6 @@
       <table>
         <tr>
           <th style="min-width: 22vw">Location Description:</th>
-          <td style="min-width: 65vw">{d.locationDescription}</td>
+          <td style="min-width: 65vw">{{ locationDescription }}</td>
         </tr>
       </table>
