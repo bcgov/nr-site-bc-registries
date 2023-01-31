@@ -11,6 +11,7 @@ import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
 
+
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
 let nilTemplate: string;
