@@ -65,4 +65,4 @@ ENV NODE_ENV production
 EXPOSE 3000
 
 # Start up command
-CMD ["sh", "-c", "echo $PATH"]
+CMD ["sh", "-c", "node dist/src/main"]
