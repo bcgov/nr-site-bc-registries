@@ -36,7 +36,7 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
 #     wget libgbm-dev
 
 RUN npm config set user 0
-#RUN npm config set unsafe-perm true
+RUN npm config set unsafe-perm true
 RUN npm ci --only=prod && \
     npm run build
 
