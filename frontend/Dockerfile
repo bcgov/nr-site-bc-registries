@@ -41,7 +41,6 @@ RUN npm ci --only=prod && \
     npm run build
 
 
-
 # Deployment container
 # FROM registry.access.redhat.com/ubi8/ubi-micro
 # FROM ubuntu:latest
