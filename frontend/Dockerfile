@@ -68,4 +68,4 @@ ENV NODE_ENV production
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT ls -l /root/.nvm/versions/node/v${NODE_VERSION}/bin/
+ENTRYPOINT ["node", "dist/src/main"]
