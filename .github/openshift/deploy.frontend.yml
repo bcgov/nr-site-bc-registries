@@ -226,6 +226,8 @@ objects:
               volumeMounts:
                 - mountPath: /mnt/sessions
                   name: esra-sessions
+              securityContext:
+                allowPrivilegeEscalation: true
   - apiVersion: v1
     kind: Service
     metadata:
