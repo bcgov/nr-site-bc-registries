@@ -6,6 +6,7 @@ metadata:
     description: "Greenfield Template"
     tags: "gfp"
     iconClass: icon-js
+    haproxy.router.openshift.io/timeout: 600s
 labels:
   app: ${NAME}-${ZONE}
   app.kubernetes.io/part-of: ${NAME}-${ZONE}
