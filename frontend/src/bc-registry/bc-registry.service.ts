@@ -10,8 +10,8 @@ import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
-    const html_to_pdf = require('html-pdf-node');
-    const Mustache = require('mustache');
+const html_to_pdf = require('html-pdf-node');
+const Mustache = require('mustache');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -252,22 +252,25 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
-      let buff = Buffer.from(documentTemplate, 'base64');  
-      let text = buff.toString('utf-8');
+      const start = process.hrtime();
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      let options = { format: 'A4' };
+      const options = { format: 'A4' };
 
-      let file = { content: filledDocumentTemplate };
-
+      const file = { content: filledDocumentTemplate };
 
       //might be a more elegant way to do this
       let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const end = process.hrtime(start);
+      const elapsedTime = (end[0] * 1000 + end[1] / 1000000) / 1000;
+      console.log(`End - ${elapsedTime}s`);
       return returnBuffer;
       /*
       former CDAWGS method
@@ -349,20 +352,18 @@ export class BCRegistryService {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
 
-      let buff = Buffer.from(documentTemplate, 'base64');  
-      let text = buff.toString('utf-8');
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      let options = { format: 'A4',
-                      timeout: 0 };
+      const options = { format: 'A4', timeout: 0 };
 
-      let file = { content: filledDocumentTemplate };
-
+      const file = { content: filledDocumentTemplate };
 
       //might be a more elegant way to do this
       let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
@@ -442,7 +443,22 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
-      htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
+
+      const filledDocumentTemplate = Mustache.render(text, siteData);
+
+      const options = { format: 'A4', timeout: 0 };
+
+      const file = { content: filledDocumentTemplate };
+
+      //might be a more elegant way to do this
+      let returnBuffer: any;
+      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+        returnBuffer = pdfBuffer;
+      });
+      htmlFile = returnBuffer.toString('hex');
+      // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
     return htmlFile;
   }
@@ -450,11 +466,13 @@ export class BCRegistryService {
   // sends an email formatted with html that has all the report data
   async sendEmailHTML(reportType: string, email: string, siteId: string, htmlFile: string): Promise<string> {
     const chesToken = await this.getChesToken();
-
     const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
     const data = JSON.stringify({
+      attachments: [
+        { content: htmlFile, encoding: 'hex', filename: `${reportType}-report_siteid-${parseInt(siteId)}.pdf` },
+      ],
       bodyType: 'html',
-      body: `${htmlFile}`,
+      body: `The ${rt} Report for Site ${parseInt(siteId)} is attached to this email.`,
       contexts: [
         {
           context: {
@@ -514,7 +532,6 @@ export class BCRegistryService {
   async getHtml(data: any, template: string, token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getCdogsToken();
     let htmlData: string;
-	console.log('Report Data: ' + data);
     const md = JSON.stringify({
       data,
       formatters:
