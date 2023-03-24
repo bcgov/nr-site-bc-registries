@@ -437,6 +437,7 @@ export class BCRegistryService {
       },
     };
 
+    let startTime: number;
     let documentTemplate: string;
     let pdfBuffer: string;
     if (requestUrl !== '') {
@@ -444,7 +445,8 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       siteData['account'] = name;
-
+      console.log('Received db data, starting pdf generation');
+      startTime = new Date().getTime();
       if (reportType == 'detailed') {
         documentTemplate = this.buildDetailedTemplate(siteData);
       } else {
@@ -467,6 +469,9 @@ export class BCRegistryService {
       pdfBuffer = returnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
+    const endTime = new Date().getTime();
+    const timeTaken = (endTime - startTime) / 1000;
+    console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
     return pdfBuffer;
   }
 
