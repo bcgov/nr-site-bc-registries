@@ -320,7 +320,7 @@ export class BCRegistryService {
   }
 
   async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getCdogsToken();
+    // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -454,8 +454,8 @@ export class BCRegistryService {
 
       //might be a more elegant way to do this
       let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-        returnBuffer = pdfBuffer;
+      await html_to_pdf.generatePdf(file, options).then((p) => {
+        returnBuffer = p;
       });
       pdfBuffer = returnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
