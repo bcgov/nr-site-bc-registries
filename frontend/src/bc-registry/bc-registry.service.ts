@@ -416,7 +416,7 @@ export class BCRegistryService {
   }
 
   async generateEmailHTML(reportType: string, siteId: string, name: string): Promise<any> {
-    const cdogsToken = await this.getCdogsToken();
+    // const cdogsToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -431,7 +431,7 @@ export class BCRegistryService {
     };
 
     let documentTemplate: string;
-    let htmlFile: string;
+    let pdfBuffer: string;
     if (requestUrl !== '') {
       const siteData = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
@@ -457,19 +457,19 @@ export class BCRegistryService {
       await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
         returnBuffer = pdfBuffer;
       });
-      htmlFile = returnBuffer.toString('hex');
+      pdfBuffer = returnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
-    return htmlFile;
+    return pdfBuffer;
   }
 
   // sends an email formatted with html that has all the report data
-  async sendEmailHTML(reportType: string, email: string, siteId: string, htmlFile: string): Promise<string> {
+  async sendEmailHTML(reportType: string, email: string, siteId: string, pdfBuffer: string): Promise<string> {
     const chesToken = await this.getChesToken();
     const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
     const data = JSON.stringify({
       attachments: [
-        { content: htmlFile, encoding: 'hex', filename: `${reportType}-report_siteid-${parseInt(siteId)}.pdf` },
+        { content: pdfBuffer, encoding: 'hex', filename: `${reportType}-report_siteid-${parseInt(siteId)}.pdf` },
       ],
       bodyType: 'html',
       body: `The ${rt} Report for Site ${parseInt(siteId)} is attached to this email.`,
