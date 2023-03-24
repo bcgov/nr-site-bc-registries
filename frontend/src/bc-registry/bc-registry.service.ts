@@ -224,7 +224,7 @@ export class BCRegistryService {
 
   // builds the pdf report to be sent back to the frontend
   async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getCdogsToken();
+    // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -245,6 +245,8 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
+      console.log('Received db data, starting pdf generation');
+      const startTime = new Date().getTime();
 
       let documentTemplate: string;
       if (reportType == 'detailed') {
@@ -252,7 +254,7 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
-      const start = process.hrtime();
+
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
@@ -268,9 +270,9 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
-      const end = process.hrtime(start);
-      const elapsedTime = (end[0] * 1000 + end[1] / 1000000) / 1000;
-      console.log(`End - ${elapsedTime}s`);
+      const endTime = new Date().getTime();
+      const timeTaken = (endTime - startTime) / 1000;
+      console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
       return returnBuffer;
       /*
       former CDAWGS method
@@ -344,6 +346,8 @@ export class BCRegistryService {
         console.log('caught error');
         return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
       }
+      console.log('Received db data, starting pdf generation');
+      const startTime = new Date().getTime();
       data['account'] = name;
       let documentTemplate: string;
       if (reportType == 'detailed') {
@@ -367,6 +371,9 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const endTime = new Date().getTime();
+      const timeTaken = (endTime - startTime) / 1000;
+      console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
       return returnBuffer;
       /*
       former CDAWGS method
