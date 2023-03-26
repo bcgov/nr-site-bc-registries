@@ -10,8 +10,8 @@ import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
-    const html_to_pdf = require('html-pdf-node');
-    const Mustache = require('mustache');
+const html_to_pdf = require('html-pdf-node');
+const Mustache = require('mustache');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -224,7 +224,7 @@ export class BCRegistryService {
 
   // builds the pdf report to be sent back to the frontend
   async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getCdogsToken();
+    // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -245,6 +245,8 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
+      console.log('Received db data, starting pdf generation');
+      const startTime = new Date().getTime();
 
       let documentTemplate: string;
       if (reportType == 'detailed') {
@@ -252,22 +254,25 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
-      let buff = Buffer.from(documentTemplate, 'base64');  
-      let text = buff.toString('utf-8');
+
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      let options = { format: 'A4' };
+      const options = { format: 'A4' };
 
-      let file = { content: filledDocumentTemplate };
-
+      const file = { content: filledDocumentTemplate };
 
       //might be a more elegant way to do this
       let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const endTime = new Date().getTime();
+      const timeTaken = (endTime - startTime) / 1000;
+      console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
       return returnBuffer;
       /*
       former CDAWGS method
@@ -317,7 +322,7 @@ export class BCRegistryService {
   }
 
   async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
-    const authorizationToken = await this.getCdogsToken();
+    // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -341,6 +346,8 @@ export class BCRegistryService {
         console.log('caught error');
         return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
       }
+      console.log('Received db data, starting pdf generation');
+      const startTime = new Date().getTime();
       data['account'] = name;
       let documentTemplate: string;
       if (reportType == 'detailed') {
@@ -349,23 +356,24 @@ export class BCRegistryService {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
 
-      let buff = Buffer.from(documentTemplate, 'base64');  
-      let text = buff.toString('utf-8');
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      let options = { format: 'A4',
-                      timeout: 0 };
+      const options = { format: 'A4', timeout: 0 };
 
-      let file = { content: filledDocumentTemplate };
-
+      const file = { content: filledDocumentTemplate };
 
       //might be a more elegant way to do this
       let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const endTime = new Date().getTime();
+      const timeTaken = (endTime - startTime) / 1000;
+      console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
       return returnBuffer;
       /*
       former CDAWGS method
@@ -415,7 +423,7 @@ export class BCRegistryService {
   }
 
   async generateEmailHTML(reportType: string, siteId: string, name: string): Promise<any> {
-    const cdogsToken = await this.getCdogsToken();
+    // const cdogsToken = await this.getCdogsToken();
 
     const requestUrl =
       reportType == 'synopsis'
@@ -429,32 +437,54 @@ export class BCRegistryService {
       },
     };
 
+    let startTime: number;
     let documentTemplate: string;
-    let htmlFile: string;
+    let pdfBuffer: string;
     if (requestUrl !== '') {
       const siteData = await lastValueFrom(
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       siteData['account'] = name;
-
+      console.log('Received db data, starting pdf generation');
+      startTime = new Date().getTime();
       if (reportType == 'detailed') {
         documentTemplate = this.buildDetailedTemplate(siteData);
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
-      htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
+      const buff = Buffer.from(documentTemplate, 'base64');
+      const text = buff.toString('utf-8');
+
+      const filledDocumentTemplate = Mustache.render(text, siteData);
+
+      const options = { format: 'A4', timeout: 0 };
+
+      const file = { content: filledDocumentTemplate };
+
+      //might be a more elegant way to do this
+      let returnBuffer: any;
+      await html_to_pdf.generatePdf(file, options).then((p) => {
+        returnBuffer = p;
+      });
+      pdfBuffer = returnBuffer.toString('hex');
+      // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
-    return htmlFile;
+    const endTime = new Date().getTime();
+    const timeTaken = (endTime - startTime) / 1000;
+    console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
+    return pdfBuffer;
   }
 
   // sends an email formatted with html that has all the report data
-  async sendEmailHTML(reportType: string, email: string, siteId: string, htmlFile: string): Promise<string> {
+  async sendEmailHTML(reportType: string, email: string, siteId: string, pdfBuffer: string): Promise<string> {
     const chesToken = await this.getChesToken();
-
     const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
     const data = JSON.stringify({
+      attachments: [
+        { content: pdfBuffer, encoding: 'hex', filename: `${reportType}-report_siteid-${parseInt(siteId)}.pdf` },
+      ],
       bodyType: 'html',
-      body: `${htmlFile}`,
+      body: `The ${rt} Report for Site ${parseInt(siteId)} is attached to this email.`,
       contexts: [
         {
           context: {
@@ -514,7 +544,6 @@ export class BCRegistryService {
   async getHtml(data: any, template: string, token?: string): Promise<string> {
     const authorizationToken = token != null ? token : await this.getCdogsToken();
     let htmlData: string;
-	console.log('Report Data: ' + data);
     const md = JSON.stringify({
       data,
       formatters:

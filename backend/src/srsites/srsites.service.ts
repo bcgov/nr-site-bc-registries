@@ -389,6 +389,8 @@ export class SrsitesService {
   }
 
   async getDetailedReportData(siteId: string) {
+    const startTime = new Date().getTime();
+    console.log('Starting detailed report db section');
     const srevents = await this.sreventsRepository.findAndCount({ siteId: siteId });
     const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
@@ -524,7 +526,9 @@ export class SrsitesService {
       entry['qna'] = qna; // add the qna portion for each individual site profile
       profiles.push(entry);
     }
-
+    const endTime = new Date().getTime();
+    const timeTaken = (endTime - startTime) / 1000;
+    console.log(`Returning database data, time taken: ${timeTaken} seconds`);
     return {
       siteId: parseInt(siteId),
       account: 'user_account',
