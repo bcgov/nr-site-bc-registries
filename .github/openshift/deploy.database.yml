@@ -118,6 +118,14 @@ objects:
               ports:
                 - containerPort: 5432
                   protocol: TCP
+          resources:
+              limits:
+                cpu: '2'
+                memory: 1Gi
+              requests:
+                cpu: '1'
+                memory: 512Mi
+          readinessProbe:
               readinessProbe:
                 exec:
                   command:
