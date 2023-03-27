@@ -260,7 +260,7 @@ export class BCRegistryService {
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4' };
+      const options = { format: 'A4', timeout: 600000 };
 
       const file = { content: filledDocumentTemplate };
 
@@ -361,7 +361,7 @@ export class BCRegistryService {
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4', timeout: 0 };
+      const options = { format: 'A4', timeout: 600000 };
 
       const file = { content: filledDocumentTemplate };
 
@@ -457,7 +457,7 @@ export class BCRegistryService {
 
       const filledDocumentTemplate = Mustache.render(text, siteData);
 
-      const options = { format: 'A4', timeout: 0 };
+      const options = { format: 'A4', timeout: 600000 };
 
       const file = { content: filledDocumentTemplate };
 
