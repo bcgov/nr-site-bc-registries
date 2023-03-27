@@ -118,14 +118,6 @@ objects:
               ports:
                 - containerPort: 5432
                   protocol: TCP
-          resources:
-              limits:
-                cpu: '2'
-                memory: 1Gi
-              requests:
-                cpu: '1'
-                memory: 512Mi
-          readinessProbe:
               readinessProbe:
                 exec:
                   command:
@@ -171,19 +163,13 @@ objects:
               volumeMounts:
                 - name: ${NAME}-${ZONE}-${COMPONENT}
                   mountPath: "/var/lib/pgsql/data"
-              livenessProbe:
-                initialDelaySeconds: 30
-                tcpSocket:
-                  port: 5432
-                timeoutSeconds: 1
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/bash
-                    - -c
-                    - pg_isready -h localhost -p 5432
-                initialDelaySeconds: 20
-                timeoutSeconds: 15
+              resources:
+                limits:
+                  cpu: 250m
+                  memory: 1Gi
+                requests:
+                  cpu: 50m
+                  memory: 256Mi
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
               imagePullPolicy: Always
