@@ -3,26 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <style>
-      @page {
-        margin: 1cm;
+      body {
+        margin: 20px;
+        font-family: Arial, Helvetica, sans-serif;
       }
       .container {
-        width: 595px;
+        width: 690px;
         height: auto;
-        font-family: Arial, Helvetica, sans-serif;
       }
       th {
         text-align: right;
         padding-right: 20px;
-        font-size: 18px;
+        width: 10em;
+        font-size: 16px;
         background-color: white;
-        font-family: Arial, Helvetica, sans-serif;
       }
       td {
         text-align: left;
         padding-right: 20px;
-        font-size: 18px;
-        font-family: Arial, Helvetica, sans-serif;
+        min-width: 5em;
+        font-size: 16px;
       }
       table {
         width: 100%;
@@ -33,22 +33,11 @@
       }
       .disclaimer {
         font-size: 12px;
-        font-family: Arial, Helvetica, sans-serif;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div class="col-sm">Report data as of: {{ downloaddate }}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {{ todaysDate }}</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{{ currentTime }} PST</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {{ account }}</div>
-      </div>
       <h2 style="text-align: center">Site Registry - Site Synopsis Report</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
       <br />
