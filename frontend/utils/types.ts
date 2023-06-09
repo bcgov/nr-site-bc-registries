@@ -58,3 +58,12 @@ export type SearchResultsJsonObject = {
   city: string;
   updatedDate: string;
 };
+
+export type ReportHeaderInfo = {
+  siteId: string;
+  folio: string;
+  reportType: string;
+  asOfDate: string;
+  reportRunDate: string;
+  clientName: string;
+};

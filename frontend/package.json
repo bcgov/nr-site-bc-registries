@@ -66,6 +66,7 @@
     "mustache": "^4.2.0",
     "nestjs-session": "^2.0.0",
     "node-fetch": "^2.6.7",
+    "pdf-lib": "^1.17.1",
     "pg": "^8.7.3",
     "popper.js": "^1.14.7",
     "qs": "^6.10.3",
