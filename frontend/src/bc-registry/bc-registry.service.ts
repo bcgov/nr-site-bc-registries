@@ -47,7 +47,7 @@ export class BCRegistryService {
   }
 
   /**
-   * Generates the pdf using puppeteer
+   * Generates the pdf using puppeteer.
    *
    * @param htmlContent
    * @param headerInfo

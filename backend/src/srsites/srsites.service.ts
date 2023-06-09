@@ -350,7 +350,7 @@ export class SrsitesService {
         const index = parseInt(entry.questionId) - 1;
         qna[index].answer = entry.answer;
       }
-      entry['qna'] = qna; // add the qna portion for each individual site profile
+      entry['qna'] = qna; // add the qna portion for each individual site profile.
       profiles.push(entry);
     }
 
