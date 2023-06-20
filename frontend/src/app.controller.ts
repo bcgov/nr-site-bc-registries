@@ -32,14 +32,14 @@ export class AppController {
           username: username,
           label: label,
           accounts: session.data.accounts,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.INDEX,
           username: username,
           label: label,
           accounts: session.data.accounts,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -62,13 +62,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.PARCEL_ID,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -91,13 +91,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_PIN,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -120,13 +120,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.CROWN_FILE,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -149,13 +149,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.SITE_ID_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -178,13 +178,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.ADDRESS_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -207,13 +207,13 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.AREA_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
         };
   }
 
@@ -236,14 +236,14 @@ export class AppController {
           title: 'DEVELOPMENT - ' + PAGE_TITLES.VIEW_SEARCH_RESULTS,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
           emails: { emails: session.data.contacts },
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
           username: username,
           label: label,
-          downloaddate: 'As Of ' + this.appService.getDownloadDate(),
+          downloaddate: 'Site Registry data current to' + this.appService.getDownloadDate(),
           emails: { emails: session.data.contacts },
         };
   }

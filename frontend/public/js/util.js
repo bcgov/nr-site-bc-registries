@@ -122,6 +122,8 @@ async function getSearchResults(url) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        setBreadcrumbSearch();
+        setPreviousPage();
         hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
@@ -143,6 +145,8 @@ async function getSearchResultsSiteId(url) {
     .then((res) => res.json())
     .then((resJson) => {
       if (!resJson.error) {
+        setBreadcrumbSearch();
+        setPreviousPage();
         localStorage.setItem('searchResults', JSON.stringify(resJson));
         window.location.href = '/view-search-results';
       } else {
@@ -169,6 +173,8 @@ async function postSearchResults(url, data) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        setBreadcrumbSearch();
+        setPreviousPage();
         hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
@@ -731,4 +737,28 @@ function hideSetAccountSpinner() {
   }
   buttonText.innerText = 'Set Account';
   $(':button').prop('disabled', false);
+}
+
+function goToIndex() {
+  window.location.href = '/';
+}
+
+function goToPrevPage() {
+  var prevPage = localStorage.getItem('prevPage');
+  if (prevPage) {
+    window.location.href = prevPage;
+  } else {
+    window.location.href = '/';
+  }
+}
+
+function setPreviousPage() {
+  var url = window.location.href;
+  var prevPage = url.substring(url.lastIndexOf('/') + 1);
+  localStorage.setItem('prevPage', prevPage);
+}
+
+function setBreadcrumbSearch() {
+  var breadcrumbSearch = document.getElementById('breadcrumbSearch').value;
+  localStorage.setItem('breadcrumbSearch', breadcrumbSearch);
 }

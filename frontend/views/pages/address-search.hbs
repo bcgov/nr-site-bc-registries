@@ -1,5 +1,35 @@
 {{#> template}}
   {{#*inline "content"}}
+    <nav style="background-color: #38598a; padding: 10px 0;">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-3 pl-4 pr-3">
+            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                class="bi bi-arrow-left"
+                viewBox="0 -2 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="col-xs-3 pl-3 pt-1" style="border-left: 1px solid #8AA2C6;">
+            <a href="/" style="text-decoration: underline; color: white">BC Registries Dashboard</a>
+          </div>
+          <div class="col-xs-1 pl-3 pt-1" style="font-size:medium; color: white; font-weight: bold">></div>
+          <div class="col-xs-4 pl-2 pt-1" style="font-size:medium; color: white">
+            Address Search
+          </div>
+        </div>
+      </div>
+    </nav>
     <main role="main">
       <div class="container">
         <div class="row">
@@ -101,6 +131,7 @@
         </div>
       </div>
       <!-- End Modal -->
+      <input type="hidden" id="breadcrumbSearch" value="Address Search" />
     </main>
     <script>
       $(function () {

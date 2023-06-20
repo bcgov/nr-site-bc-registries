@@ -10,7 +10,9 @@ import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const html_to_pdf = require('html-pdf-node');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
 
 let synopsisTemplate: string;

@@ -127,3 +127,17 @@ input[type='number'] {
   margin-left: 10px;
   width: 40%;
 }
+
+.round {
+  border-radius: 50%;
+}
+
+.previous {
+  background-color: #f1f1f1;
+  color: #38598a;
+}
+
+.previous-disabled {
+  background-color: #f1f1f191;
+  color: #38598a8e;
+}
