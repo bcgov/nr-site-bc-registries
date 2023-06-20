@@ -26,7 +26,7 @@ import { BCRegistryService } from './bc-registry.service';
 export class BCRegistryController {
   constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
-  @Get('download-pdf/:reportType/:siteId')
+  @Get('download-pdf/:reportType/:siteId/:folio')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=report.pdf')
   async getPdf(

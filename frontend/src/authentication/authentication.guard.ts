@@ -19,7 +19,12 @@ export class AuthenticationGuard implements CanActivate {
     const code = url.searchParams.get('code') ? url.searchParams.get('code') : null;
     let token = request.session.data ? request.session.data.access_token : null;
 
-    if (request.originalUrl === "/" || request.originalUrl.startsWith("/?session_state")|| request.originalUrl.startsWith("/?accountid")) {
+    // this resets the session whenever the user goes to the index page
+    if (
+      request.originalUrl === '/' ||
+      request.originalUrl.startsWith('/?session_state') ||
+      request.originalUrl.startsWith('/?accountid')
+    ) {
       token = null;
     }
 

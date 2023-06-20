@@ -211,9 +211,10 @@ function checkAreaSearchInputs() {
 }
 async function getPdfSynopsis() {
   const siteId = document.getElementById('siteId').value;
+  const folioValue = document.getElementById('folioInput').value;
   $(':button').prop('disabled', true);
   displaySynDownloadSpinner();
-  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}`, {
+  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}/${folioValue}`, {
     method: 'GET',
   })
     .then((res) => {
@@ -247,9 +248,10 @@ async function getPdfSynopsis() {
 }
 async function getPdfDetailed() {
   const siteId = document.getElementById('siteId').value;
+  const folioValue = document.getElementById('folioInput').value;
   $(':button').prop('disabled', true);
   displayDetDownloadSpinner();
-  fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
+  fetch(`/bc-registry/download-pdf2/detailed/${siteId}/${folioValue}`, {
     method: 'GET',
   })
     .then((res) => {

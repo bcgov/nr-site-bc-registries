@@ -14,7 +14,7 @@ const axios = require('axios'); //
 const html_to_pdf = require('html-pdf-node');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -65,17 +65,20 @@ export class BCRegistryService {
    * @returns
    */
   async modifyPdf(pdfBuffer: Buffer, headerInfo: ReportHeaderInfo) {
+    const reportRunParts = headerInfo.reportRunDate.split(' ');
+    const reportRunDate = reportRunParts[0];
+    const reportRunTime = reportRunParts[1];
     // Create a PDFDocument from the generated PDF buffer
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     // Get the number of pages in the PDF document
     const pageCount = pdfDoc.getPageCount();
     // Embed the font for the footer text
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize = 8;
     // Draw the footers
     for (let i = 0; i < pageCount; i++) {
       const page = pdfDoc.getPage(i);
       // Set the font and font size for the footer text
-      const fontSize = 8;
       page.setFont(font);
       page.setFontSize(fontSize);
       // Calculate the position for the left footer
@@ -93,11 +96,59 @@ export class BCRegistryService {
       page.drawText(textRightFooter, { x: xPosRightFooter, y: yPosRightFooter, size: fontSize, color: rgb(0, 0, 0) });
     }
 
-    // Draw the headers
+    /**~~~~~~~ PAGE 0 HEADER SECTION START ~~~~~~~*/
+    // Draw the header for page 0
+    const firstPage: PDFPage = pdfDoc.getPage(0);
+    firstPage.setFont(font);
+    firstPage.setFontSize(fontSize);
+    const firstPageLineHeight = font.heightAtSize(fontSize);
+    // Left Header
+    const firstPageTextLeftHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
+    const firstPageXPosLeftHeader = 20;
+    const firstPageYPosHeader = firstPage.getHeight() - 20;
+    firstPage.drawText(firstPageTextLeftHeaderLine1, {
+      x: firstPageXPosLeftHeader,
+      y: firstPageYPosHeader,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    // Right Header
+    const firstPageTextRightHeaderLine1 = `Report Run: ${reportRunDate}`;
+    const firstPageTextRightHeaderLine2 = `${reportRunTime}`;
+    const firstPageTextRightHeaderLine3 = `For: ${headerInfo.clientName}`;
+    // Right Header Text Widths
+    const firstPageTextWidthRightHeaderLine1 = font.widthOfTextAtSize(firstPageTextRightHeaderLine1, fontSize);
+    const firstPageTextWidthRightHeaderLine2 = font.widthOfTextAtSize(firstPageTextRightHeaderLine2, fontSize);
+    const firstPageTextWidthRightHeaderLine3 = font.widthOfTextAtSize(firstPageTextRightHeaderLine3, fontSize);
+    // Right Header line 1
+    firstPage.drawText(firstPageTextRightHeaderLine1, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine1 - 20,
+      y: firstPageYPosHeader,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    // Right Header line 2
+    const yPosRightHeaderLine2 = firstPageYPosHeader - firstPageLineHeight - 3;
+    firstPage.drawText(firstPageTextRightHeaderLine2, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine2 - 20,
+      y: yPosRightHeaderLine2,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    // Right Header line 3
+    const yPosRightHeaderLine3 = firstPageYPosHeader - firstPageLineHeight * 2 - 6;
+    firstPage.drawText(firstPageTextRightHeaderLine3, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine3 - 20,
+      y: yPosRightHeaderLine3,
+      size: fontSize,
+      color: rgb(0, 0, 0),
+    });
+    /**~~~~~~~ PAGE 0 HEADER SECTION END ~~~~~~~*/
+
+    // Draw the headers for the remaining pages
     for (let i = 1; i < pageCount; i++) {
       const page = pdfDoc.getPage(i);
       // Set the font and font size for the header text
-      const fontSize = 8;
       page.setFont(font);
       page.setFontSize(fontSize);
       const lineHeight = font.heightAtSize(fontSize);
@@ -120,23 +171,31 @@ export class BCRegistryService {
 
       // Right Header
       const textRightHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
-      const textRightHeaderLine2 = `Report run: ${headerInfo.reportRunDate}`;
-      const textRightHeaderLine3 = `For: ${headerInfo.clientName}`;
+      const textRightHeaderLine2 = `Report Run: ${reportRunDate}`;
+      const textRightHeaderLine3 = `${reportRunTime}`;
+      const textRightHeaderLine4 = `For: ${headerInfo.clientName}`;
       // Right Header line 1
       const textWidthRightHeaderLine1 = font.widthOfTextAtSize(textRightHeaderLine1, fontSize);
       const textWidthRightHeaderLine2 = font.widthOfTextAtSize(textRightHeaderLine2, fontSize);
       const textWidthRightHeaderLine3 = font.widthOfTextAtSize(textRightHeaderLine3, fontSize);
-      const maxTextWidthRightHeader = Math.max(
-        textWidthRightHeaderLine1,
-        textWidthRightHeaderLine2,
-        textWidthRightHeaderLine3
-      );
-      const xPosRightHeader = page.getWidth() - maxTextWidthRightHeader - 20;
-      page.drawText(textRightHeaderLine1, { x: xPosRightHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+      const textWidthRightHeaderLine4 = font.widthOfTextAtSize(textRightHeaderLine4, fontSize);
+      // const maxTextWidthRightHeader = Math.max(
+      //   textWidthRightHeaderLine1,
+      //   textWidthRightHeaderLine2,
+      //   textWidthRightHeaderLine3,
+      //   textWidthRightHeaderLine4
+      // );
+      // const xPosRightHeader = page.getWidth() - maxTextWidthRightHeader - 20;
+      page.drawText(textRightHeaderLine1, {
+        x: page.getWidth() - textWidthRightHeaderLine1 - 20,
+        y: yPosHeader,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
       // Right Header line 2
       const yPosRightHeaderLine2 = yPosHeader - lineHeight - 3;
       page.drawText(textRightHeaderLine2, {
-        x: xPosRightHeader,
+        x: page.getWidth() - textWidthRightHeaderLine2 - 20,
         y: yPosRightHeaderLine2,
         size: fontSize,
         color: rgb(0, 0, 0),
@@ -144,17 +203,33 @@ export class BCRegistryService {
       // Right Header line 3
       const yPosRightHeaderLine3 = yPosHeader - lineHeight * 2 - 6;
       page.drawText(textRightHeaderLine3, {
-        x: xPosRightHeader,
+        x: page.getWidth() - textWidthRightHeaderLine3 - 20,
         y: yPosRightHeaderLine3,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      // Right Header line 4
+      const yPosRightHeaderLine4 = yPosHeader - lineHeight * 3 - 9;
+      page.drawText(textRightHeaderLine4, {
+        x: page.getWidth() - textWidthRightHeaderLine4 - 20,
+        y: yPosRightHeaderLine4,
         size: fontSize,
         color: rgb(0, 0, 0),
       });
 
       // Center Header
       const textCenterHeader = headerInfo.reportType;
-      const textWidthCenterHeader = font.widthOfTextAtSize(textCenterHeader, fontSize);
+      const centerFontSize = 12;
+      const textWidthCenterHeader = font.widthOfTextAtSize(textCenterHeader, centerFontSize);
       const xPosCenterHeader = (page.getWidth() - textWidthCenterHeader) / 2; // Centered position
-      page.drawText(textCenterHeader, { x: xPosCenterHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+      const centerFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      page.setFont(centerFont);
+      page.drawText(textCenterHeader, {
+        x: xPosCenterHeader,
+        y: yPosHeader,
+        size: centerFontSize,
+        color: rgb(0, 0, 0),
+      });
     }
 
     // Save the modified PDF as a Uint8Array
@@ -368,7 +443,7 @@ export class BCRegistryService {
 
       const headerInfo: ReportHeaderInfo = {
         siteId: data.siteId,
-        folio: '123', // TODO
+        folio: folio,
         reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
         asOfDate: data.downloaddate,
         reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
@@ -383,7 +458,7 @@ export class BCRegistryService {
       const options = {
         format: 'A4',
         timeout: 600000,
-        margin: { top: '75px', bottom: '50px', left: '50px', right: '50px' },
+        margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
       };
 
       const file = { content: filledDocumentTemplate };
@@ -482,7 +557,7 @@ export class BCRegistryService {
       }
       const headerInfo: ReportHeaderInfo = {
         siteId: data.siteId,
-        folio: '123', // TODO
+        folio: folio,
         reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
         asOfDate: data.downloaddate,
         reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
@@ -494,7 +569,11 @@ export class BCRegistryService {
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        format: 'A4',
+        timeout: 600000,
+        margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
@@ -588,7 +667,7 @@ export class BCRegistryService {
       }
       const headerInfo: ReportHeaderInfo = {
         siteId: siteData.siteId,
-        folio: '123', // TODO
+        folio: folio,
         reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
         asOfDate: siteData.downloaddate,
         reportRunDate: siteData.todaysDate + ' ' + siteData.currentTime + ' PST',
@@ -600,7 +679,11 @@ export class BCRegistryService {
 
       const filledDocumentTemplate = Mustache.render(text, siteData);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        format: 'A4',
+        timeout: 600000,
+        margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
