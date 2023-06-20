@@ -32,6 +32,7 @@ export class BCRegistryController {
   async getPdf(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
+    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<any> {
@@ -39,7 +40,7 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name);
+      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name, folio);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -73,12 +74,13 @@ export class BCRegistryController {
   }
 
   // this route is specifically for the siteId search page report downloads
-  @Get('download-pdf2/:reportType/:siteId')
+  @Get('download-pdf2/:reportType/:siteId/:folio')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'inline; filename=report.pdf')
   async getPdfSiteId(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
+    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<StreamableFile | null> {
@@ -87,7 +89,7 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name);
+      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name, folio);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -121,11 +123,12 @@ export class BCRegistryController {
     }
   }
 
-  @Get('email-pdf/:reportType/:email/:siteId')
+  @Get('email-pdf/:reportType/:email/:siteId/:folio')
   async getEmail(
     @Param('reportType') reportType: string,
     @Param('email') email: string,
     @Param('siteId') siteId: string,
+    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<{ message: string }> {
@@ -133,7 +136,7 @@ export class BCRegistryController {
     let paymentStatus: string;
     let reportHtml: string;
     try {
-      reportHtml = await this.bcRegistryService.generateEmailHTML(reportType, siteId, session.data.name);
+      reportHtml = await this.bcRegistryService.generateEmailHTML(reportType, siteId, session.data.name, folio);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE EMAIL');
@@ -203,5 +206,18 @@ export class BCRegistryController {
         session.data.name
       )
     );
+  }
+
+  @Get('get-folio')
+  getFolio(@Session() session: { data?: SessionData }) {
+    const folio = session.data ? (session.data.folio ? session.data.folio : '') : '';
+    return { folio: folio };
+  }
+
+  @Get('set-folio/:folio')
+  async setFolio(@Param('folio') folio: string, @Session() session: { data?: SessionData }) {
+    session.data.folio = folio;
+    console.log('folio: ' + session.data.folio);
+    return { message: 'Folio successfully updated!' };
   }
 }

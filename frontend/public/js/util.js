@@ -284,10 +284,11 @@ async function getPdfDetailed() {
 
 async function getPdf(siteId) {
   const reportType = document.getElementById(`reportType${siteId}`).value;
+  const folioValue = document.getElementById('folioInput').value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
     $(':button').prop('disabled', true);
     displayDownloadSpinner(siteId);
-    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
+    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}/${folioValue}`, {
       method: 'GET',
     })
       .then((res) => {
@@ -762,3 +763,41 @@ function setBreadcrumbSearch() {
   var breadcrumbSearch = document.getElementById('breadcrumbSearch').value;
   localStorage.setItem('breadcrumbSearch', breadcrumbSearch);
 }
+
+function setFolio(folioInput) {
+  var debounceTimer;
+
+  return function () {
+    clearTimeout(debounceTimer);
+
+    const folioValue = folioInput.value;
+    console.log('folioValue: ' + folioValue);
+
+    // Debounce the fetch request with a delay of 0.5 seconds
+    debounceTimer = setTimeout(function () {
+      fetch(`bc-registry/set-folio/${folioValue}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data.message);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, 500);
+  };
+}
+
+var folioInput = document.getElementById('folioInput');
+folioInput.addEventListener('input', setFolio(folioInput));
+
+window.onload = function () {
+  fetch('bc-registry/get-folio')
+    .then((response) => response.json())
+    .then((data) => {
+      var folioInput = document.getElementById('folioInput');
+      folioInput.value = data.folio;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

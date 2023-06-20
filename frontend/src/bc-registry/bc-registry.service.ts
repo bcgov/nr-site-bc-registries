@@ -225,7 +225,7 @@ export class BCRegistryService {
   }
 
   // builds the pdf report to be sent back to the frontend
-  async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
+  async getPdf(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
@@ -323,7 +323,7 @@ export class BCRegistryService {
     }
   }
 
-  async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
+  async getPdfSiteIdDirect(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
@@ -424,7 +424,7 @@ export class BCRegistryService {
     }
   }
 
-  async generateEmailHTML(reportType: string, siteId: string, name: string): Promise<any> {
+  async generateEmailHTML(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const cdogsToken = await this.getCdogsToken();
 
     const requestUrl =

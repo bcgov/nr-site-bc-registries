@@ -15,6 +15,7 @@ export type SessionData = {
   name: string;
   contacts: string[];
   savedReports: savedReport[];
+  folio: string;
 };
 
 export type AccountObject = {
