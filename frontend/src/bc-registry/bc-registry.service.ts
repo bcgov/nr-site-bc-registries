@@ -6,7 +6,7 @@ import * as base64 from 'base-64';
 import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
+import { ReportHeaderInfo, SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
@@ -14,6 +14,7 @@ const axios = require('axios'); //
 const html_to_pdf = require('html-pdf-node');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -54,6 +55,114 @@ export class BCRegistryService {
       }
     }
     return false;
+  }
+
+  /**
+   * Modifies the pdfBuffer to add headers and footers.
+   *
+   * @param pdfBuffer
+   * @param headerInfo
+   * @returns
+   */
+  async modifyPdf(pdfBuffer: Buffer, headerInfo: ReportHeaderInfo) {
+    // Create a PDFDocument from the generated PDF buffer
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    // Get the number of pages in the PDF document
+    const pageCount = pdfDoc.getPageCount();
+    // Embed the font for the footer text
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    // Draw the footers
+    for (let i = 0; i < pageCount; i++) {
+      const page = pdfDoc.getPage(i);
+      // Set the font and font size for the footer text
+      const fontSize = 8;
+      page.setFont(font);
+      page.setFontSize(fontSize);
+      // Calculate the position for the left footer
+      const textLeftFooter = `Page ${i + 1} of ${pageCount}`;
+      const xPosLeftFooter = 20;
+      const yPosLeftFooter = 20;
+      // Draw the left footer text
+      page.drawText(textLeftFooter, { x: xPosLeftFooter, y: yPosLeftFooter, size: fontSize, color: rgb(0, 0, 0) });
+      // Calculate the position for the right footer
+      const textRightFooter = 'See Disclaimer on last page of report.';
+      const textWidthRightFooter = font.widthOfTextAtSize(textRightFooter, fontSize);
+      const xPosRightFooter = page.getWidth() - textWidthRightFooter - 20;
+      const yPosRightFooter = 20;
+      // Draw the right footer text
+      page.drawText(textRightFooter, { x: xPosRightFooter, y: yPosRightFooter, size: fontSize, color: rgb(0, 0, 0) });
+    }
+
+    // Draw the headers
+    for (let i = 1; i < pageCount; i++) {
+      const page = pdfDoc.getPage(i);
+      // Set the font and font size for the header text
+      const fontSize = 8;
+      page.setFont(font);
+      page.setFontSize(fontSize);
+      const lineHeight = font.heightAtSize(fontSize);
+
+      // Left Header
+      const textLeftHeaderLine1 = `Site Id: ${headerInfo.siteId}`;
+      const textLeftHeaderLine2 = `Folio: ${headerInfo.folio}`;
+      // Left Header line 1
+      const xPosLeftHeader = 20;
+      const yPosHeader = page.getHeight() - 20;
+      page.drawText(textLeftHeaderLine1, { x: xPosLeftHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+      // Left Header line 2
+      const yPosLeftHeaderLine2 = yPosHeader - lineHeight - 3;
+      page.drawText(textLeftHeaderLine2, {
+        x: xPosLeftHeader,
+        y: yPosLeftHeaderLine2,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      // Right Header
+      const textRightHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
+      const textRightHeaderLine2 = `Report run: ${headerInfo.reportRunDate}`;
+      const textRightHeaderLine3 = `For: ${headerInfo.clientName}`;
+      // Right Header line 1
+      const textWidthRightHeaderLine1 = font.widthOfTextAtSize(textRightHeaderLine1, fontSize);
+      const textWidthRightHeaderLine2 = font.widthOfTextAtSize(textRightHeaderLine2, fontSize);
+      const textWidthRightHeaderLine3 = font.widthOfTextAtSize(textRightHeaderLine3, fontSize);
+      const maxTextWidthRightHeader = Math.max(
+        textWidthRightHeaderLine1,
+        textWidthRightHeaderLine2,
+        textWidthRightHeaderLine3
+      );
+      const xPosRightHeader = page.getWidth() - maxTextWidthRightHeader - 20;
+      page.drawText(textRightHeaderLine1, { x: xPosRightHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+      // Right Header line 2
+      const yPosRightHeaderLine2 = yPosHeader - lineHeight - 3;
+      page.drawText(textRightHeaderLine2, {
+        x: xPosRightHeader,
+        y: yPosRightHeaderLine2,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      // Right Header line 3
+      const yPosRightHeaderLine3 = yPosHeader - lineHeight * 2 - 6;
+      page.drawText(textRightHeaderLine3, {
+        x: xPosRightHeader,
+        y: yPosRightHeaderLine3,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+
+      // Center Header
+      const textCenterHeader = headerInfo.reportType;
+      const textWidthCenterHeader = font.widthOfTextAtSize(textCenterHeader, fontSize);
+      const xPosCenterHeader = (page.getWidth() - textWidthCenterHeader) / 2; // Centered position
+      page.drawText(textCenterHeader, { x: xPosCenterHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+    }
+
+    // Save the modified PDF as a Uint8Array
+    const modifiedPdfBytes = await pdfDoc.save();
+    const newPdfBuffer = Buffer.from(modifiedPdfBytes);
+
+    console.log('PDF modified successfully!');
+    return newPdfBuffer;
   }
 
   async requestNilPdf(
@@ -257,12 +366,25 @@ export class BCRegistryService {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
 
+      const headerInfo: ReportHeaderInfo = {
+        siteId: data.siteId,
+        folio: '123', // TODO
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: data.downloaddate,
+        reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
+        clientName: name,
+      };
+
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        format: 'A4',
+        timeout: 600000,
+        margin: { top: '75px', bottom: '50px', left: '50px', right: '50px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
@@ -272,10 +394,11 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
       console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
-      return returnBuffer;
+      return modifiedReturnBuffer;
       /*
       former CDAWGS method
 
@@ -357,6 +480,14 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
+      const headerInfo: ReportHeaderInfo = {
+        siteId: data.siteId,
+        folio: '123', // TODO
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: data.downloaddate,
+        reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
+        clientName: name,
+      };
 
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
@@ -373,10 +504,11 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
       console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
-      return returnBuffer;
+      return modifiedReturnBuffer;
       /*
       former CDAWGS method
 
@@ -454,6 +586,15 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
+      const headerInfo: ReportHeaderInfo = {
+        siteId: siteData.siteId,
+        folio: '123', // TODO
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: siteData.downloaddate,
+        reportRunDate: siteData.todaysDate + ' ' + siteData.currentTime + ' PST',
+        clientName: name,
+      };
+
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
@@ -468,7 +609,8 @@ export class BCRegistryService {
       await html_to_pdf.generatePdf(file, options).then((p) => {
         returnBuffer = p;
       });
-      pdfBuffer = returnBuffer.toString('hex');
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
+      pdfBuffer = modifiedReturnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
     const endTime = new Date().getTime();
@@ -1048,43 +1190,43 @@ export class BCRegistryService {
           // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+            `<p class="comments-text" style="font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
           );
           template =
             entry.plannedActivityComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+            '<p class="comments-text" style="font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
           );
           template =
             entry.siteDisclosureComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         } else {
           // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
           );
           template =
             entry.commentString != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.commentString}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         }
         template = template.concat('<hr size="1" color="black">');
       }
@@ -1123,7 +1265,7 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Notation Type:</th><td>${notation.eventType}</td></tr>`);
         template = template.concat(`<tr><th>Notation Class:</th><td>${notation.eventClass}</td></tr>`);
         template = template.concat(`<tr><th>Initiated:</th><td>${notation.eventDate}</td></tr>`);
-        template = template.concat(`<tr><th>Approved:</th><td>${notation.approvedDate}</td></tr>`);
+        template = template.concat(`<tr><th>Completed:</th><td>${notation.approvedDate}</td></tr>`);
         template = template.concat(`<tr><th>Ministry Contact:</th><td>${notation.ministryContact}</td></tr>`);
         template = template.concat(`<tr><th>Note:</th><td>${notation.noteString}</td></tr>`);
         template = template.concat(`<tr><th>Required Actions:</th><td>${notation.requiredAction}</td></tr>`);
@@ -1199,8 +1341,8 @@ export class BCRegistryService {
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Title:</th><td>${document.titleString}</td></tr>`);
-        template = template.concat(`<tr><th>Authored:</th><td>${document.documentDate}</td></tr>`);
-        template = template.concat(`<tr><th>Submitted:</th><td>${document.submissionDate}</td></tr>`);
+        template = template.concat(`<tr><th>Document Date:</th><td>${document.documentDate}</td></tr>`);
+        template = template.concat(`<tr><th>Received Date:</th><td>${document.submissionDate}</td></tr>`);
         template = template.concat(`</table>`);
         if (document.participantsArray.length > 0) {
           template = template.concat('<br>');
@@ -1242,7 +1384,7 @@ export class BCRegistryService {
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Site ID:</th><td>${associatedSite.siteId}</td></tr>`);
-        template = template.concat(`<tr><th>Effect Date:</th><td>${associatedSite.effectDate}</td></tr>`);
+        template = template.concat(`<tr><th>Date Noted:</th><td>${associatedSite.effectDate}</td></tr>`);
         template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
         template = template.concat(`</table>`);
 
@@ -1613,43 +1755,43 @@ export class BCRegistryService {
           // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+            `<p class="comments-text" style="font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
           );
           template =
             entry.plannedActivityComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+            '<p class="comments-text" style="font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
           );
           template =
             entry.siteDisclosureComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         } else {
           // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
           );
           template =
             entry.commentString != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.commentString}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         }
         template = template.concat('<hr size="1" color="black">');
       }

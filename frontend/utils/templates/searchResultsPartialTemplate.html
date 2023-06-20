@@ -3,26 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <style>
-      @page {
-        margin: 1cm;
+      body {
+        font-family: Arial, Helvetica, sans-serif;
       }
       .container {
-        width: 595px;
+        width: 680px;
         height: auto;
-        font-family: Arial, Helvetica, sans-serif;
       }
       th {
         text-align: left;
         padding-right: 20px;
-        font-size: 18px;
+        font-size: 16px;
         background-color: white;
-        font-family: Arial, Helvetica, sans-serif;
       }
       td {
         text-align: left;
         padding-right: 20px;
-        font-size: 18px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
       }
       table {
         width: 100%;
@@ -32,27 +29,15 @@
         text-align: right;
       }
       .bigserif {
-        font-size: 18px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
       }
       .disclaimer {
         font-size: 12px;
-        font-family: Arial, Helvetica, sans-serif;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div class="col-sm">Report data as of: {d.downloaddate}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {d.todaysDate}</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{d.currentTime} PST</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {d.account}</div>
-      </div>
       <h2 style="text-align: center">Site Registry - {d.searchType} Search</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
       <br />
