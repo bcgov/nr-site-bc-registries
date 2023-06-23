@@ -1390,11 +1390,14 @@ export class BCRegistryService {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
+        template = template.concat('<table style="margin-bottom: 2px">\n');
         template = template.concat(`<tr><th>Participant:</th><td>${participant.nameString}</td></tr>`);
         template = template.concat(`<tr><th>Role(s):</th><td>${participant.participantType}</td></tr>`);
-        template = template.concat(`<tr><th>Start Date:</th><td>${participant.effectiveDate}</td></tr>`);
-        template = template.concat(`<tr><th>End Date:</th><td>${participant.endDate}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
+        template = template.concat(
+          `<tr><th>Start Date:</th><td style="width: 150px">${participant.effectiveDate}</td><th>End Date:</th><td>${participant.endDate}</td></tr>`
+        );
         template = template.concat(`<tr><th>Notes:</th><td>${participant.noteString}</td></tr>`);
         template = template.concat(`</table>`);
         counter++;
@@ -1424,8 +1427,11 @@ export class BCRegistryService {
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Title:</th><td>${document.titleString}</td></tr>`);
-        template = template.concat(`<tr><th>Document Date:</th><td>${document.documentDate}</td></tr>`);
-        template = template.concat(`<tr><th>Received Date:</th><td>${document.submissionDate}</td></tr>`);
+        template = template.concat('</table>\n');
+        template = template.concat('<table>\n');
+        template = template.concat(
+          `<tr><th>Document Date:</th><td style="width: 150px">${document.documentDate}</td><th>Received Date:</th><td>${document.submissionDate}</td></tr>`
+        );
         template = template.concat(`</table>`);
         if (document.participantsArray.length > 0) {
           template = template.concat('<br>');
@@ -1465,9 +1471,12 @@ export class BCRegistryService {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Site ID:</th><td>${associatedSite.siteId}</td></tr>`);
-        template = template.concat(`<tr><th>Date Noted:</th><td>${associatedSite.effectDate}</td></tr>`);
+        template = template.concat('<table style="margin-bottom: 2px">\n');
+        template = template.concat(
+          `<tr><th>Site ID:</th><td style="width: 150px">${associatedSite.siteId}</td><th>Date Noted:</th><td>${associatedSite.effectDate}</td></tr>`
+        );
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
         template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
         template = template.concat(`</table>`);
 
@@ -1525,13 +1534,15 @@ export class BCRegistryService {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Date Noted:</th><td>${parcelDescription.dateNoted}</td></tr>`);
-        template = template.concat(`<tr><th>Crown Land PIN:</th><td>${parcelDescription.pin}</td></tr>`);
-        template = template.concat(`<tr><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`);
+        template = template.concat('<table style="margin-bottom: 2px">\n');
         template = template.concat(
-          `<tr><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+          `<tr><th>Date Noted:</th><td style="width: 150px">${parcelDescription.dateNoted}</td><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`
         );
+        template = template.concat(
+          `<tr><th>Crown Land PIN:</th><td style="width: 150px">${parcelDescription.pin}</td><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+        );
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
 
