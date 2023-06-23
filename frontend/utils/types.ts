@@ -52,6 +52,7 @@ export type SearchResultsJson = {
     searchCriteria3: string;
   };
   searchData: [SearchResultsJsonObject];
+  folio: string;
 };
 
 export type SearchResultsJsonObject = {

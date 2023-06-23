@@ -373,6 +373,7 @@ async function emailSearchResults() {
   $(':button').prop('disabled', true);
   displayReportEmailSpinner();
   const searchData = JSON.parse(localStorage.getItem('searchResults'));
+  const folio = $('#folioInput').val();
   let email = $('#selectSearchResultsEmailRadio').is(':checked')
     ? $('#searchResultsEmailSelect').val()
     : $('#searchResultsEmailInput').val();
@@ -381,6 +382,7 @@ async function emailSearchResults() {
       email: email,
       searchData: searchData,
       searchInfo: getSearchInfo(),
+      folio: folio,
     };
     fetch(`/bc-registry/email-search-results`, {
       method: 'POST',
@@ -477,6 +479,7 @@ async function getNilPdf() {
   let searchCriteria1;
   let searchCriteria2;
   let searchCriteria3;
+  const folio = $('#folioInput').val();
   switch (searchType) {
     case 'pid': {
       searchCriteria1 = localStorage.getItem('searchCriteria');
@@ -528,7 +531,7 @@ async function getNilPdf() {
     fetch(
       `/bc-registry/nil-pdf/${searchType}/${encodeURI(searchCriteria1)}/${encodeURI(searchCriteria2)}/${encodeURI(
         searchCriteria3
-      )}`,
+      )}/${folio}`,
       {
         method: 'GET',
       }

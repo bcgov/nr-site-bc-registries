@@ -187,7 +187,7 @@ export class BCRegistryController {
     };
   }
 
-  @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3')
+  @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3/:folio')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=report.pdf')
   async getNilPdf(
@@ -195,6 +195,7 @@ export class BCRegistryController {
     @Param('searchCriteria1') searchCriteria1: string,
     @Param('searchCriteria2') searchCriteria2: string,
     @Param('searchCriteria3') searchCriteria3: string,
+    @Param('folio') folio: string,
     @Session() session: { data?: SessionData }
   ): Promise<StreamableFile> {
     return new StreamableFile(
@@ -203,7 +204,8 @@ export class BCRegistryController {
         decodeURI(searchCriteria1),
         decodeURI(searchCriteria2),
         decodeURI(searchCriteria3),
-        session.data.name
+        session.data.name,
+        folio
       )
     );
   }

@@ -260,7 +260,8 @@ export class BCRegistryService {
     searchCriteria1: string,
     searchCriteria2: string,
     searchCriteria3: string,
-    name: string
+    name: string,
+    folio: string
   ) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate;
@@ -275,6 +276,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
+    data['folio'] = folio;
 
     switch (searchType) {
       case 'pid': {
@@ -368,7 +370,7 @@ export class BCRegistryService {
       });
   }
 
-  async requestNilSiteIdPdf(siteId: string, name: string) {
+  async requestNilSiteIdPdf(siteId: string, name: string, folio: string) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate2;
     const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
@@ -382,6 +384,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
+    data['folio'] = folio;
     data['searchType'] = 'Site Identification Number';
     data['siteId'] = 'Site ID: ' + siteId; // siteid
 
@@ -559,7 +562,7 @@ export class BCRegistryService {
         );
       } catch (err) {
         console.log('caught error');
-        return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
+        return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name, folio);
       }
       console.log('Received db data, starting pdf generation');
       const startTime = new Date().getTime();
@@ -845,6 +848,7 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
+      data['folio'] = searchResultsJson.folio;
       switch (searchResultsJson.searchInfo.searchType) {
         case 'pid': {
           data['searchType'] = 'Land Title Parcel Identifier (PID)';
