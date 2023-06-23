@@ -121,6 +121,7 @@ input[type='number'] {
 .folio-label {
   color: blue;
   text-align: center;
+  font-weight: bold;
 }
 
 .folio-input {
