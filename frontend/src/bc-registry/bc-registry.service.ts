@@ -172,7 +172,7 @@ export class BCRegistryService {
       // Right Header
       const textRightHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
       const textRightHeaderLine2 = `Report Run: ${reportRunDate}`;
-      const textRightHeaderLine3 = `${reportRunTime}`;
+      const textRightHeaderLine3 = `${reportRunTime} PST`;
       const textRightHeaderLine4 = `For: ${headerInfo.clientName}`;
       // Right Header line 1
       const textWidthRightHeaderLine1 = font.widthOfTextAtSize(textRightHeaderLine1, fontSize);
