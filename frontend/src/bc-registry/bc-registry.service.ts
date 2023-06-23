@@ -74,7 +74,7 @@ export class BCRegistryService {
     const pageCount = pdfDoc.getPageCount();
     // Embed the font for the footer text
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 8;
+    const fontSize = 10;
     // Draw the footers
     for (let i = 0; i < pageCount; i++) {
       const page = pdfDoc.getPage(i);
