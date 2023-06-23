@@ -86,14 +86,24 @@ export class BCRegistryService {
       const xPosLeftFooter = 20;
       const yPosLeftFooter = 20;
       // Draw the left footer text
-      page.drawText(textLeftFooter, { x: xPosLeftFooter, y: yPosLeftFooter, size: fontSize, color: rgb(0, 0, 0) });
+      page.drawText(textLeftFooter, {
+        x: xPosLeftFooter,
+        y: yPosLeftFooter,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
       // Calculate the position for the right footer
       const textRightFooter = 'See Disclaimer on last page of report.';
       const textWidthRightFooter = font.widthOfTextAtSize(textRightFooter, fontSize);
       const xPosRightFooter = page.getWidth() - textWidthRightFooter - 20;
       const yPosRightFooter = 20;
       // Draw the right footer text
-      page.drawText(textRightFooter, { x: xPosRightFooter, y: yPosRightFooter, size: fontSize, color: rgb(0, 0, 0) });
+      page.drawText(textRightFooter, {
+        x: xPosRightFooter,
+        y: yPosRightFooter,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
     }
 
     /**~~~~~~~ PAGE 0 HEADER SECTION START ~~~~~~~*/
@@ -110,7 +120,7 @@ export class BCRegistryService {
       x: firstPageXPosLeftHeader,
       y: firstPageYPosHeader,
       size: fontSize,
-      color: rgb(0, 0, 0),
+      color: rgb(0.5, 0.5, 0.5),
     });
     // Right Header
     const firstPageTextRightHeaderLine1 = `Report Run: ${reportRunDate}`;
@@ -125,7 +135,7 @@ export class BCRegistryService {
       x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine1 - 20,
       y: firstPageYPosHeader,
       size: fontSize,
-      color: rgb(0, 0, 0),
+      color: rgb(0.5, 0.5, 0.5),
     });
     // Right Header line 2
     const yPosRightHeaderLine2 = firstPageYPosHeader - firstPageLineHeight - 3;
@@ -133,7 +143,7 @@ export class BCRegistryService {
       x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine2 - 20,
       y: yPosRightHeaderLine2,
       size: fontSize,
-      color: rgb(0, 0, 0),
+      color: rgb(0.5, 0.5, 0.5),
     });
     // Right Header line 3
     const yPosRightHeaderLine3 = firstPageYPosHeader - firstPageLineHeight * 2 - 6;
@@ -141,7 +151,7 @@ export class BCRegistryService {
       x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine3 - 20,
       y: yPosRightHeaderLine3,
       size: fontSize,
-      color: rgb(0, 0, 0),
+      color: rgb(0.5, 0.5, 0.5),
     });
     /**~~~~~~~ PAGE 0 HEADER SECTION END ~~~~~~~*/
 
@@ -159,14 +169,19 @@ export class BCRegistryService {
       // Left Header line 1
       const xPosLeftHeader = 20;
       const yPosHeader = page.getHeight() - 20;
-      page.drawText(textLeftHeaderLine1, { x: xPosLeftHeader, y: yPosHeader, size: fontSize, color: rgb(0, 0, 0) });
+      page.drawText(textLeftHeaderLine1, {
+        x: xPosLeftHeader,
+        y: yPosHeader,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
       // Left Header line 2
       const yPosLeftHeaderLine2 = yPosHeader - lineHeight - 3;
       page.drawText(textLeftHeaderLine2, {
         x: xPosLeftHeader,
         y: yPosLeftHeaderLine2,
         size: fontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
 
       // Right Header
@@ -190,7 +205,7 @@ export class BCRegistryService {
         x: page.getWidth() - textWidthRightHeaderLine1 - 20,
         y: yPosHeader,
         size: fontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
       // Right Header line 2
       const yPosRightHeaderLine2 = yPosHeader - lineHeight - 3;
@@ -198,7 +213,7 @@ export class BCRegistryService {
         x: page.getWidth() - textWidthRightHeaderLine2 - 20,
         y: yPosRightHeaderLine2,
         size: fontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
       // Right Header line 3
       const yPosRightHeaderLine3 = yPosHeader - lineHeight * 2 - 6;
@@ -206,7 +221,7 @@ export class BCRegistryService {
         x: page.getWidth() - textWidthRightHeaderLine3 - 20,
         y: yPosRightHeaderLine3,
         size: fontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
       // Right Header line 4
       const yPosRightHeaderLine4 = yPosHeader - lineHeight * 3 - 9;
@@ -214,7 +229,7 @@ export class BCRegistryService {
         x: page.getWidth() - textWidthRightHeaderLine4 - 20,
         y: yPosRightHeaderLine4,
         size: fontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
 
       // Center Header
@@ -228,7 +243,7 @@ export class BCRegistryService {
         x: xPosCenterHeader,
         y: yPosHeader,
         size: centerFontSize,
-        color: rgb(0, 0, 0),
+        color: rgb(0.5, 0.5, 0.5),
       });
     }
 
