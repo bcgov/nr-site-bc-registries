@@ -1354,13 +1354,11 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Required Actions:</th><td>${notation.requiredAction}</td></tr>`);
         template = template.concat(`</table>`);
         if (notation.participantsArray.length > 0) {
-          template = template.concat('<br>');
           template = template.concat(`<h4 style="text-indent: 4em"><em>Notation Participants</em></h4>`);
           template = template.concat(`<table>`);
           for (const notationParticipant of notation.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${notationParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${notationParticipant.roleString}</td></tr>`);
-            template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
           }
           template = template.concat(`</table>`);
         }
@@ -1434,13 +1432,11 @@ export class BCRegistryService {
         );
         template = template.concat(`</table>`);
         if (document.participantsArray.length > 0) {
-          template = template.concat('<br>');
           template = template.concat(`<h4 style="text-indent: 4em"><em>Document Participants</em></h4>`);
           template = template.concat(`<table>`);
           for (const documentParticipant of document.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${documentParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${documentParticipant.roleString}</td></tr>`);
-            template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
           }
           template = template.concat(`</table>`);
         }
