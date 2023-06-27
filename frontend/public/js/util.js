@@ -802,6 +802,7 @@ function setFolio(folioInput) {
     clearTimeout(debounceTimer);
 
     const folioValue = folioInput.value;
+    localStorage.setItem('folio', folioValue);
 
     // Debounce the fetch request with a delay of 0.5 seconds
     debounceTimer = setTimeout(function () {
@@ -827,18 +828,29 @@ var folioInput = document.getElementById('folioInput');
 folioInput.addEventListener('input', setFolio(folioInput));
 
 window.onload = function () {
-  fetch('bc-registry/get-folio')
-    .then((response) => response.json())
-    .then((data) => {
-      var folioInput = document.getElementById('folioInput');
-      folioInput.value = data.folio;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  const lastSearch = localStorage.getItem('lastSearchType');
+  const folioValue = localStorage.getItem('folio');
   const pathName = window.location.pathname;
+  const lastSearch = localStorage.getItem('lastSearchType');
+
+  $('#folioInput').val(folioValue);
+  // The session gets reset on the index page, when that happens set the folio in the new session
+  if (pathName === '/') {
+    fetch(`bc-registry/set-folio`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ folio: folioValue }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   switch (pathName) {
     case '/parcel-id':
       if (lastSearch === 'pid') {
