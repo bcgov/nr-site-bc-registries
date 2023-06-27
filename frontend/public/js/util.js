@@ -770,11 +770,16 @@ function setFolio(folioInput) {
     clearTimeout(debounceTimer);
 
     const folioValue = folioInput.value;
-    console.log('folioValue: ' + folioValue);
 
     // Debounce the fetch request with a delay of 0.5 seconds
     debounceTimer = setTimeout(function () {
-      fetch(`bc-registry/set-folio/${folioValue}`)
+      fetch(`bc-registry/set-folio`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ folio: folioValue }),
+      })
         .then((response) => response.json())
         .then((data) => {
           console.log(data.message);

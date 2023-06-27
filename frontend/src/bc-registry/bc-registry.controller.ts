@@ -222,8 +222,8 @@ export class BCRegistryController {
     return { folio: folio };
   }
 
-  @Get('set-folio/:folio')
-  async setFolio(@Param('folio') folio: string, @Session() session: { data?: SessionData }) {
+  @Post('set-folio')
+  async setFolio(@Body('folio') folio: string, @Session() session: { data?: SessionData }) {
     session.data.folio = folio;
     console.log('folio: ' + session.data.folio);
     return { message: 'Folio successfully updated!' };
