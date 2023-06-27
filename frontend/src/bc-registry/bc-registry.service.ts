@@ -82,7 +82,7 @@ export class BCRegistryService {
       page.setFont(font);
       page.setFontSize(fontSize);
       // Calculate the position for the left footer
-      const textLeftFooter = `Page ${i + 1} of ${pageCount}`;
+      const textLeftFooter = `See Disclaimer on last page of report.`;
       const xPosLeftFooter = 20;
       const yPosLeftFooter = 20;
       // Draw the left footer text
@@ -93,7 +93,7 @@ export class BCRegistryService {
         color: rgb(0.5, 0.5, 0.5),
       });
       // Calculate the position for the right footer
-      const textRightFooter = 'See Disclaimer on last page of report.';
+      const textRightFooter = `Page ${i + 1} of ${pageCount}`;
       const textWidthRightFooter = font.widthOfTextAtSize(textRightFooter, fontSize);
       const xPosRightFooter = page.getWidth() - textWidthRightFooter - 20;
       const yPosRightFooter = 20;
@@ -124,7 +124,7 @@ export class BCRegistryService {
     });
     // Right Header
     const firstPageTextRightHeaderLine1 = `Report Run: ${reportRunDate}`;
-    const firstPageTextRightHeaderLine2 = `${reportRunTime}`;
+    const firstPageTextRightHeaderLine2 = `${reportRunTime} PST`;
     const firstPageTextRightHeaderLine3 = `For: ${headerInfo.clientName}`;
     // Right Header Text Widths
     const firstPageTextWidthRightHeaderLine1 = font.widthOfTextAtSize(firstPageTextRightHeaderLine1, fontSize);
@@ -194,13 +194,6 @@ export class BCRegistryService {
       const textWidthRightHeaderLine2 = font.widthOfTextAtSize(textRightHeaderLine2, fontSize);
       const textWidthRightHeaderLine3 = font.widthOfTextAtSize(textRightHeaderLine3, fontSize);
       const textWidthRightHeaderLine4 = font.widthOfTextAtSize(textRightHeaderLine4, fontSize);
-      // const maxTextWidthRightHeader = Math.max(
-      //   textWidthRightHeaderLine1,
-      //   textWidthRightHeaderLine2,
-      //   textWidthRightHeaderLine3,
-      //   textWidthRightHeaderLine4
-      // );
-      // const xPosRightHeader = page.getWidth() - maxTextWidthRightHeader - 20;
       page.drawText(textRightHeaderLine1, {
         x: page.getWidth() - textWidthRightHeaderLine1 - 20,
         y: yPosHeader,
