@@ -190,7 +190,11 @@ export class BCRegistryController {
     @Session() session: { data?: SessionData }
   ): Promise<{ message: string }> {
     return {
-      message: await this.bcRegistryService.emailSearchResultsHTML(searchResultsJson, session.data.name),
+      message: await this.bcRegistryService.emailSearchResultsHTML(
+        searchResultsJson,
+        session.data.name,
+        session.data.folio
+      ),
     };
   }
 

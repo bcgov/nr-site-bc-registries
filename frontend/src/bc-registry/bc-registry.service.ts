@@ -822,7 +822,7 @@ export class BCRegistryService {
   }
 
   // sends an email formatted with html that has search results data
-  async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string): Promise<string> {
+  async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string, folio: string): Promise<string> {
     const cdogsToken = await this.getCdogsToken();
     const chesToken = await this.getChesToken();
 
@@ -841,7 +841,7 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
-      data['folio'] = searchResultsJson.folio;
+      data['folio'] = folio;
       switch (searchResultsJson.searchInfo.searchType) {
         case 'pid': {
           data['searchType'] = 'Land Title Parcel Identifier (PID)';

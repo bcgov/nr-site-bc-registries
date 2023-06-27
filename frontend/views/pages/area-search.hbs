@@ -244,8 +244,8 @@
         }
 
         function autoDraw() {
-            var postalCodeTab = document.getElementById('pills-postalcode');
-            var coordinatesTab = document.getElementById('pills-coordinates');
+            const postalCodeTab = document.getElementById('pills-postalcode-tab');
+            const coordinatesTab = document.getElementById('pills-coordinates-tab');
             if (postalCodeTab.classList.contains('active')) {
                 var postalCodeInput = document.getElementById('postalCodeInput').value;
                 if (postalCodeInput.length == 7) {
