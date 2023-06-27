@@ -26,13 +26,12 @@ import { BCRegistryService } from './bc-registry.service';
 export class BCRegistryController {
   constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
-  @Get('download-pdf/:reportType/:siteId/:folio')
+  @Get('download-pdf/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=report.pdf')
   async getPdf(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
-    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<any> {
@@ -40,7 +39,7 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name, folio);
+      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name, session.data.folio);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -74,13 +73,12 @@ export class BCRegistryController {
   }
 
   // this route is specifically for the siteId search page report downloads
-  @Get('download-pdf2/:reportType/:siteId/:folio')
+  @Get('download-pdf2/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'inline; filename=report.pdf')
   async getPdfSiteId(
     @Param('reportType') reportType: string,
     @Param('siteId') siteId: string,
-    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<StreamableFile | null> {
@@ -89,7 +87,12 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name, folio);
+      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(
+        reportType,
+        siteId,
+        session.data.name,
+        session.data.folio
+      );
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -123,12 +126,11 @@ export class BCRegistryController {
     }
   }
 
-  @Get('email-pdf/:reportType/:email/:siteId/:folio')
+  @Get('email-pdf/:reportType/:email/:siteId')
   async getEmail(
     @Param('reportType') reportType: string,
     @Param('email') email: string,
     @Param('siteId') siteId: string,
-    @Param('folio') folio: string,
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<{ message: string }> {
@@ -136,7 +138,12 @@ export class BCRegistryController {
     let paymentStatus: string;
     let reportHtml: string;
     try {
-      reportHtml = await this.bcRegistryService.generateEmailHTML(reportType, siteId, session.data.name, folio);
+      reportHtml = await this.bcRegistryService.generateEmailHTML(
+        reportType,
+        siteId,
+        session.data.name,
+        session.data.folio
+      );
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE EMAIL');
@@ -187,7 +194,7 @@ export class BCRegistryController {
     };
   }
 
-  @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3/:folio')
+  @Get('nil-pdf/:searchType/:searchCriteria1/:searchCriteria2/:searchCriteria3')
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=report.pdf')
   async getNilPdf(
@@ -195,7 +202,6 @@ export class BCRegistryController {
     @Param('searchCriteria1') searchCriteria1: string,
     @Param('searchCriteria2') searchCriteria2: string,
     @Param('searchCriteria3') searchCriteria3: string,
-    @Param('folio') folio: string,
     @Session() session: { data?: SessionData }
   ): Promise<StreamableFile> {
     return new StreamableFile(
@@ -205,7 +211,7 @@ export class BCRegistryController {
         decodeURI(searchCriteria2),
         decodeURI(searchCriteria3),
         session.data.name,
-        folio
+        session.data.folio
       )
     );
   }

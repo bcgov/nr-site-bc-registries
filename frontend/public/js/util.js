@@ -211,10 +211,9 @@ function checkAreaSearchInputs() {
 }
 async function getPdfSynopsis() {
   const siteId = document.getElementById('siteId').value;
-  const folioValue = document.getElementById('folioInput').value;
   $(':button').prop('disabled', true);
   displaySynDownloadSpinner();
-  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}/${folioValue}`, {
+  fetch(`/bc-registry/download-pdf2/synopsis/${siteId}`, {
     method: 'GET',
   })
     .then((res) => {
@@ -248,10 +247,9 @@ async function getPdfSynopsis() {
 }
 async function getPdfDetailed() {
   const siteId = document.getElementById('siteId').value;
-  const folioValue = document.getElementById('folioInput').value;
   $(':button').prop('disabled', true);
   displayDetDownloadSpinner();
-  fetch(`/bc-registry/download-pdf2/detailed/${siteId}/${folioValue}`, {
+  fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
     method: 'GET',
   })
     .then((res) => {
@@ -286,11 +284,10 @@ async function getPdfDetailed() {
 
 async function getPdf(siteId) {
   const reportType = document.getElementById(`reportType${siteId}`).value;
-  const folioValue = document.getElementById('folioInput').value;
   if (reportType == 'synopsis' || reportType == 'detailed') {
     $(':button').prop('disabled', true);
     displayDownloadSpinner(siteId);
-    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}/${folioValue}`, {
+    fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
       method: 'GET',
     })
       .then((res) => {
@@ -373,7 +370,6 @@ async function emailSearchResults() {
   $(':button').prop('disabled', true);
   displayReportEmailSpinner();
   const searchData = JSON.parse(localStorage.getItem('searchResults'));
-  const folio = $('#folioInput').val();
   let email = $('#selectSearchResultsEmailRadio').is(':checked')
     ? $('#searchResultsEmailSelect').val()
     : $('#searchResultsEmailInput').val();
@@ -382,7 +378,6 @@ async function emailSearchResults() {
       email: email,
       searchData: searchData,
       searchInfo: getSearchInfo(),
-      folio: folio,
     };
     fetch(`/bc-registry/email-search-results`, {
       method: 'POST',
@@ -479,7 +474,6 @@ async function getNilPdf() {
   let searchCriteria1;
   let searchCriteria2;
   let searchCriteria3;
-  const folio = $('#folioInput').val();
   switch (searchType) {
     case 'pid': {
       searchCriteria1 = localStorage.getItem('searchCriteria');
@@ -531,7 +525,7 @@ async function getNilPdf() {
     fetch(
       `/bc-registry/nil-pdf/${searchType}/${encodeURI(searchCriteria1)}/${encodeURI(searchCriteria2)}/${encodeURI(
         searchCriteria3
-      )}/${folio}`,
+      )}`,
       {
         method: 'GET',
       }
