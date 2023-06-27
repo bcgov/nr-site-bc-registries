@@ -122,6 +122,15 @@ export class BCRegistryService {
       size: fontSize,
       color: rgb(0.5, 0.5, 0.5),
     });
+    // Left Header line 2
+    const textLeftHeaderLine2 = `Folio: ${headerInfo.folio}`;
+    const yPosLeftHeaderLine2 = firstPageYPosHeader - firstPageLineHeight - 3;
+    firstPage.drawText(textLeftHeaderLine2, {
+      x: firstPageXPosLeftHeader,
+      y: yPosLeftHeaderLine2,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
     // Right Header
     const firstPageTextRightHeaderLine1 = `Report Run: ${reportRunDate}`;
     const firstPageTextRightHeaderLine2 = `${reportRunTime} PST`;
