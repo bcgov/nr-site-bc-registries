@@ -1351,7 +1351,7 @@ export class BCRegistryService {
       // sort notations chronologically
       data.notationsArray.sort(this.sortByProperty('eventDate'));
 
-      template = template.concat('<h4>NOTATIONS</h4>\n');
+      template = template.concat('<h4>NOTATIONS:</h4>\n');
       for (const notation of data.notationsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1395,7 +1395,7 @@ export class BCRegistryService {
       // sort participants chronologically
       data.participantsArray.sort(this.sortByProperty('effectiveDate'));
 
-      template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
+      template = template.concat('<h4>SITE PARTICIPANTS:</h4>\n');
       for (const participant of data.participantsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1430,7 +1430,7 @@ export class BCRegistryService {
       // sort documents chronologically
       data.documentsArray.sort(this.sortByProperty('documentDate'));
 
-      template = template.concat('<h4>DOCUMENTS</h4>\n');
+      template = template.concat('<h4>DOCUMENTS:</h4>\n');
       for (const document of data.documentsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1474,7 +1474,7 @@ export class BCRegistryService {
       // sort associated sites chronologically
       data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
 
-      template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
+      template = template.concat('<h4>ASSOCIATED SITES:</h4>\n');
       for (const associatedSite of data.associatedSitesArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1506,7 +1506,7 @@ export class BCRegistryService {
     const suspectLandUsesLength = data.suspectLandUsesArray.length;
     counter = 0;
     if (suspectLandUsesLength > 0) {
-      template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
+      template = template.concat('<h4>SUSPECT LAND USES:</h4>\n');
       for (const suspectLandUse of data.suspectLandUsesArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1537,7 +1537,7 @@ export class BCRegistryService {
       // sort parcel descriptions chronologically
       data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
 
-      template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
+      template = template.concat('<h4>PARCEL DESCRIPTIONS:</h4>\n');
       for (const parcelDescription of data.parcelDescriptionsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
