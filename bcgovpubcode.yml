@@ -1,0 +1,63 @@
+---
+data_management_roles:
+  data_custodian: Alan McCammon
+  data_steward: Daniel Tan
+  product_owner: Ana deCastro
+product_external_dependencies:
+  common_components:
+    - Common-Document-Generation-Service
+  identity_authorization:
+    - Business-BceId
+    - BC-Services-Card
+    - BCGov-SSO-Keycloak
+  notification_standard: []
+  other_dependencies: BC Registry Pay and Auth API
+product_information:
+  api_specifications: []
+  ministry:
+    - Environment and Climate Change Strategy
+  product_acronym: ESRA
+  product_description: >-
+    ESRA is the tool used to look up environment assessment information on
+    properties (sites) across British Columbia. Tool connects to BCPayExpress as
+    there is a cost to each search. Authentication to ESRA is through BCeID. 
+    Public is required to access ESRA through BC Registries Portal. Business
+    BCeID or BC Services Card is used for authentication.  This is a rewrite of
+    the public Site Registry originally hosted by BC Online (mainframe).This
+    application consumes information from the SITE (SIS) application through a
+    CRON JOB that runs every Sunday to upload the data from SITE to ESRA via
+    Object Store. It uses BC Registry APIs:  BC Registry Payment API:
+    https://bcregistry-prod.apigee.net/pay BC Registry Auth API:
+    https://bcregistry-prod.apigee.net/auth   Here`s the BC Registries Payment
+    API - developers https://developer.bcregistry.daxiom.ca/pay-api
+  product_name: Electronic Site Registry Application
+  product_status: stable
+  product_urls:
+    - https://esra.nrs.gov.bc.ca
+    - https://www.bcregistry.gov.bc.ca/
+  program_area: Environmental Protection Division
+product_technology_information:
+  backend_frameworks:
+    - name: Node.js
+      version: '14'
+    - name: NestJS
+      version: '8.2'
+  backend_languages_version:
+    - name: TypeScript
+      version: '4.4'
+  ci_cd_tools:
+    - GitHub-Actions
+  data_storage_platforms:
+    - Postgresql
+    - Object-Storage
+  frontend_frameworks:
+    - name: NestJS
+      version: '8.2'
+    - name: Node.js
+      version: '16'
+  frontend_languages:
+    - name: TypeScript
+      version: '4.4'
+  hosting_platforms:
+    - Private-Cloud-Openshift
+version: 1
