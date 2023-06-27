@@ -474,9 +474,9 @@ export class BCRegistryService {
       const filledDocumentTemplate = Mustache.render(text, data);
 
       const options = {
-        format: 'A4',
+        // format: 'A4',
         timeout: 600000,
-        margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
+        margin: { top: '85px', bottom: '50px', left: '20px', right: '20px' },
       };
 
       const file = { content: filledDocumentTemplate };
