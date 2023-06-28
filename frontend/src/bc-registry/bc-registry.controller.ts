@@ -39,7 +39,7 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name);
+      fileBuffer = await this.bcRegistryService.getPdf(reportType, siteId, session.data.name, session.data.folio);
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -87,7 +87,12 @@ export class BCRegistryController {
     let paymentStatus: string;
     let fileBuffer: any;
     try {
-      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(reportType, siteId, session.data.name);
+      fileBuffer = await this.bcRegistryService.getPdfSiteIdDirect(
+        reportType,
+        siteId,
+        session.data.name,
+        session.data.folio
+      );
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE FILE');
@@ -133,7 +138,12 @@ export class BCRegistryController {
     let paymentStatus: string;
     let reportHtml: string;
     try {
-      reportHtml = await this.bcRegistryService.generateEmailHTML(reportType, siteId, session.data.name);
+      reportHtml = await this.bcRegistryService.generateEmailHTML(
+        reportType,
+        siteId,
+        session.data.name,
+        session.data.folio
+      );
     } catch (err) {
       console.log(err);
       response.status(HttpStatus.BAD_REQUEST).send('FAILED TO GENERATE EMAIL');
@@ -180,7 +190,11 @@ export class BCRegistryController {
     @Session() session: { data?: SessionData }
   ): Promise<{ message: string }> {
     return {
-      message: await this.bcRegistryService.emailSearchResultsHTML(searchResultsJson, session.data.name),
+      message: await this.bcRegistryService.emailSearchResultsHTML(
+        searchResultsJson,
+        session.data.name,
+        session.data.folio
+      ),
     };
   }
 
@@ -200,8 +214,22 @@ export class BCRegistryController {
         decodeURI(searchCriteria1),
         decodeURI(searchCriteria2),
         decodeURI(searchCriteria3),
-        session.data.name
+        session.data.name,
+        session.data.folio
       )
     );
+  }
+
+  @Get('get-folio')
+  getFolio(@Session() session: { data?: SessionData }) {
+    const folio = session.data ? (session.data.folio ? session.data.folio : '') : '';
+    return { folio: folio };
+  }
+
+  @Post('set-folio')
+  async setFolio(@Body('folio') folio: string, @Session() session: { data?: SessionData }) {
+    session.data.folio = folio;
+    console.log('folio: ' + session.data.folio);
+    return { message: 'Folio successfully updated!' };
   }
 }

@@ -3,28 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <style>
-      @page {
-        margin: 1cm;
+      body {
+        font-family: Arial, Helvetica, sans-serif;
       }
       .container {
-        width: 595px;
+        width: 760px;
         height: auto;
-        font-family: Arial, Helvetica, sans-serif;
       }
       th {
         text-align: right;
         padding-right: 20px;
         width: 10em;
-        font-size: 18px;
+        font-size: 14px;
         background-color: white;
-        font-family: Arial, Helvetica, sans-serif;
       }
       td {
         text-align: left;
         padding-right: 20px;
         min-width: 5em;
-        font-size: 18px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
       }
       table {
         width: 100%;
@@ -34,29 +31,23 @@
         text-align: right;
       }
       .disclaimer {
-        font-size: 12px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+      }
+      .comments-text {
+        font-size: 14px;
+      }
+      h4 {
+        margin-bottom: 10px;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div class="col-sm">Report data as of: {{ downloaddate }}</div>
-        <div class="col-sm text-right" style="text-align: right">Report run: {{ todaysDate }}</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">{{ currentTime }} PST</div>
-      </div>
-      <div class="row">
-        <div class="col-sm text-right" style="text-align: right">For: {{ account }}</div>
-      </div>
       <h2 style="text-align: center">Site Registry - Site Details Report</h2>
       <h3 style="text-align: center; margin: 0.5rem">BC Registries and Online Services</h3>
       <br />
-      <hr size="1" color="black">
-      <br />
       <h4>SITE LOCATION</h4>
+      <hr size="1" color="black" />
       <table>
         <tr>
           <th>Site ID:</th>
@@ -101,16 +92,8 @@
           <td>{{ postalCode }}</td>
         </tr>
       </table>
-      <hr size="1" color="black">
+      <hr size="1" color="black" />
       <table>
-        <tr>
-          <th>Registered:</th>
-          <td>{{ registeredDate }}</td>
-          <th>Updated:</th>
-          <td>{{ modifiedDate }}</td>
-          <th>Detail Removed:</th>
-          <td>{{ detailRemovedDate }}</td>
-        </tr>
         <tr>
           <th>Notations:</th>
           <td>{{ notations }}</td>
@@ -128,7 +111,7 @@
           <td>{{ parcelDesc }}</td>
         </tr>
       </table>
-      <hr size="1" color="black">
+      <hr size="1" color="black" />
       <table>
         <tr>
           <th style="min-width: 22vw">Location Description:</th>

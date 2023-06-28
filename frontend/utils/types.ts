@@ -15,6 +15,7 @@ export type SessionData = {
   name: string;
   contacts: string[];
   savedReports: savedReport[];
+  folio: string;
 };
 
 export type AccountObject = {
@@ -51,10 +52,20 @@ export type SearchResultsJson = {
     searchCriteria3: string;
   };
   searchData: [SearchResultsJsonObject];
+  folio: string;
 };
 
 export type SearchResultsJsonObject = {
   siteId: string;
   city: string;
   updatedDate: string;
+};
+
+export type ReportHeaderInfo = {
+  siteId: string;
+  folio: string;
+  reportType: string;
+  asOfDate: string;
+  reportRunDate: string;
+  clientName: string;
 };

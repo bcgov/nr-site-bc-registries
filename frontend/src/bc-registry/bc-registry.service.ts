@@ -6,12 +6,15 @@ import * as base64 from 'base-64';
 import { URLSearchParams } from 'url';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
+import { ReportHeaderInfo, SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios'); //
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const html_to_pdf = require('html-pdf-node');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
+import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -54,12 +57,213 @@ export class BCRegistryService {
     return false;
   }
 
+  /**
+   * Modifies the pdfBuffer to add headers and footers.
+   *
+   * @param pdfBuffer
+   * @param headerInfo
+   * @returns
+   */
+  async modifyPdf(pdfBuffer: Buffer, headerInfo: ReportHeaderInfo) {
+    const reportRunParts = headerInfo.reportRunDate.split(' ');
+    const reportRunDate = reportRunParts[0];
+    const reportRunTime = reportRunParts[1];
+    // Create a PDFDocument from the generated PDF buffer
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    // Get the number of pages in the PDF document
+    const pageCount = pdfDoc.getPageCount();
+    // Embed the font for the footer text
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize = 10;
+    // Draw the footers
+    for (let i = 0; i < pageCount; i++) {
+      const page = pdfDoc.getPage(i);
+      // Set the font and font size for the footer text
+      page.setFont(font);
+      page.setFontSize(fontSize);
+      // Calculate the position for the left footer
+      const textLeftFooter = `See Disclaimer on last page of report.`;
+      const xPosLeftFooter = 20;
+      const yPosLeftFooter = 20;
+      // Draw the left footer text
+      page.drawText(textLeftFooter, {
+        x: xPosLeftFooter,
+        y: yPosLeftFooter,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      // Calculate the position for the right footer
+      const textRightFooter = `Page ${i + 1} of ${pageCount}`;
+      const textWidthRightFooter = font.widthOfTextAtSize(textRightFooter, fontSize);
+      const xPosRightFooter = page.getWidth() - textWidthRightFooter - 20;
+      const yPosRightFooter = 20;
+      // Draw the right footer text
+      page.drawText(textRightFooter, {
+        x: xPosRightFooter,
+        y: yPosRightFooter,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+    }
+
+    /**~~~~~~~ PAGE 0 HEADER SECTION START ~~~~~~~*/
+    // Draw the header for page 0
+    const firstPage: PDFPage = pdfDoc.getPage(0);
+    firstPage.setFont(font);
+    firstPage.setFontSize(fontSize);
+    const firstPageLineHeight = font.heightAtSize(fontSize);
+    // Left Header
+    const firstPageTextLeftHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
+    const firstPageXPosLeftHeader = 20;
+    const firstPageYPosHeader = firstPage.getHeight() - 20;
+    firstPage.drawText(firstPageTextLeftHeaderLine1, {
+      x: firstPageXPosLeftHeader,
+      y: firstPageYPosHeader,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+    // Left Header line 2
+    const textLeftHeaderLine2 = `Folio: ${headerInfo.folio}`;
+    const yPosLeftHeaderLine2 = firstPageYPosHeader - firstPageLineHeight - 3;
+    firstPage.drawText(textLeftHeaderLine2, {
+      x: firstPageXPosLeftHeader,
+      y: yPosLeftHeaderLine2,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+    // Right Header
+    const firstPageTextRightHeaderLine1 = `Report Run: ${reportRunDate}`;
+    const firstPageTextRightHeaderLine2 = `${reportRunTime} PST`;
+    const firstPageTextRightHeaderLine3 = `For: ${headerInfo.clientName}`;
+    // Right Header Text Widths
+    const firstPageTextWidthRightHeaderLine1 = font.widthOfTextAtSize(firstPageTextRightHeaderLine1, fontSize);
+    const firstPageTextWidthRightHeaderLine2 = font.widthOfTextAtSize(firstPageTextRightHeaderLine2, fontSize);
+    const firstPageTextWidthRightHeaderLine3 = font.widthOfTextAtSize(firstPageTextRightHeaderLine3, fontSize);
+    // Right Header line 1
+    firstPage.drawText(firstPageTextRightHeaderLine1, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine1 - 20,
+      y: firstPageYPosHeader,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+    // Right Header line 2
+    const yPosRightHeaderLine2 = firstPageYPosHeader - firstPageLineHeight - 3;
+    firstPage.drawText(firstPageTextRightHeaderLine2, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine2 - 20,
+      y: yPosRightHeaderLine2,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+    // Right Header line 3
+    const yPosRightHeaderLine3 = firstPageYPosHeader - firstPageLineHeight * 2 - 6;
+    firstPage.drawText(firstPageTextRightHeaderLine3, {
+      x: firstPage.getWidth() - firstPageTextWidthRightHeaderLine3 - 20,
+      y: yPosRightHeaderLine3,
+      size: fontSize,
+      color: rgb(0.5, 0.5, 0.5),
+    });
+    /**~~~~~~~ PAGE 0 HEADER SECTION END ~~~~~~~*/
+
+    // Draw the headers for the remaining pages
+    for (let i = 1; i < pageCount; i++) {
+      const page = pdfDoc.getPage(i);
+      // Set the font and font size for the header text
+      page.setFont(font);
+      page.setFontSize(fontSize);
+      const lineHeight = font.heightAtSize(fontSize);
+
+      // Left Header
+      const textLeftHeaderLine1 = `Site Id: ${headerInfo.siteId}`;
+      const textLeftHeaderLine2 = `Folio: ${headerInfo.folio}`;
+      // Left Header line 1
+      const xPosLeftHeader = 20;
+      const yPosHeader = page.getHeight() - 20;
+      page.drawText(textLeftHeaderLine1, {
+        x: xPosLeftHeader,
+        y: yPosHeader,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      // Left Header line 2
+      const yPosLeftHeaderLine2 = yPosHeader - lineHeight - 3;
+      page.drawText(textLeftHeaderLine2, {
+        x: xPosLeftHeader,
+        y: yPosLeftHeaderLine2,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+
+      // Right Header
+      const textRightHeaderLine1 = `Report Data as of: ${headerInfo.asOfDate}`;
+      const textRightHeaderLine2 = `Report Run: ${reportRunDate}`;
+      const textRightHeaderLine3 = `${reportRunTime} PST`;
+      const textRightHeaderLine4 = `For: ${headerInfo.clientName}`;
+      // Right Header line 1
+      const textWidthRightHeaderLine1 = font.widthOfTextAtSize(textRightHeaderLine1, fontSize);
+      const textWidthRightHeaderLine2 = font.widthOfTextAtSize(textRightHeaderLine2, fontSize);
+      const textWidthRightHeaderLine3 = font.widthOfTextAtSize(textRightHeaderLine3, fontSize);
+      const textWidthRightHeaderLine4 = font.widthOfTextAtSize(textRightHeaderLine4, fontSize);
+      page.drawText(textRightHeaderLine1, {
+        x: page.getWidth() - textWidthRightHeaderLine1 - 20,
+        y: yPosHeader,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      // Right Header line 2
+      const yPosRightHeaderLine2 = yPosHeader - lineHeight - 3;
+      page.drawText(textRightHeaderLine2, {
+        x: page.getWidth() - textWidthRightHeaderLine2 - 20,
+        y: yPosRightHeaderLine2,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      // Right Header line 3
+      const yPosRightHeaderLine3 = yPosHeader - lineHeight * 2 - 6;
+      page.drawText(textRightHeaderLine3, {
+        x: page.getWidth() - textWidthRightHeaderLine3 - 20,
+        y: yPosRightHeaderLine3,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      // Right Header line 4
+      const yPosRightHeaderLine4 = yPosHeader - lineHeight * 3 - 9;
+      page.drawText(textRightHeaderLine4, {
+        x: page.getWidth() - textWidthRightHeaderLine4 - 20,
+        y: yPosRightHeaderLine4,
+        size: fontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+
+      // Center Header
+      const textCenterHeader = headerInfo.reportType;
+      const centerFontSize = 12;
+      const textWidthCenterHeader = font.widthOfTextAtSize(textCenterHeader, centerFontSize);
+      const xPosCenterHeader = (page.getWidth() - textWidthCenterHeader) / 2; // Centered position
+      const centerFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      page.setFont(centerFont);
+      page.drawText(textCenterHeader, {
+        x: xPosCenterHeader,
+        y: yPosHeader,
+        size: centerFontSize,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+    }
+
+    // Save the modified PDF as a Uint8Array
+    const modifiedPdfBytes = await pdfDoc.save();
+    const newPdfBuffer = Buffer.from(modifiedPdfBytes);
+
+    console.log('PDF modified successfully!');
+    return newPdfBuffer;
+  }
+
   async requestNilPdf(
     searchType: string,
     searchCriteria1: string,
     searchCriteria2: string,
     searchCriteria3: string,
-    name: string
+    name: string,
+    folio: string
   ) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate;
@@ -74,6 +278,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
+    data['folio'] = folio;
 
     switch (searchType) {
       case 'pid': {
@@ -167,7 +372,7 @@ export class BCRegistryService {
       });
   }
 
-  async requestNilSiteIdPdf(siteId: string, name: string) {
+  async requestNilSiteIdPdf(siteId: string, name: string, folio: string) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate2;
     const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
@@ -181,6 +386,7 @@ export class BCRegistryService {
       this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
     );
     data['account'] = name;
+    data['folio'] = folio;
     data['searchType'] = 'Site Identification Number';
     data['siteId'] = 'Site ID: ' + siteId; // siteid
 
@@ -223,7 +429,7 @@ export class BCRegistryService {
   }
 
   // builds the pdf report to be sent back to the frontend
-  async getPdf(reportType: string, siteId: string, name: string): Promise<any> {
+  async getPdf(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
@@ -255,12 +461,25 @@ export class BCRegistryService {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
 
+      const headerInfo: ReportHeaderInfo = {
+        siteId: data.siteId,
+        folio: folio,
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: data.downloaddate,
+        reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
+        clientName: name,
+      };
+
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        // format: 'A4',
+        timeout: 600000,
+        margin: { top: '85px', bottom: '50px', left: '20px', right: '20px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
@@ -270,10 +489,11 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
       console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
-      return returnBuffer;
+      return modifiedReturnBuffer;
       /*
       former CDAWGS method
 
@@ -321,7 +541,7 @@ export class BCRegistryService {
     }
   }
 
-  async getPdfSiteIdDirect(reportType: string, siteId: string, name: string): Promise<any> {
+  async getPdfSiteIdDirect(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const authorizationToken = await this.getCdogsToken();
 
     const requestUrl =
@@ -344,7 +564,7 @@ export class BCRegistryService {
         );
       } catch (err) {
         console.log('caught error');
-        return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name);
+        return this.requestNilSiteIdPdf(parseInt(siteId).toString(), name, folio);
       }
       console.log('Received db data, starting pdf generation');
       const startTime = new Date().getTime();
@@ -355,13 +575,25 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
+      const headerInfo: ReportHeaderInfo = {
+        siteId: data.siteId,
+        folio: folio,
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: data.downloaddate,
+        reportRunDate: data.todaysDate + ' ' + data.currentTime + ' PST',
+        clientName: name,
+      };
 
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, data);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        format: 'A4',
+        timeout: 600000,
+        margin: { top: '85px', bottom: '50px', left: '20px', right: '20px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
@@ -371,10 +603,11 @@ export class BCRegistryService {
         //console.log('pdfBuffer: ' + pdfBuffer);
         returnBuffer = pdfBuffer;
       });
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
       console.log(`Returning pdf buffer, time taken: ${timeTaken} seconds`);
-      return returnBuffer;
+      return modifiedReturnBuffer;
       /*
       former CDAWGS method
 
@@ -422,7 +655,7 @@ export class BCRegistryService {
     }
   }
 
-  async generateEmailHTML(reportType: string, siteId: string, name: string): Promise<any> {
+  async generateEmailHTML(reportType: string, siteId: string, name: string, folio: string): Promise<any> {
     // const cdogsToken = await this.getCdogsToken();
 
     const requestUrl =
@@ -452,12 +685,25 @@ export class BCRegistryService {
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
+      const headerInfo: ReportHeaderInfo = {
+        siteId: siteData.siteId,
+        folio: folio,
+        reportType: reportType === 'synopsis' ? 'Site Synopsis Report' : 'Site Details Report',
+        asOfDate: siteData.downloaddate,
+        reportRunDate: siteData.todaysDate + ' ' + siteData.currentTime + ' PST',
+        clientName: name,
+      };
+
       const buff = Buffer.from(documentTemplate, 'base64');
       const text = buff.toString('utf-8');
 
       const filledDocumentTemplate = Mustache.render(text, siteData);
 
-      const options = { format: 'A4', timeout: 600000 };
+      const options = {
+        format: 'A4',
+        timeout: 600000,
+        margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
+      };
 
       const file = { content: filledDocumentTemplate };
 
@@ -466,7 +712,8 @@ export class BCRegistryService {
       await html_to_pdf.generatePdf(file, options).then((p) => {
         returnBuffer = p;
       });
-      pdfBuffer = returnBuffer.toString('hex');
+      const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
+      pdfBuffer = modifiedReturnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
     }
     const endTime = new Date().getTime();
@@ -584,7 +831,7 @@ export class BCRegistryService {
   }
 
   // sends an email formatted with html that has search results data
-  async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string): Promise<string> {
+  async emailSearchResultsHTML(searchResultsJson: SearchResultsJson, name: string, folio: string): Promise<string> {
     const cdogsToken = await this.getCdogsToken();
     const chesToken = await this.getChesToken();
 
@@ -603,6 +850,7 @@ export class BCRegistryService {
         this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
       );
       data['account'] = name;
+      data['folio'] = folio;
       switch (searchResultsJson.searchInfo.searchType) {
         case 'pid': {
           data['searchType'] = 'Land Title Parcel Identifier (PID)';
@@ -1046,43 +1294,43 @@ export class BCRegistryService {
           // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+            `<p class="comments-text" style="font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
           );
           template =
             entry.plannedActivityComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+            '<p class="comments-text" style="font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
           );
           template =
             entry.siteDisclosureComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         } else {
           // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
           );
           template =
             entry.commentString != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.commentString}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         }
         template = template.concat('<hr size="1" color="black">');
       }
@@ -1112,7 +1360,7 @@ export class BCRegistryService {
       // sort notations chronologically
       data.notationsArray.sort(this.sortByProperty('eventDate'));
 
-      template = template.concat('<h4>NOTATIONS</h4>\n');
+      template = template.concat('<h4>NOTATIONS:</h4>\n');
       for (const notation of data.notationsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1121,19 +1369,17 @@ export class BCRegistryService {
         template = template.concat(`<tr><th>Notation Type:</th><td>${notation.eventType}</td></tr>`);
         template = template.concat(`<tr><th>Notation Class:</th><td>${notation.eventClass}</td></tr>`);
         template = template.concat(`<tr><th>Initiated:</th><td>${notation.eventDate}</td></tr>`);
-        template = template.concat(`<tr><th>Approved:</th><td>${notation.approvedDate}</td></tr>`);
+        template = template.concat(`<tr><th>Completed:</th><td>${notation.approvedDate}</td></tr>`);
         template = template.concat(`<tr><th>Ministry Contact:</th><td>${notation.ministryContact}</td></tr>`);
         template = template.concat(`<tr><th>Note:</th><td>${notation.noteString}</td></tr>`);
         template = template.concat(`<tr><th>Required Actions:</th><td>${notation.requiredAction}</td></tr>`);
         template = template.concat(`</table>`);
         if (notation.participantsArray.length > 0) {
-          template = template.concat('<br>');
           template = template.concat(`<h4 style="text-indent: 4em"><em>Notation Participants</em></h4>`);
           template = template.concat(`<table>`);
           for (const notationParticipant of notation.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${notationParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${notationParticipant.roleString}</td></tr>`);
-            template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
           }
           template = template.concat(`</table>`);
         }
@@ -1158,16 +1404,19 @@ export class BCRegistryService {
       // sort participants chronologically
       data.participantsArray.sort(this.sortByProperty('effectiveDate'));
 
-      template = template.concat('<h4>SITE PARTICIPANTS</h4>\n');
+      template = template.concat('<h4>SITE PARTICIPANTS:</h4>\n');
       for (const participant of data.participantsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
+        template = template.concat('<table style="margin-bottom: 2px">\n');
         template = template.concat(`<tr><th>Participant:</th><td>${participant.nameString}</td></tr>`);
         template = template.concat(`<tr><th>Role(s):</th><td>${participant.participantType}</td></tr>`);
-        template = template.concat(`<tr><th>Start Date:</th><td>${participant.effectiveDate}</td></tr>`);
-        template = template.concat(`<tr><th>End Date:</th><td>${participant.endDate}</td></tr>`);
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
+        template = template.concat(
+          `<tr><th>Start Date:</th><td style="width: 150px">${participant.effectiveDate}</td><th>End Date:</th><td>${participant.endDate}</td></tr>`
+        );
         template = template.concat(`<tr><th>Notes:</th><td>${participant.noteString}</td></tr>`);
         template = template.concat(`</table>`);
         counter++;
@@ -1190,24 +1439,25 @@ export class BCRegistryService {
       // sort documents chronologically
       data.documentsArray.sort(this.sortByProperty('documentDate'));
 
-      template = template.concat('<h4>DOCUMENTS</h4>\n');
+      template = template.concat('<h4>DOCUMENTS:</h4>\n');
       for (const document of data.documentsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
         template = template.concat('<table>\n');
         template = template.concat(`<tr><th>Title:</th><td>${document.titleString}</td></tr>`);
-        template = template.concat(`<tr><th>Authored:</th><td>${document.documentDate}</td></tr>`);
-        template = template.concat(`<tr><th>Submitted:</th><td>${document.submissionDate}</td></tr>`);
+        template = template.concat('</table>\n');
+        template = template.concat('<table>\n');
+        template = template.concat(
+          `<tr><th>Document Date:</th><td style="width: 150px">${document.documentDate}</td><th>Received Date:</th><td>${document.submissionDate}</td></tr>`
+        );
         template = template.concat(`</table>`);
         if (document.participantsArray.length > 0) {
-          template = template.concat('<br>');
           template = template.concat(`<h4 style="text-indent: 4em"><em>Document Participants</em></h4>`);
           template = template.concat(`<table>`);
           for (const documentParticipant of document.participantsArray) {
             template = template.concat(`<tr><th>Name:</th><td>${documentParticipant.nameString}</td></tr>`);
             template = template.concat(`<tr><th>Role:</th><td>${documentParticipant.roleString}</td></tr>`);
-            template = template.concat(`<tr><th>&nbsp;</th><td>&nbsp;</td></tr>`);
           }
           template = template.concat(`</table>`);
         }
@@ -1233,14 +1483,17 @@ export class BCRegistryService {
       // sort associated sites chronologically
       data.associatedSitesArray.sort(this.sortByProperty('effectDate'));
 
-      template = template.concat('<h4>ASSOCIATED SITES</h4>\n');
+      template = template.concat('<h4>ASSOCIATED SITES:</h4>\n');
       for (const associatedSite of data.associatedSitesArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Site ID:</th><td>${associatedSite.siteId}</td></tr>`);
-        template = template.concat(`<tr><th>Effect Date:</th><td>${associatedSite.effectDate}</td></tr>`);
+        template = template.concat('<table style="margin-bottom: 2px">\n');
+        template = template.concat(
+          `<tr><th>Site ID:</th><td style="width: 150px">${associatedSite.siteId}</td><th>Date Noted:</th><td>${associatedSite.effectDate}</td></tr>`
+        );
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
         template = template.concat(`<tr><th>Notes:</th><td>${associatedSite.noteString}</td></tr>`);
         template = template.concat(`</table>`);
 
@@ -1262,7 +1515,7 @@ export class BCRegistryService {
     const suspectLandUsesLength = data.suspectLandUsesArray.length;
     counter = 0;
     if (suspectLandUsesLength > 0) {
-      template = template.concat('<h4>SUSPECT LAND USES</h4>\n');
+      template = template.concat('<h4>SUSPECT LAND USES:</h4>\n');
       for (const suspectLandUse of data.suspectLandUsesArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
@@ -1293,18 +1546,20 @@ export class BCRegistryService {
       // sort parcel descriptions chronologically
       data.parcelDescriptionsArray.sort(this.sortByProperty('dateNoted'));
 
-      template = template.concat('<h4>PARCEL DESCRIPTIONS</h4>\n');
+      template = template.concat('<h4>PARCEL DESCRIPTIONS:</h4>\n');
       for (const parcelDescription of data.parcelDescriptionsArray) {
         if (counter > 0) {
           // template = template.concat('<div style="page-break-inside: avoid">\n');
         }
-        template = template.concat('<table>\n');
-        template = template.concat(`<tr><th>Date Noted:</th><td>${parcelDescription.dateNoted}</td></tr>`);
-        template = template.concat(`<tr><th>Crown Land PIN:</th><td>${parcelDescription.pin}</td></tr>`);
-        template = template.concat(`<tr><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`);
+        template = template.concat('<table style="margin-bottom: 2px">\n');
         template = template.concat(
-          `<tr><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+          `<tr><th>Date Noted:</th><td style="width: 150px">${parcelDescription.dateNoted}</td><th>Parcel ID:</th><td>${parcelDescription.pid}</td></tr>`
         );
+        template = template.concat(
+          `<tr><th>Crown Land PIN:</th><td style="width: 150px">${parcelDescription.pin}</td><th>Crown Lands File Number:</th><td>${parcelDescription.crownLandsFileNumber}</td></tr>`
+        );
+        template = template.concat(`</table>`);
+        template = template.concat('<table style="margin-top: 2px">\n');
         template = template.concat(`<tr><th>Land Description:</th><td>${parcelDescription.legalDescription}</td></tr>`);
         template = template.concat(`</table>`);
 
@@ -1611,43 +1866,43 @@ export class BCRegistryService {
           // site disclosure comments
           template = template.concat('<h4>IV  ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            `<p style="font-size: 18px; font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
+            `<p class="comments-text" style="font-weight: bold">Provide a brief summary of the planned activity and proposed land use at the site.</p>`
           );
           template =
             entry.plannedActivityComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.plannedActivityComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.plannedActivityComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
+            '<p class="comments-text" style="font-weight: bold">Indicate the information used to complete this site disclosure statement including a list of record searches completed.</p>'
           );
           template =
             entry.siteDisclosureComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.siteDisclosureComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.siteDisclosureComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">List any past or present government orders, permits, approvals, certificates or notifications pertaining to the environmental condition of the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         } else {
           // site profile comments
           template = template.concat('<h4>X   ADDITIONAL COMMENTS AND EXPLANATIONS</h4>\n');
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 1: Please list any past or present government orders, permits, approvals, certificates and notifications pertaining to the environmental condition, use or quality of soil, surface water, groundwater or biota at the site.</p>'
           );
           template =
             entry.govDocumentsComment != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.govDocumentsComment}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.govDocumentsComment}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
           template = template.concat(
-            '<p style="font-size: 18px; font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
+            '<p class="comments-text" style="font-weight: bold">Note 2: If completed by a consultant, receiver or trustee, please indicate the type and degree of access to information used to complete this site profile.</p>'
           );
           template =
             entry.commentString != ''
-              ? template.concat(`<p style="font-size: 18px">${entry.commentString}</p>`)
-              : template.concat(`<p style="font-size: 18px"></p>`);
+              ? template.concat(`<p class="comments-text">${entry.commentString}</p>`)
+              : template.concat(`<p class="comments-text"></p>`);
         }
         template = template.concat('<hr size="1" color="black">');
       }

@@ -7,17 +7,12 @@
   border-style: solid;
   background-color: lightgray;
 }
-.top-text,
+
 .disclaimer-text,
 .bottom-text {
   text-align: center;
 }
-.top-text {
-  color: red;
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
-}
+
 .my-table {
   margin-top: 2em;
   margin-right: 2em;
@@ -121,4 +116,29 @@ input[type='number'] {
 .account-error {
   color: red;
   text-align: center;
+}
+
+.folio-label {
+  color: blue;
+  text-align: center;
+  font-weight: bold;
+}
+
+.folio-input {
+  margin-left: 10px;
+  width: 40%;
+}
+
+.round {
+  border-radius: 50%;
+}
+
+.previous {
+  background-color: #f1f1f1;
+  color: #38598a;
+}
+
+.previous-disabled {
+  background-color: #f1f1f191;
+  color: #38598a8e;
 }

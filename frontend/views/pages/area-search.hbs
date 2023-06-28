@@ -1,5 +1,35 @@
 {{#> template}}
   {{#*inline "content"}}
+    <nav style="background-color: #38598a; padding: 10px 0;">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-3 pl-4 pr-3">
+            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                class="bi bi-arrow-left"
+                viewBox="0 -2 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="col-xs-3 pl-3 pt-1" style="border-left: 1px solid #8AA2C6;">
+            <a href="/" style="text-decoration: underline; color: white">BC Registries Dashboard</a>
+          </div>
+          <div class="col-xs-1 pl-3 pt-1" style="font-size:medium; color: white; font-weight: bold">></div>
+          <div class="col-xs-4 pl-2 pt-1" style="font-size:medium; color: white">
+            Area Search
+          </div>
+        </div>
+      </div>
+    </nav>
     <main role="main">
     <div class="container">
         <div class="row">
@@ -8,120 +38,127 @@
         <div class="row">
             <div id="line"><hr /></div>
         </div>
-        <div class="pill-box mt-3 mb-3">
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item">
-                <a
-                    class="nav-link active"
-                    id="pills-postalcode-tab"
-                    data-toggle="pill"
-                    href="#pills-postalcode"
-                    role="tab"
-                    aria-controls="pills-postalcode"
-                    aria-selected="true"
-                >Postal Code</a>
-                </li>
-                <li class="nav-item">
-                <a
-                    class="nav-link"
-                    id="pills-coordinates-tab"
-                    data-toggle="pill"
-                    href="#pills-coordinates"
-                    role="tab"
-                    aria-controls="pills-coordinates"
-                    aria-selected="false"
-                >Coordinates</a>
-                </li>
-            </ul>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="pill-box mt-3 mb-3">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="pills-postalcode-tab"
+                            data-toggle="pill"
+                            href="#pills-postalcode"
+                            role="tab"
+                            aria-controls="pills-postalcode"
+                            aria-selected="true"
+                        >Postal Code</a>
+                        </li>
+                        <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="pills-coordinates-tab"
+                            data-toggle="pill"
+                            href="#pills-coordinates"
+                            role="tab"
+                            aria-controls="pills-coordinates"
+                            aria-selected="false"
+                        >Coordinates</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" style="height:100px;width:800px" id="pills-tabContent">
+                        <div
+                        class="tab-pane fade show active"
+                        id="pills-postalcode"
+                        role="tabpanel"
+                        aria-labelledby="pills-postalcode-tab"
+                        >
+                        <div class="row mt-2 ml-4">
+                            <div class="col-xs-2 pt-2">
+                                <label style="width:150px;text-align:left;float:left;" for="colFormLabel">Postal Code:</label>
+                            </div>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" id="postalCodeInput" oninput="autoDraw()" value="" maxlength="7" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <p class="pt-2" style="color:red" id="postalCodeError"></p>
+                        </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-coordinates" role="tabpanel" aria-labelledby="pills-coordinates-tab">
+                            <div class="row mt-2 ml-4">
+                                <div class="col-xs-2 m-1">
+                                    <label style="font-size:medium; font-weight:bold; width: 100px; text-align: left">Latitude:</label>
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="degInput">Degrees:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="latDegInput" maxlength="2" pattern="\\d*" oninput="checkLatDeg(this.value)" style="width:45px" />
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="minInput">Minutes:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="latMinInput" maxlength="2" pattern="\\d*" oninput="checkLatMin(this.value)" style="width:45px" />
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="secInput">Seconds:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="latSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLatSec(this.value)" style="width:45px" />
+                                </div>
+                            </div>
+                            <div class="row mt-2 ml-4">
+                                <div class="col-xs-2 m-1">
+                                    <label style="font-size:medium; font-weight:bold; width: 100px; text-align: left">Longitude:</label>
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="degInput">Degrees:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="lonDegInput" maxlength="3" pattern="\\d*" oninput="checkLonDeg(this.value)" style="width:45px" />
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="minInput">Minutes:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="lonMinInput" maxlength="2" pattern="\\d*" oninput="checkLonMin(this.value)" style="width:45px" />
+                                </div>
+                                <div class="col-xs-2 m-1">
+                                    <label for="secInput">Seconds:</label>
+                                </div>
+                                <div class="col-xs-1 m-1">
+                                    <input type="text" id="lonSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLonSec(this.value)" style="width:45px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="tab-content" style="height:100px;width:800px" id="pills-tabContent">
-                <div
-                class="tab-pane fade show active"
-                id="pills-postalcode"
-                role="tabpanel"
-                aria-labelledby="pills-postalcode-tab"
-                >
-                <div class="row mt-2 ml-4">
-                    <div class="col-xs-2 pt-2">
-                        <label style="width:150px;text-align:left;float:left;" for="colFormLabel">Postal Code:</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <input type="text" class="form-control" id="postalCodeInput" oninput="autoDraw()" value="" maxlength="7" />
-                    </div>
-                </div>
-                <div class="row">
-                    <p class="pt-2" style="color:red" id="postalCodeError"></p>
-                </div>
-                </div>
-                <div class="tab-pane fade" id="pills-coordinates" role="tabpanel" aria-labelledby="pills-coordinates-tab">
-                    <div class="row mt-2 ml-4">
-                        <div class="col-xs-2 m-1">
-                            <label style="font-size:medium; font-weight:bold; width: 100px; text-align: left">Latitude:</label>
-                        </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="degInput">Degrees:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="latDegInput" maxlength="2" pattern="\\d*" oninput="checkLatDeg(this.value)" style="width:45px" />
-                        </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="minInput">Minutes:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="latMinInput" maxlength="2" pattern="\\d*" oninput="checkLatMin(this.value)" style="width:45px" />
-                        </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="secInput">Seconds:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="latSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLatSec(this.value)" style="width:45px" />
+                    <div class="row">
+                        <div class="col-sm-6 pt-2">
+                            <input type="radio" id="sizeSmall" name="circle" value="small" onchange="autoDraw()" checked />
+                            <label for="sizeSmall">Small (0.5km Radius)- $51</label>
                         </div>
                     </div>
-                    <div class="row mt-2 ml-4">
-                        <div class="col-xs-2 m-1">
-                            <label style="font-size:medium; font-weight:bold; width: 100px; text-align: left">Longitude:</label>
+                    <div class="row">
+                        <div class="col-sm-6 pb-2">
+                            <input type="radio" id="sizeLarge" name="circle" value="large" onchange="autoDraw()" />
+                            <label for="sizeLarge">Large (5.0km Radius)- $101</label>
                         </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="degInput">Degrees:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="lonDegInput" maxlength="3" pattern="\\d*" oninput="checkLonDeg(this.value)" style="width:45px" />
-                        </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="minInput">Minutes:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="lonMinInput" maxlength="2" pattern="\\d*" oninput="checkLonMin(this.value)" style="width:45px" />
-                        </div>
-                        <div class="col-xs-2 m-1">
-                            <label for="secInput">Seconds:</label>
-                        </div>
-                        <div class="col-xs-1 m-1">
-                            <input type="text" id="lonSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLonSec(this.value)" style="width:45px" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm">
+                            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+                            <button onclick="searchArea()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-sm-4 pt-2">
-                    <input type="radio" id="sizeSmall" name="circle" value="small" onchange="autoDraw()" checked />
-                    <label for="sizeSmall">Small (0.5km Radius)- $51</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 pb-2">
-                    <input type="radio" id="sizeLarge" name="circle" value="large" onchange="autoDraw()" />
-                    <label for="sizeLarge">Large (5.0km Radius)- $101</label>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-1"></div>
-                <div class="col-sm">
-                    <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-                    <button onclick="searchArea()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
-                </div>
+            <div class="col-sm-1 pt-2" style="margin-top: 72px"><label style="width:150px;text-align:left;float:left;" for="folioInput" class="folio-label">Folio:</label></div>
+            <div class="col-sm-4" style="margin-top: 72px">
+                <input id="folioInput" name="folioInput" class="form-control" style="width: 11em" maxlength="15" />
             </div>
         </div>
         <div class="row">
@@ -130,6 +167,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="breadcrumbSearch" value="Area Search" />
     </main>
     <script>
         function checkLatDeg(value) {
@@ -206,8 +244,8 @@
         }
 
         function autoDraw() {
-            var postalCodeTab = document.getElementById('pills-postalcode');
-            var coordinatesTab = document.getElementById('pills-coordinates');
+            const postalCodeTab = document.getElementById('pills-postalcode-tab');
+            const coordinatesTab = document.getElementById('pills-coordinates-tab');
             if (postalCodeTab.classList.contains('active')) {
                 var postalCodeInput = document.getElementById('postalCodeInput').value;
                 if (postalCodeInput.length == 7) {

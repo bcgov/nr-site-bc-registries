@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // utility functions
 function back() {
-  window.history.go(-1);
+  const urlPath = window.location.pathname;
+  if (urlPath === '/view-search-results') {
+    window.location.href = `/${localStorage.getItem('prevPage')}`;
+  } else {
+    window.location.href = '/';
+  }
 }
 
 async function searchPid() {
@@ -9,6 +14,8 @@ async function searchPid() {
   localStorage.setItem('searchType', 'pid');
   localStorage.setItem('searchCriteria', parcelId);
   localStorage.setItem('searchCriteria2', '');
+  localStorage.setItem('lastSearchType', 'pid');
+  localStorage.setItem('lastSearchCriteria', parcelId);
   if (parcelId !== '') {
     displayViewResultsSpinner();
     const url = `/site-registry/searchPid/${parcelId}`;
@@ -23,6 +30,8 @@ async function searchCLP() {
   localStorage.setItem('searchType', 'clp');
   localStorage.setItem('searchCriteria', crownLandsPin);
   localStorage.setItem('searchCriteria2', '');
+  localStorage.setItem('lastSearchType', 'clp');
+  localStorage.setItem('lastSearchCriteria', crownLandsPin);
   if (crownLandsPin !== '') {
     displayViewResultsSpinner();
     const url = `/site-registry/searchCLP/${crownLandsPin}`;
@@ -37,6 +46,8 @@ async function searchCLF() {
   localStorage.setItem('searchType', 'clf');
   localStorage.setItem('searchCriteria', crownLandsFile);
   localStorage.setItem('searchCriteria2', '');
+  localStorage.setItem('lastSearchType', 'clf');
+  localStorage.setItem('lastSearchCriteria', crownLandsFile);
   if (crownLandsFile !== '') {
     displayViewResultsSpinner();
     const url = `/site-registry/searchCLF/${encodeURIComponent(crownLandsFile)}`;
@@ -51,6 +62,8 @@ async function searchSiteId() {
   localStorage.setItem('searchType', 'sid');
   localStorage.setItem('searchCriteria', siteId);
   localStorage.setItem('searchCriteria2', '');
+  localStorage.setItem('lastSearchType', 'sid');
+  localStorage.setItem('lastSearchCriteria', siteId);
   if (siteId !== '') {
     displaySiteIDSearchSpinner();
     const url = `/site-registry/searchSiteId/${siteId}`;
@@ -66,6 +79,9 @@ async function searchAddress() {
   localStorage.setItem('searchType', 'adr');
   localStorage.setItem('searchCriteria', address);
   localStorage.setItem('searchCriteria2', city);
+  localStorage.setItem('lastSearchType', 'adr');
+  localStorage.setItem('lastSearchCriteria', address);
+  localStorage.setItem('lastSearchCriteria2', city);
   if (city.length >= 2 && city.replace(/\*/g, '').length >= 2) {
     displayViewResultsSpinner();
     const url = `/site-registry/searchAddr`;
@@ -91,6 +107,9 @@ async function searchArea() {
       if (checkPostalCode(document.getElementById('postalCodeInput').value)) {
         localStorage.setItem('searchType', 'postal');
         localStorage.setItem('postalCode', document.getElementById('postalCodeInput').value);
+        localStorage.setItem('lastSearchType', 'postal');
+        localStorage.setItem('lastSearchCriteria', document.getElementById('postalCodeInput').value);
+        localStorage.setItem('lastSearchCriteria2', size);
       } else {
         hideViewResultsSpinner();
         document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
@@ -101,6 +120,19 @@ async function searchArea() {
       localStorage.setItem('searchType', 'coords');
       localStorage.setItem('latDms', dms.latDeg + 'deg ' + dms.latMin + 'min ' + dms.latSec + 'sec');
       localStorage.setItem('lonDms', dms.lonDeg + 'deg ' + dms.lonMin + 'min ' + dms.lonSec + 'sec');
+      localStorage.setItem('lastSearchType', 'coords');
+      localStorage.setItem(
+        'lastSearchCriteria',
+        JSON.stringify({
+          latDeg: dms.latDeg,
+          latMin: dms.latMin,
+          latSec: dms.latSec,
+          lonDeg: dms.lonDeg,
+          lonMin: dms.lonMin,
+          lonSec: dms.lonSec,
+        })
+      );
+      localStorage.setItem('lastSearchCriteria2', size);
     }
     const lat = latLon.lat.toFixed(5);
     const lon = Math.abs(latLon.lon).toFixed(5);
@@ -122,6 +154,8 @@ async function getSearchResults(url) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        setBreadcrumbSearch();
+        setPreviousPage();
         hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
@@ -143,6 +177,8 @@ async function getSearchResultsSiteId(url) {
     .then((res) => res.json())
     .then((resJson) => {
       if (!resJson.error) {
+        setBreadcrumbSearch();
+        setPreviousPage();
         localStorage.setItem('searchResults', JSON.stringify(resJson));
         window.location.href = '/view-search-results';
       } else {
@@ -169,6 +205,8 @@ async function postSearchResults(url, data) {
     .then((resJson) => {
       if (!resJson.error) {
         localStorage.setItem('searchResults', JSON.stringify(resJson));
+        setBreadcrumbSearch();
+        setPreviousPage();
         hideViewResultsSpinner();
         window.location.href = '/view-search-results';
       } else {
@@ -732,3 +770,144 @@ function hideSetAccountSpinner() {
   buttonText.innerText = 'Set Account';
   $(':button').prop('disabled', false);
 }
+
+function goToIndex() {
+  window.location.href = '/';
+}
+
+function goToPrevPage() {
+  var prevPage = localStorage.getItem('prevPage');
+  if (prevPage) {
+    window.location.href = prevPage;
+  } else {
+    window.location.href = '/';
+  }
+}
+
+function setPreviousPage() {
+  var url = window.location.href;
+  var prevPage = url.substring(url.lastIndexOf('/') + 1);
+  localStorage.setItem('prevPage', prevPage);
+}
+
+function setBreadcrumbSearch() {
+  var breadcrumbSearch = document.getElementById('breadcrumbSearch').value;
+  localStorage.setItem('breadcrumbSearch', breadcrumbSearch);
+}
+
+function setFolio(folioInput) {
+  var debounceTimer;
+
+  return function () {
+    clearTimeout(debounceTimer);
+
+    const folioValue = folioInput.value;
+    localStorage.setItem('folio', folioValue);
+
+    // Debounce the fetch request with a delay of 0.5 seconds
+    debounceTimer = setTimeout(function () {
+      fetch(`bc-registry/set-folio`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ folio: folioValue }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data.message);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, 500);
+  };
+}
+
+var folioInput = document.getElementById('folioInput');
+folioInput.addEventListener('input', setFolio(folioInput));
+
+window.onload = function () {
+  const folioValue = localStorage.getItem('folio');
+  const pathName = window.location.pathname;
+  const lastSearch = localStorage.getItem('lastSearchType');
+
+  $('#folioInput').val(folioValue);
+  // The session gets reset on the index page, when that happens set the folio in the new session
+  if (pathName === '/') {
+    fetch(`bc-registry/set-folio`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ folio: folioValue }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  switch (pathName) {
+    case '/parcel-id':
+      if (lastSearch === 'pid') {
+        $('#parcelId').val(localStorage.getItem('lastSearchCriteria'));
+      }
+      break;
+    case '/crown-lands-pin':
+      if (lastSearch === 'clp') {
+        $('#crownLandsPin').val(localStorage.getItem('lastSearchCriteria'));
+      }
+      break;
+    case '/crown-lands-file':
+      if (lastSearch === 'clf') {
+        $('#crownLandsFile').val(localStorage.getItem('lastSearchCriteria'));
+      }
+      break;
+    case '/site-id-search':
+      if (lastSearch === 'sid') {
+        $('#siteId').val(localStorage.getItem('lastSearchCriteria'));
+      }
+      break;
+    case '/address-search':
+      if (lastSearch === 'adr') {
+        $('#address').val(localStorage.getItem('lastSearchCriteria'));
+        $('#city').val(localStorage.getItem('lastSearchCriteria2'));
+      }
+      break;
+    case '/area-search':
+      if (lastSearch === 'postal') {
+        $('#postalCodeInput').val(localStorage.getItem('lastSearchCriteria'));
+        const size = localStorage.getItem('lastSearchCriteria2');
+        if (size === 'Large') {
+          document.getElementById('sizeLarge').checked = true;
+        }
+        autoDraw();
+      } else if (lastSearch === 'coords') {
+        if (localStorage.getItem('lastSearchCriteria') != '') {
+          const dms = JSON.parse(localStorage.getItem('lastSearchCriteria'));
+          console.log(dms);
+          const size = localStorage.getItem('lastSearchCriteria2');
+          if (size === 'Large') {
+            document.getElementById('sizeLarge').checked = true;
+          }
+          $('#latDegInput').val(dms.latDeg);
+          $('#latMinInput').val(dms.latMin);
+          $('#latSecInput').val(dms.latSec);
+          $('#lonDegInput').val(dms.lonDeg);
+          $('#lonMinInput').val(dms.lonMin);
+          $('#lonSecInput').val(dms.lonSec);
+          const tab = document.getElementById('pills-coordinates-tab');
+          const tabInstance = new bootstrap.Tab(tab);
+          tabInstance.show();
+          autoDraw();
+        }
+      }
+      break;
+    default:
+      break;
+  }
+};
