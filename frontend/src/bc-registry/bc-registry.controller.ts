@@ -17,7 +17,7 @@ import { AuthenticationFilter } from 'src/authentication/authentication.filter';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 import { PayService } from 'src/pay/pay.service';
 import { SearchResultsJson, SessionData } from 'utils/types';
-import { prependZeroesToSiteId } from 'utils/util';
+import { logCurrentTimePST, prependZeroesToSiteId } from 'utils/util';
 import { BCRegistryService } from './bc-registry.service';
 
 @Controller('bc-registry')
@@ -35,6 +35,7 @@ export class BCRegistryController {
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<any> {
+    logCurrentTimePST('download-pdf: Generating PDF');
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let fileBuffer: any;
@@ -82,6 +83,7 @@ export class BCRegistryController {
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<StreamableFile | null> {
+    logCurrentTimePST('download-pdf2: Generating PDF from Site ID page');
     siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
@@ -134,6 +136,7 @@ export class BCRegistryController {
     @Session() session: { data?: SessionData },
     @Res() response: Response
   ): Promise<{ message: string }> {
+    logCurrentTimePST('email-pdf: Sending an email with HTML report');
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let reportHtml: string;
@@ -189,6 +192,7 @@ export class BCRegistryController {
     @Body() searchResultsJson: SearchResultsJson,
     @Session() session: { data?: SessionData }
   ): Promise<{ message: string }> {
+    logCurrentTimePST('email-search-results: Sending an email with search results as HTML');
     return {
       message: await this.bcRegistryService.emailSearchResultsHTML(
         searchResultsJson,
@@ -208,6 +212,7 @@ export class BCRegistryController {
     @Param('searchCriteria3') searchCriteria3: string,
     @Session() session: { data?: SessionData }
   ): Promise<StreamableFile> {
+    logCurrentTimePST('nil-pdf: Generating NIL PDF');
     return new StreamableFile(
       await this.bcRegistryService.requestNilPdf(
         searchType,
