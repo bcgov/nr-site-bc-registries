@@ -4,7 +4,7 @@ import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from
 export class ParcelSearchPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     const siteId = parseInt(value);
-    if (siteId == NaN) {
+    if (Number.isNaN(siteId)) {
       throw new BadRequestException('SiteId is not a number');
     }
 

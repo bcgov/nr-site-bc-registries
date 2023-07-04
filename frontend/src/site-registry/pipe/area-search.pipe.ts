@@ -7,9 +7,9 @@ export class AreaSearchPipe implements PipeTransform {
     let lng = value.lng;
     let size = value.size;
 
-    if (parseFloat(lat) == NaN) {
+    if (Number.isNaN(parseFloat(lat))) {
       throw new BadRequestException('Latitude is not a number');
-    } else if (parseFloat(lng) == NaN) {
+    } else if (Number.isNaN(parseFloat(lng))) {
       throw new BadRequestException('Longitude is not a number');
     } else if (size != 'Small' && size != 'Large') {
       throw new BadRequestException('Incorrect size value');

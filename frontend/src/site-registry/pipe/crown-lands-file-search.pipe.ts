@@ -6,12 +6,12 @@ export class CrownLandsFileSearchPipe implements PipeTransform {
     let clfNum: number;
     if (value.startsWith('N/A')) {
       clfNum = parseInt(value.slice(2));
-      if (clfNum == NaN) {
+      if (Number.isNaN(clfNum)) {
         throw new BadRequestException('Invalid Crown Lands File Number');
       }
     } else {
       clfNum = parseInt(value);
-      if (clfNum == NaN) {
+      if (Number.isNaN(clfNum)) {
         throw new BadRequestException('Invalid Crown Lands File Number');
       }
     }

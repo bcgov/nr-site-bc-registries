@@ -9,12 +9,11 @@ import * as path from 'path';
 import { ReportHeaderInfo, SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios'); //
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const html_to_pdf = require('html-pdf-node');
+const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
 import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
+const puppeteer = require('puppeteer');
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -55,6 +54,24 @@ export class BCRegistryService {
       }
     }
     return false;
+  }
+
+  /**
+   * Generate the PDF using Puppeteer
+   *
+   * @param html
+   * @param options
+   * @returns
+   */
+  async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
+    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const pdfBuffer = await page.pdf(options);
+
+    await browser.close();
+    return pdfBuffer;
   }
 
   /**
@@ -476,19 +493,11 @@ export class BCRegistryService {
       const filledDocumentTemplate = Mustache.render(text, data);
 
       const options = {
-        // format: 'A4',
-        timeout: 600000,
+        format: 'A4',
         margin: { top: '85px', bottom: '50px', left: '20px', right: '20px' },
       };
 
-      const file = { content: filledDocumentTemplate };
-
-      //might be a more elegant way to do this
-      let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-        //console.log('pdfBuffer: ' + pdfBuffer);
-        returnBuffer = pdfBuffer;
-      });
+      const returnBuffer: Buffer = await this.generatePdfFromHtml(filledDocumentTemplate, options);
       const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
@@ -591,18 +600,10 @@ export class BCRegistryService {
 
       const options = {
         format: 'A4',
-        timeout: 600000,
         margin: { top: '85px', bottom: '50px', left: '20px', right: '20px' },
       };
 
-      const file = { content: filledDocumentTemplate };
-
-      //might be a more elegant way to do this
-      let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-        //console.log('pdfBuffer: ' + pdfBuffer);
-        returnBuffer = pdfBuffer;
-      });
+      const returnBuffer: Buffer = await this.generatePdfFromHtml(filledDocumentTemplate, options);
       const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       const endTime = new Date().getTime();
       const timeTaken = (endTime - startTime) / 1000;
@@ -701,17 +702,10 @@ export class BCRegistryService {
 
       const options = {
         format: 'A4',
-        timeout: 600000,
         margin: { top: '85px', bottom: '50px', left: '50px', right: '50px' },
       };
 
-      const file = { content: filledDocumentTemplate };
-
-      //might be a more elegant way to do this
-      let returnBuffer: any;
-      await html_to_pdf.generatePdf(file, options).then((p) => {
-        returnBuffer = p;
-      });
+      const returnBuffer: Buffer = await this.generatePdfFromHtml(filledDocumentTemplate, options);
       const modifiedReturnBuffer = await this.modifyPdf(returnBuffer, headerInfo);
       pdfBuffer = modifiedReturnBuffer.toString('hex');
       // htmlFile = await this.getHtml(siteData, documentTemplate, cdogsToken.toString());
