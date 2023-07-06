@@ -14,6 +14,7 @@ const axios = require('axios');
 const Mustache = require('mustache');
 import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
 const puppeteer = require('puppeteer');
+//
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
