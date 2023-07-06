@@ -3,7 +3,7 @@
 FROM ubuntu:latest as builder
 # RUN dnf module install -y nodejs:16
 RUN apt-get update
-ENV NODE_VERSION=18.0.0
+ENV NODE_VERSION=16.14.0
 RUN apt install -y curl
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
