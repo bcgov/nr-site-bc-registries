@@ -32,7 +32,12 @@ export class SiteRegistryController {
     @Param('pid', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pid: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchPid(pid, session.data.access_token, session.data.activeAccount.id);
+    return this.siteRegistryService.searchPid(
+      pid,
+      session.data.access_token,
+      session.data.activeAccount.id,
+      session.data.folio
+    );
   }
 
   @Get('searchCLP/:pin')
@@ -40,7 +45,12 @@ export class SiteRegistryController {
     @Param('pin', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) pin: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchCrownPin(pin, session.data.access_token, session.data.activeAccount.id);
+    return this.siteRegistryService.searchCrownPin(
+      pin,
+      session.data.access_token,
+      session.data.activeAccount.id,
+      session.data.folio
+    );
   }
 
   @Get('searchCLF/:crownLandsFileNumber')
@@ -51,7 +61,8 @@ export class SiteRegistryController {
     return this.siteRegistryService.searchCrownFile(
       crownLandsFileNumber,
       session.data.access_token,
-      session.data.activeAccount.id
+      session.data.activeAccount.id,
+      session.data.folio
     );
   }
 
@@ -60,7 +71,12 @@ export class SiteRegistryController {
     @Param('siteId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) siteId: string,
     @Session() session: { data?: SessionData }
   ): Promise<[SearchResultsObject] | { error: string }> {
-    return this.siteRegistryService.searchSiteId(siteId, session.data.access_token, session.data.activeAccount.id);
+    return this.siteRegistryService.searchSiteId(
+      siteId,
+      session.data.access_token,
+      session.data.activeAccount.id,
+      session.data.folio
+    );
   }
 
   @Post('searchAddr')
@@ -72,7 +88,8 @@ export class SiteRegistryController {
       searchObject.address,
       searchObject.city,
       session.data.access_token,
-      session.data.activeAccount.id
+      session.data.activeAccount.id,
+      session.data.folio
     );
   }
 
@@ -86,7 +103,8 @@ export class SiteRegistryController {
       searchObject.lng,
       searchObject.size,
       session.data.access_token,
-      session.data.activeAccount.id
+      session.data.activeAccount.id,
+      session.data.folio
     );
   }
 }

@@ -53,12 +53,14 @@ export class BCRegistryController {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else if (reportType == 'detailed') {
         paymentStatus = await this.payService.createDetailedInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else {
         return null; // report type error, payment api does not get called
@@ -107,12 +109,14 @@ export class BCRegistryController {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else if (reportType == 'detailed') {
         paymentStatus = await this.payService.createDetailedInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else {
         return null; // report type error, payment api does not get called
@@ -162,12 +166,14 @@ export class BCRegistryController {
       if (reportType == 'synopsis') {
         paymentStatus = await this.payService.createSynopsisInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else if (reportType == 'detailed') {
         paymentStatus = await this.payService.createDetailedInvoice(
           session.data.access_token,
-          session.data.activeAccount.id
+          session.data.activeAccount.id,
+          session.data.folio
         );
       } else {
         response.status(200).send({ message: 'Report type error' });

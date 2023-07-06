@@ -26,43 +26,43 @@ export class PayService {
     ESRA_SYN_RPT = 'SYN_RPT';
   }
 
-  async createParcelSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_PARCEL_SRCH);
+  async createParcelSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_PARCEL_SRCH, folioNumber);
   }
 
-  async createPINSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_PIN_SRCH);
+  async createPINSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_PIN_SRCH, folioNumber);
   }
 
-  async createFileSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_FILE_SRCH);
+  async createFileSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_FILE_SRCH, folioNumber);
   }
 
-  async createSiteSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_SITE_SRCH);
+  async createSiteSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_SITE_SRCH, folioNumber);
   }
 
-  async createSmallAreaSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_AREA_SRCH_SM);
+  async createSmallAreaSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_AREA_SRCH_SM, folioNumber);
   }
 
-  async createLargeAreaSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_AREA_SRCH_LG);
+  async createLargeAreaSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_AREA_SRCH_LG, folioNumber);
   }
 
-  async createAddressSearchInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_ADDRESS_SRCH);
+  async createAddressSearchInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_ADDRESS_SRCH, folioNumber);
   }
 
-  async createSynopsisInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_SYN_RPT);
+  async createSynopsisInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_SYN_RPT, folioNumber);
   }
 
-  async createDetailedInvoice(token: string, account_id: number) {
-    return this.createInvoice(token, account_id, ESRA_DTL_RPT);
+  async createDetailedInvoice(token: string, account_id: number, folioNumber: string) {
+    return this.createInvoice(token, account_id, ESRA_DTL_RPT, folioNumber);
   }
 
-  async createInvoice(token: string, account_id: number, filingTypeCode: string): Promise<string> {
+  async createInvoice(token: string, account_id: number, filingTypeCode: string, folioNumber: string): Promise<string> {
     // send the request to pay api to create the invoice
     const data = JSON.stringify({
       filingInfo: {
@@ -73,6 +73,7 @@ export class PayService {
             filingTypeCode: filingTypeCode,
           },
         ],
+        folioNumber: folioNumber,
       },
       businessInfo: {
         corpType: 'ESRA',

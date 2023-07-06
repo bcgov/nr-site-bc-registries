@@ -16,8 +16,8 @@ export class SiteRegistryService {
     port = process.env.BACKEND_URL ? 3000 : 3001;
   }
 
-  async searchPid(pid: string, token: string, account_id: number): Promise<any> {
-    const paymentStatus = await this.payService.createParcelSearchInvoice(token, account_id);
+  async searchPid(pid: string, token: string, account_id: number, folioNumber: string): Promise<any> {
+    const paymentStatus = await this.payService.createParcelSearchInvoice(token, account_id, folioNumber);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchPid/${pid}`;
       const requestConfig: AxiosRequestConfig = {
@@ -30,12 +30,12 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 
-  async searchCrownPin(pin: string, token: string, account_id: number): Promise<any> {
-    const paymentStatus = await this.payService.createPINSearchInvoice(token, account_id);
+  async searchCrownPin(pin: string, token: string, account_id: number, folioNumber: string): Promise<any> {
+    const paymentStatus = await this.payService.createPINSearchInvoice(token, account_id, folioNumber);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchCrownPin/${pin}`;
       const requestConfig: AxiosRequestConfig = {
@@ -49,12 +49,17 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 
-  async searchCrownFile(crownLandsFileNumber: string, token: string, account_id: number): Promise<any> {
-    const paymentStatus = await this.payService.createFileSearchInvoice(token, account_id);
+  async searchCrownFile(
+    crownLandsFileNumber: string,
+    token: string,
+    account_id: number,
+    folioNumber: string
+  ): Promise<any> {
+    const paymentStatus = await this.payService.createFileSearchInvoice(token, account_id, folioNumber);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
       const requestConfig: AxiosRequestConfig = {
@@ -68,12 +73,12 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 
-  async searchSiteId(siteId: string, token: string, account_id: number): Promise<any> {
-    const paymentStatus = await this.payService.createSiteSearchInvoice(token, account_id);
+  async searchSiteId(siteId: string, token: string, account_id: number, folioNumber: string): Promise<any> {
+    const paymentStatus = await this.payService.createSiteSearchInvoice(token, account_id, folioNumber);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchSiteId/${siteId}`;
       const requestConfig: AxiosRequestConfig = {
@@ -87,12 +92,18 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 
-  async searchAddress(address: string, city: string, token: string, account_id: number): Promise<any> {
-    const paymentStatus = await this.payService.createAddressSearchInvoice(token, account_id);
+  async searchAddress(
+    address: string,
+    city: string,
+    token: string,
+    account_id: number,
+    folioNumber: string
+  ): Promise<any> {
+    const paymentStatus = await this.payService.createAddressSearchInvoice(token, account_id, folioNumber);
     if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
       const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
       const data = await lastValueFrom(
@@ -100,16 +111,23 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 
-  async searchArea(lat: string, lng: string, size: string, token: string, account_id: number): Promise<any> {
+  async searchArea(
+    lat: string,
+    lng: string,
+    size: string,
+    token: string,
+    account_id: number,
+    folioNumber: string
+  ): Promise<any> {
     let paymentStatus: string;
     if (size == 'Small') {
-      paymentStatus = await this.payService.createSmallAreaSearchInvoice(token, account_id);
+      paymentStatus = await this.payService.createSmallAreaSearchInvoice(token, account_id, folioNumber);
     } else if (size == 'Large') {
-      paymentStatus = await this.payService.createLargeAreaSearchInvoice(token, account_id);
+      paymentStatus = await this.payService.createLargeAreaSearchInvoice(token, account_id, folioNumber);
     } else {
       return { error: 'Area Size Error' }; // should never reach here
     }
@@ -126,7 +144,7 @@ export class SiteRegistryService {
       );
       return data;
     } else {
-      return { error: 'Status code = ' + paymentStatus + ".  Please ensure that you have a premium account selected." };
+      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
     }
   }
 }
