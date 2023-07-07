@@ -17,7 +17,7 @@ const Mustache = require('mustache');
 const puppeteer = require('puppeteer');
 
 let synopsisTemplate: string;
-let detailedPartialTemplate: string;
+let detailsPartialTemplate: string;
 let nilTemplate: string;
 let nilTemplate2: string;
 let searchResultsTemplate: string;
@@ -28,8 +28,8 @@ let port: number;
 export class BCRegistryService {
   constructor(private httpService: HttpService) {
     synopsisTemplate = fs.readFileSync(path.resolve(__dirname, '../../utils/templates/synopsisTemplate.html'), 'utf8');
-    detailedPartialTemplate = fs.readFileSync(
-      path.resolve(__dirname, '../../utils/templates/detailedPartialTemplate.html'),
+    detailsPartialTemplate = fs.readFileSync(
+      path.resolve(__dirname, '../../utils/templates/detailsPartialTemplate.html'),
       'utf8'
     );
     nilTemplate = base64.encode(
@@ -456,8 +456,8 @@ export class BCRegistryService {
     const requestUrl =
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
-        : reportType == 'detailed'
-        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : reportType == 'details'
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
         : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -476,8 +476,8 @@ export class BCRegistryService {
       const startTime = new Date().getTime();
 
       let documentTemplate: string;
-      if (reportType == 'detailed') {
-        documentTemplate = this.buildDetailedTemplate(data);
+      if (reportType == 'details') {
+        documentTemplate = this.buildDetailsTemplate(data);
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
@@ -560,8 +560,8 @@ export class BCRegistryService {
     const requestUrl =
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
-        : reportType == 'detailed'
-        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : reportType == 'details'
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
         : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -583,8 +583,8 @@ export class BCRegistryService {
       const startTime = new Date().getTime();
       data['account'] = name;
       let documentTemplate: string;
-      if (reportType == 'detailed') {
-        documentTemplate = this.buildDetailedTemplate(data);
+      if (reportType == 'details') {
+        documentTemplate = this.buildDetailsTemplate(data);
       } else {
         documentTemplate = this.buildSynopsisTemplate(data);
       }
@@ -666,8 +666,8 @@ export class BCRegistryService {
     const requestUrl =
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
-        : reportType == 'detailed'
-        ? `${hostname}:${port}/srsites/detailedReport/${siteId}`
+        : reportType == 'details'
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
         : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -685,8 +685,8 @@ export class BCRegistryService {
       siteData['account'] = name;
       console.log('Received db data, starting pdf generation');
       startTime = new Date().getTime();
-      if (reportType == 'detailed') {
-        documentTemplate = this.buildDetailedTemplate(siteData);
+      if (reportType == 'details') {
+        documentTemplate = this.buildDetailsTemplate(siteData);
       } else {
         documentTemplate = this.buildSynopsisTemplate(siteData);
       }
@@ -723,7 +723,7 @@ export class BCRegistryService {
   // sends an email formatted with html that has all the report data
   async sendEmailHTML(reportType: string, email: string, siteId: string, pdfBuffer: string): Promise<string> {
     const chesToken = await this.getChesToken();
-    const rt = reportType == 'detailed' ? 'Detailed' : 'Synopsis';
+    const rt = reportType == 'details' ? 'Details' : 'Synopsis';
     const data = JSON.stringify({
       attachments: [
         { content: pdfBuffer, encoding: 'hex', filename: `${reportType}-report_siteid-${parseInt(siteId)}.pdf` },
@@ -1341,15 +1341,15 @@ export class BCRegistryService {
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Synopsis Report</p>');
     template = template.concat(
-      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
+      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the Province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
 
     return Buffer.from(template).toString('base64');
   }
 
-  // dynamically builds the detailed template with some data, the rest of the data is added in getPdf()
-  buildDetailedTemplate(data): string {
-    let template: string = detailedPartialTemplate;
+  // dynamically builds the details template with some data, the rest of the data is added in getPdf()
+  buildDetailsTemplate(data): string {
+    let template: string = detailsPartialTemplate;
     template = template.concat('<hr size="1" color="black">');
     // notations
     const notationsLength = data.notationsArray.length;
@@ -1913,7 +1913,7 @@ export class BCRegistryService {
     }
     template = template.concat('<p style="text-align: center; font-size: 18px">End of Site Details Report</p>');
     template = template.concat(
-      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
+      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the Province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
 
     return Buffer.from(template).toString('base64');
@@ -1949,7 +1949,7 @@ export class BCRegistryService {
     template = template.concat('<hr />');
     template = template.concat('<div style="text-align: center; font-size: 18px">End of Search Results</div>');
     template = template.concat(
-      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
+      '<p class="disclaimer">Disclaimer: Site Registry information has been filed in accordance with the provisions of the <i>Environmental Management Act</i>. While we believe the information to be reliable, BC Registries and Online Services and the Province of British Columbia make no representation or warranty as to its accuracy or completeness. Persons using this information do so at their own risk.</p></div></body></html>'
     );
 
     return Buffer.from(template).toString('base64');

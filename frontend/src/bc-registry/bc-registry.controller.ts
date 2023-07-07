@@ -58,8 +58,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -114,8 +114,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -171,8 +171,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio

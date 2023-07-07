@@ -277,11 +277,11 @@ async function getPdfSynopsis() {
       $(':button').prop('disabled', false);
     });
 }
-async function getPdfDetailed() {
+async function getPdfDetails() {
   const siteId = document.getElementById('siteId').value;
   $(':button').prop('disabled', true);
   displayDetDownloadSpinner();
-  fetch(`/bc-registry/download-pdf2/detailed/${siteId}`, {
+  fetch(`/bc-registry/download-pdf2/details/${siteId}`, {
     method: 'GET',
   })
     .then((res) => {
@@ -296,7 +296,7 @@ async function getPdfDetailed() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = 'detailed-report_siteid-' + parseInt(siteId) + '.pdf';
+      a.download = 'details-report_siteid-' + parseInt(siteId) + '.pdf';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -316,7 +316,7 @@ async function getPdfDetailed() {
 
 async function getPdf(siteId) {
   const reportType = document.getElementById(`reportType${siteId}`).value;
-  if (reportType == 'synopsis' || reportType == 'detailed') {
+  if (reportType == 'synopsis' || reportType == 'details') {
     $(':button').prop('disabled', true);
     displayDownloadSpinner(siteId);
     fetch(`/bc-registry/download-pdf/${reportType}/${siteId}`, {
@@ -358,7 +358,7 @@ async function getPdf(siteId) {
 async function emailPdf() {
   const siteId = $('#reportSiteId').val();
   const reportType = document.getElementById(`reportType${siteId}`).value;
-  if (reportType == 'synopsis' || reportType == 'detailed') {
+  if (reportType == 'synopsis' || reportType == 'details') {
     $(':button').prop('disabled', true);
     displayReportEmailSpinner();
     let email = $('#selectReportEmailRadio').is(':checked')
@@ -699,19 +699,19 @@ function hideSynDownloadSpinner() {
 }
 
 function displayDetDownloadSpinner() {
-  var buttonText = document.getElementById('detailedBtnText');
-  var spinner = document.getElementById('downloadSpinnerDetailed');
+  var buttonText = document.getElementById('detailsBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetails');
   spinner.classList.remove('d-none');
   buttonText.innerText = '';
 }
 
 function hideDetDownloadSpinner() {
-  var buttonText = document.getElementById('detailedBtnText');
-  var spinner = document.getElementById('downloadSpinnerDetailed');
+  var buttonText = document.getElementById('detailsBtnText');
+  var spinner = document.getElementById('downloadSpinnerDetails');
   if (!spinner.classList.contains('d-none')) {
     spinner.classList.add('d-none');
   }
-  buttonText.innerText = 'Download Detailed Report';
+  buttonText.innerText = 'Download Details Report';
 }
 
 // view results button spinners
@@ -773,6 +773,10 @@ function hideSetAccountSpinner() {
 
 function goToIndex() {
   window.location.href = '/';
+}
+
+function goToDashboard() {
+  window.location.href = 'https://www.bcregistry.gov.bc.ca/';
 }
 
 function goToPrevPage() {
