@@ -36,6 +36,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<any> {
     logCurrentTimePST('download-pdf: Generating PDF');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let fileBuffer: any;
