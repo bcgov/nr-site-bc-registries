@@ -9,6 +9,7 @@ import * as path from 'path';
 import { ReportHeaderInfo, SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
 import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
+import { ESRA_PUPPETEER_ERROR } from 'utils/constants';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -65,17 +66,22 @@ export class BCRegistryService {
    * @returns
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-    });
+    try {
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      });
 
-    const page = await browser.newPage();
-    await page.setContent(html);
-    const pdfBuffer = await page.pdf(options);
+      const page = await browser.newPage();
+      await page.setContent(html);
+      const pdfBuffer = await page.pdf(options);
 
-    await browser.close();
-    return pdfBuffer;
+      await browser.close();
+      return pdfBuffer;
+    } catch (err) {
+      console.log(ESRA_PUPPETEER_ERROR);
+      console.log(err);
+    }
   }
 
   /**

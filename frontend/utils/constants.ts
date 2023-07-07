@@ -9,3 +9,5 @@ export const PAGE_TITLES = {
   VIEW_SEARCH_RESULTS: 'View Search Results',
   ERROR_PAGE: 'Error - Access Denied',
 };
+
+export const ESRA_PUPPETEER_ERROR = 'ESRA_ERROR_500: Puppeteer failed to launch the browser process.';

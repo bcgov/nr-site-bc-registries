@@ -1,9 +1,6 @@
-# RedHat UBI 8 with nodejs 16
-# FROM registry.access.redhat.com/ubi8/ubi as builder
 FROM ubuntu:latest as builder
-# RUN dnf module install -y nodejs:16
 RUN apt-get update
-ENV NODE_VERSION=16.14.0
+ENV NODE_VERSION=18.10.0
 RUN apt install -y curl
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
@@ -14,8 +11,6 @@ RUN chmod -R 777 /root/.nvm/versions/node/v${NODE_VERSION}
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 # Install packages, build and keep only prod packages
-WORKDIR /app
-COPY . ./
 RUN apt-get update -y
 RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 \
@@ -24,12 +19,20 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
-    wget libgbm-dev
+    wget libgbm-dev gnupg gnupg2 gnupg1
+
+ENV CHROME_VERSION="114.0.5735.198-1"
+# Install Chrome version 114
+RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+  && apt install -y /tmp/chrome.deb \
+  && rm /tmp/chrome.deb
+
+WORKDIR /app
+COPY . ./
 
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
 RUN npm ci --only=prod && \
-    npm list rimraf && \
     npm run build
 
 # Set node to production 
