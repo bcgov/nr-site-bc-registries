@@ -8,13 +8,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ReportHeaderInfo, SearchResultsJson, SearchResultsJsonObject } from 'utils/types';
 import { newSiteProfileDate } from 'utils/util';
+import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
-import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
 const puppeteer = require('puppeteer');
-//
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
@@ -65,7 +64,10 @@ export class BCRegistryService {
    * @returns
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    });
 
     const page = await browser.newPage();
     await page.setContent(html);
