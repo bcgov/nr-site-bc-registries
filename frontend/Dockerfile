@@ -1,6 +1,6 @@
 FROM ubuntu:latest as builder
 RUN apt-get update
-ENV NODE_VERSION=18.10.0
+ENV NODE_VERSION=16.14.0
 RUN apt install -y curl
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
