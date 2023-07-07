@@ -13,8 +13,8 @@ const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
 import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const puppeteer = require('puppeteer');
-//
 
 let synopsisTemplate: string;
 let detailedPartialTemplate: string;
