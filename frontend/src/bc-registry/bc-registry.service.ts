@@ -67,8 +67,9 @@ export class BCRegistryService {
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
     try {
       const browser = await puppeteer.launch({
-        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+        executablePath: '/usr/bin/google-chrome-stable',
+        headless: 'new',
       });
 
       const page = await browser.newPage();
