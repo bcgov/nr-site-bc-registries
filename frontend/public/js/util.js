@@ -804,7 +804,7 @@ function setFolio(folioInput) {
     const folioValue = folioInput.value;
     localStorage.setItem('folio', folioValue);
 
-    // Debounce the fetch request with a delay of 0.5 seconds
+    // Debounce the fetch request with a delay of 0.25 seconds
     debounceTimer = setTimeout(function () {
       fetch(`bc-registry/set-folio`, {
         method: 'POST',
@@ -820,7 +820,7 @@ function setFolio(folioInput) {
         .catch((error) => {
           console.error(error);
         });
-    }, 500);
+    }, 250);
   };
 }
 

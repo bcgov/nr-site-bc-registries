@@ -13,6 +13,7 @@ const axios = require('axios');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Mustache = require('mustache');
 import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const puppeteer = require('puppeteer');
 
 let synopsisTemplate: string;
@@ -64,14 +65,26 @@ export class BCRegistryService {
    * @returns
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    try {
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+        executablePath: '/usr/bin/google-chrome-stable',
+        headless: 'new',
+        env: {
+          ELECTRON_DISABLE_SANDBOX: '1',
+        },
+      });
 
-    const page = await browser.newPage();
-    await page.setContent(html);
-    const pdfBuffer = await page.pdf(options);
+      const page = await browser.newPage();
+      await page.setContent(html);
+      const pdfBuffer = await page.pdf({ ...options, timeout: 300000 });
 
-    await browser.close();
-    return pdfBuffer;
+      await browser.close();
+      return pdfBuffer;
+    } catch (err) {
+      console.log('ESRA_ERROR_500: Puppeteer failed to launch the browser process.');
+      console.log(err);
+    }
   }
 
   /**
