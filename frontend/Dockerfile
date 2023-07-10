@@ -26,7 +26,7 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
     wget libgbm-dev gnupg gnupg2 gnupg1
 
-ENV CHROME_VERSION="114.0.5735.133"
+ENV CHROME_VERSION="114.0.5735.133-1"
 # Install Chrome version 114
 RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
   && apt install -y /tmp/chrome.deb \
