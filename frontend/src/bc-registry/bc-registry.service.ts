@@ -70,6 +70,9 @@ export class BCRegistryService {
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
         executablePath: '/usr/bin/google-chrome-stable',
         headless: 'new',
+        env: {
+          ELECTRON_DISABLE_SANDBOX: '1',
+        },
       });
 
       const page = await browser.newPage();
