@@ -77,7 +77,7 @@ export class BCRegistryService {
 
       const page = await browser.newPage();
       await page.setContent(html);
-      const pdfBuffer = await page.pdf(options);
+      const pdfBuffer = await page.pdf({ ...options, timeout: 300000 });
 
       await browser.close();
       return pdfBuffer;
