@@ -34,7 +34,9 @@ RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/
 RUN mkdir -p /root/.local/share/fonts \
   && mkdir -p /root/.config/puppeteer \
   && chmod -R 777 /root/.local \
-  && chmod -R 777 /root/.config
+  && chmod -R 777 /root/.config \
+  && mkdir -p /.local \
+  && chmod -R 777 /.local
 
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
