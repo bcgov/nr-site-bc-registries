@@ -1,5 +1,5 @@
-# RedHat UBI 8 with nodejs 16
 FROM ubuntu:latest as builder
+
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
 RUN apt install -y curl
@@ -29,6 +29,12 @@ ENV CHROME_VERSION="114.0.5735.133-1"
 RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
   && apt install -y /tmp/chrome.deb \
   && rm /tmp/chrome.deb
+
+# Set up directories and adjust permissions
+RUN mkdir -p /root/.local/share/fonts \
+  && mkdir -p /root/.config/puppeteer \
+  && chmod -R 777 /root/.local \
+  && chmod -R 777 /root/.config
 
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
