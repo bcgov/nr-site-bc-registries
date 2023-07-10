@@ -65,14 +65,22 @@ export class BCRegistryService {
    * @returns
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    try {
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+      });
 
-    const page = await browser.newPage();
-    await page.setContent(html);
-    const pdfBuffer = await page.pdf(options);
+      const page = await browser.newPage();
+      await page.setContent(html);
+      const pdfBuffer = await page.pdf(options);
 
-    await browser.close();
-    return pdfBuffer;
+      await browser.close();
+      return pdfBuffer;
+    } catch (err) {
+      console.log('ESRA_ERROR_500: Puppeteer failed to launch the browser process.');
+      console.log(err);
+    }
   }
 
   /**
