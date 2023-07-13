@@ -41,7 +41,7 @@ import { Srdocpar } from '../srdocpar/entities/srdocpar.entity';
 import { Srdate } from '../srdate/entities/srdate.entity';
 import { Srassoc } from '../srassocs/entities/srassoc.entity';
 
-const chunkSize = 1000; //
+const chunkSize = 1000;
 
 @Injectable()
 export class CronService {
