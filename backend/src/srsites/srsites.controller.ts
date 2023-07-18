@@ -74,10 +74,10 @@ export class SrsitesController {
     return this.srsitesService.getSynopsisReportData(siteId);
   }
 
-  @Get('detailedReport/:siteId')
-  getDetailedReportData(@Param('siteId') siteId: string) {
-    logCurrentTimePST('detailedReport');
-    return this.srsitesService.getDetailedReportData(siteId);
+  @Get('detailsReport/:siteId')
+  getDetailsReportData(@Param('siteId') siteId: string) {
+    logCurrentTimePST('detailsReport');
+    return this.srsitesService.getDetailsReportData(siteId);
   }
 
   // id is unused, it's necessary for this route to work though

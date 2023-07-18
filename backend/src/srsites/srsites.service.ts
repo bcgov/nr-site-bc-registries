@@ -388,9 +388,9 @@ export class SrsitesService {
     };
   }
 
-  async getDetailedReportData(siteId: string) {
+  async getDetailsReportData(siteId: string) {
     const startTime = new Date().getTime();
-    console.log('Starting detailed report db section');
+    console.log('Starting details report db section');
     const srevents = await this.sreventsRepository.findAndCount({ siteId: siteId });
     const srsitdoc = await this.srsitdocsRepository.findAndCount({ siteId: siteId });
     const srsitpars = await this.srsitparsRepository.findAndCount({ siteId: siteId });
