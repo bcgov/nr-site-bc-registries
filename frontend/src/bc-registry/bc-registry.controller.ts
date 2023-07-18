@@ -88,6 +88,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<StreamableFile | null> {
     logCurrentTimePST('download-pdf2: Generating PDF from Site ID page');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
@@ -143,6 +145,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<{ message: string }> {
     logCurrentTimePST('email-pdf: Sending an email with HTML report');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let reportHtml: string;
