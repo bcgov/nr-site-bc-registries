@@ -36,6 +36,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<any> {
     logCurrentTimePST('download-pdf: Generating PDF');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let fileBuffer: any;
@@ -56,8 +58,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -112,8 +114,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -169,8 +171,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
