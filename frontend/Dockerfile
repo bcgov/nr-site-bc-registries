@@ -1,4 +1,4 @@
-FROM ubuntu:latest as builder
+FROM ubuntu:20.04 as builder
 
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
