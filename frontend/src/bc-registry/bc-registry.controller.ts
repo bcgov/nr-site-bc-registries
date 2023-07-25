@@ -19,7 +19,7 @@ import { PayService } from 'src/pay/pay.service';
 import { SearchResultsJson, SessionData } from 'utils/types';
 import { logCurrentTimePST, prependZeroesToSiteId } from 'utils/util';
 import { BCRegistryService } from './bc-registry.service';
-
+//
 @Controller('bc-registry')
 @UseFilters(AuthenticationFilter)
 @UseGuards(AuthenticationGuard)
