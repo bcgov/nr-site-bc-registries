@@ -19,7 +19,7 @@ import { PayService } from 'src/pay/pay.service';
 import { SearchResultsJson, SessionData } from 'utils/types';
 import { logCurrentTimePST, prependZeroesToSiteId } from 'utils/util';
 import { BCRegistryService } from './bc-registry.service';
-//
+
 @Controller('bc-registry')
 @UseFilters(AuthenticationFilter)
 @UseGuards(AuthenticationGuard)
@@ -245,7 +245,7 @@ export class BCRegistryController {
 
   @Post('set-folio')
   async setFolio(@Body('folio') folio: string, @Session() session: { data?: SessionData }) {
-    session.data.folio = folio;
+    session.data.folio = folio ? folio : '';
     console.log('folio: ' + session.data.folio);
     return { message: 'Folio successfully updated!' };
   }
