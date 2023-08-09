@@ -25,11 +25,11 @@ parameters:
   - name: DOMAIN
     value: apps.silver.devops.gov.bc.ca
   - name: CPU_REQUEST
-    value: "2"
+    value: '0.5'
   - name: MEMORY_REQUEST
     value: 1Gi
   - name: CPU_LIMIT
-    value: "2"
+    value: '1'
   - name: MEMORY_LIMIT
     value: 2Gi
   - name: REGISTRY
