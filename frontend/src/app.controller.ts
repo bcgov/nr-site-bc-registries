@@ -6,10 +6,14 @@ import { AuthenticationGuard } from './authentication/authentication.guard';
 import { AuthenticationFilter } from './authentication/authentication.filter';
 import { AccountGuard } from './account/account.guard';
 import { AccountFilter } from './account/account.filter';
+//
+let dashboardUrl = '';
 
 @Controller()
 export class AppController {
-  constructor(private appService: AppService) {}
+  constructor(private appService: AppService) {
+    dashboardUrl = process.env.bc_registry_dashboard_url;
+  }
 
   @Get()
   @Render('index')
@@ -33,6 +37,7 @@ export class AppController {
           label: label,
           accounts: session.data.accounts,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.INDEX,
@@ -40,6 +45,7 @@ export class AppController {
           label: label,
           accounts: session.data.accounts,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -63,12 +69,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.PARCEL_ID,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -92,12 +100,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.CROWN_PIN,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -121,12 +131,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.CROWN_FILE,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -150,12 +162,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.SITE_ID_SEARCH,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -179,12 +193,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.ADDRESS_SEARCH,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -208,12 +224,14 @@ export class AppController {
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.AREA_SEARCH,
           username: username,
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -238,6 +256,7 @@ export class AppController {
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
           emails: { emails: session.data.contacts },
+          dashboardUrl: dashboardUrl,
         }
       : {
           title: PAGE_TITLES.VIEW_SEARCH_RESULTS,
@@ -245,6 +264,7 @@ export class AppController {
           label: label,
           downloaddate: 'Site Registry data current to ' + this.appService.getDownloadDate(),
           emails: { emails: session.data.contacts },
+          dashboardUrl: dashboardUrl,
         };
   }
 
@@ -258,6 +278,7 @@ export class AppController {
           label: '',
           downloaddate: '',
           emails: { emails: [] },
+          dashboardUrl: '',
         }
       : {
           title: PAGE_TITLES.ERROR_PAGE,
@@ -265,6 +286,7 @@ export class AppController {
           label: '',
           downloaddate: '',
           emails: { emails: [] },
+          dashboardUrl: '',
         };
   }
 }

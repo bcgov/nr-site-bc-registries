@@ -64,6 +64,7 @@ export class AuthenticationGuard implements CanActivate {
             name: tokenDetails.name,
             contacts: tokenDetails.contacts,
             savedReports: [],
+            folio: '',
           };
           return true;
         } else {
@@ -92,6 +93,7 @@ export class AuthenticationGuard implements CanActivate {
             name: tokenDetails.name,
             contacts: tokenDetails.contacts,
             savedReports: [],
+            folio: '',
           };
           return true;
         } else {

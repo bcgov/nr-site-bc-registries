@@ -104,14 +104,14 @@ objects:
               imagePullPolicy: Always
               name: ${NAME}
               env:
-                - name: NODE_TLS_REJECT_UNAUTHORIZED 
-                  value: '0'
+                - name: NODE_TLS_REJECT_UNAUTHORIZED
+                  value: "0"
                 - name: BACKEND_URL
                   value: http://${NAME}-${ZONE}-backend
                 - name: site_environment
                   value: TEST
                 - name: SESSION_PATH
-                  value: '/mnt/sessions'
+                  value: "/mnt/sessions"
                 - name: COOKIE_SECRET
                   valueFrom:
                     secretKeyRef:
@@ -119,89 +119,94 @@ objects:
                       key: COOKIE_SECRET
                 - name: BC_REGISTRY_BASE_URL
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: bc-registry-config
                       key: BC_REGISTRY_BASE_URL
                 - name: baseUrl
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: bc-registry-config
                       key: baseUrl
                 - name: API_KEY_HOST
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: bc-registry-config
                       key: API_KEY_HOST
                 - name: SESSION_SECRET
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: esra-sessions
                       key: SESSION_SECRET
                 - name: KEYCLOAK_BASE_URL
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: keycloak
                       key: KEYCLOAK_BASE_URL
                 - name: KEYCLOAK_REALM
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: keycloak
                       key: KEYCLOAK_REALM
                 - name: KEYCLOAK_CLIENT_ID
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: keycloak
                       key: KEYCLOAK_CLIENT_ID
                 - name: KEYCLOAK_SECRET
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: keycloak
                       key: KEYCLOAK_SECRET
                 - name: KEYCLOAK_XAPIKEY
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: keycloak
                       key: KEYCLOAK_XAPIKEY
                 - name: common_service_keycloak_base_url
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: common_service_keycloak_base_url
                 - name: cdogs_url
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: cdogs_url
                 - name: ches_url
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: ches_url
                 - name: service_realm
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: service_realm
                 - name: cdogs_service_client_id
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: cdogs_service_client_id
                 - name: cdogs_service_client_secret
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: cdogs_service_client_secret
                 - name: ches_service_client_id
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: ches_service_client_id
                 - name: ches_service_client_secret
                   valueFrom:
-                    secretKeyRef: 
+                    secretKeyRef:
                       name: common-services
                       key: ches_service_client_secret
+                - name: bc_registry_dashboard_url
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: bc_registry_dashboard_url
               ports:
                 - containerPort: 3000
                   protocol: TCP

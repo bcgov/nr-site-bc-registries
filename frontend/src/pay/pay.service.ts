@@ -58,7 +58,7 @@ export class PayService {
     return this.createInvoice(token, account_id, ESRA_SYN_RPT, folioNumber);
   }
 
-  async createDetailedInvoice(token: string, account_id: number, folioNumber: string) {
+  async createDetailsInvoice(token: string, account_id: number, folioNumber: string) {
     return this.createInvoice(token, account_id, ESRA_DTL_RPT, folioNumber);
   }
 

@@ -36,6 +36,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<any> {
     logCurrentTimePST('download-pdf: Generating PDF');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let fileBuffer: any;
@@ -56,8 +58,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -86,6 +88,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<StreamableFile | null> {
     logCurrentTimePST('download-pdf2: Generating PDF from Site ID page');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     siteId = prependZeroesToSiteId(siteId); // siteId's are stored in the db with prepended zeroes
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
@@ -112,8 +116,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -141,6 +145,8 @@ export class BCRegistryController {
     @Res() response: Response
   ): Promise<{ message: string }> {
     logCurrentTimePST('email-pdf: Sending an email with HTML report');
+    console.log('Site ID: ' + siteId);
+    console.log('Report Type: ' + reportType);
     const isSaved = this.bcRegistryService.isReportSaved(siteId, reportType, session.data.savedReports);
     let paymentStatus: string;
     let reportHtml: string;
@@ -169,8 +175,8 @@ export class BCRegistryController {
           session.data.activeAccount.id,
           session.data.folio
         );
-      } else if (reportType == 'detailed') {
-        paymentStatus = await this.payService.createDetailedInvoice(
+      } else if (reportType == 'details') {
+        paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
           session.data.activeAccount.id,
           session.data.folio
@@ -239,7 +245,7 @@ export class BCRegistryController {
 
   @Post('set-folio')
   async setFolio(@Body('folio') folio: string, @Session() session: { data?: SessionData }) {
-    session.data.folio = folio;
+    session.data.folio = folio ? folio : '';
     console.log('folio: ' + session.data.folio);
     return { message: 'Folio successfully updated!' };
   }
