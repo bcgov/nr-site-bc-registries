@@ -29,7 +29,7 @@ parameters:
   - name: MEMORY_REQUEST
     value: 2Gi
   - name: CPU_LIMIT
-    value: "1"
+    value: "2"
   - name: MEMORY_LIMIT
     value: 4Gi
   - name: REGISTRY
@@ -74,7 +74,7 @@ objects:
         app: ${NAME}-${ZONE}
       name: ${NAME}-${ZONE}-${COMPONENT}
     spec:
-      replicas: 1
+      replicas: 2
       triggers:
         - type: ConfigChange
         - type: ImageChange
