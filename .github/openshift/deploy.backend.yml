@@ -25,9 +25,9 @@ parameters:
   - name: DOMAIN
     value: apps.silver.devops.gov.bc.ca
   - name: CPU_REQUEST
-    value: 100m
+    value: 50m
   - name: MEMORY_REQUEST
-    value: 0.5Gi
+    value: 512Mi
   - name: REGISTRY
     description: Container registry to import from (internal is image-registry.openshift-image-registry.svc:5000)
     value: ghcr.io
@@ -83,8 +83,8 @@ objects:
               imagePullPolicy: Always
               name: ${NAME}
               env:
-                - name: NODE_TLS_REJECT_UNAUTHORIZED 
-                  value: '0'
+                - name: NODE_TLS_REJECT_UNAUTHORIZED
+                  value: "0"
                 - name: POSTGRESQL_HOST
                   value: ${NAME}-${ZONE}-database
                 - name: POSTGRESQL_DATABASE
