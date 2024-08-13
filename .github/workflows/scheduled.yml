@@ -1,0 +1,27 @@
+name: Scheduled
+
+on:
+  schedule: [cron: "0 9 * * *"] # every midnight
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  rollout_frontend:
+    name: Rollout frontend
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Rollout frontend to remove defunt pids # temporary solution
+        shell: bash
+        run: |
+          # Login to OpenShift and select project
+          oc login --token=${{ secrets.OC_TOKEN }} --server=${{ secrets.OC_SERVER }}
+          oc project ${{ secrets.OC_NAMESPACE }}
+          oc rollout latest dc/esra-prod-frontend
+          oc rollout status dc/esra-prod-frontend
+          
+
