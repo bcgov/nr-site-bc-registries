@@ -16,12 +16,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Rollout frontend to remove defunt pids # temporary solution
-        shell: bash
-        run: |
-          # Login to OpenShift and select project
-          oc login --token=${{ secrets.OC_TOKEN }} --server=${{ secrets.OC_SERVER }}
-          oc project ${{ secrets.OC_NAMESPACE }}
-          oc rollout latest dc/esra-prod-frontend
-          oc rollout status dc/esra-prod-frontend
-          
-
+        uses: bcgov/action-oc-runner@v0.3.0
+        with:
+          oc_namespace: ${{ secrets.oc_namespace }}
+          oc_token: ${{ secrets.oc_token }}
+          oc_server: ${{ vars.oc_server }}
+          commands: |
+            oc rollout latest dc/esra-prod-frontend
+            oc rollout status dc/esra-prod-frontend
+            
