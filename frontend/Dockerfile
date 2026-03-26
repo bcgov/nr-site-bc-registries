@@ -35,9 +35,10 @@ RUN mkdir -p /root/.local/share/fonts \
   && mkdir -p /.local \
   && chmod -R 777 /.local
 
-RUN npm config set user 0
-RUN npm config set unsafe-perm true
-RUN npm ci && \
+RUN npm config set user 0 && \
+    npm config set unsafe-perm true && \
+    npm install -g typescript @nestjs/cli && \
+    npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
