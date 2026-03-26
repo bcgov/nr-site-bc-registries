@@ -1,4 +1,4 @@
-FROM ubuntu:latest as builder
+FROM ubuntu:22.04 AS builder
 
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
@@ -44,8 +44,8 @@ RUN npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
-# Set node to production 
-ENV NODE_ENV production
+# Set node to production
+ENV NODE_ENV=production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
