@@ -56,12 +56,10 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Chrome version 114
-ENV CHROME_VERSION="114.0.5735.133-1"
-RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb && \
-    apt-get update && apt-get install -y /tmp/chrome.deb && \
-    rm -f /tmp/chrome.deb && \
-    rm -rf /var/lib/apt/lists/*
+# Install Chromium browser
+RUN apt-get update && apt-get install -y \
+    chromium-browser \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
@@ -77,8 +75,8 @@ RUN npm config set user 0 && \
     npm list rimraf && \
     npm run build
 
-# Set node to production 
-ENV NODE_ENV production
+# Set node to production
+ENV NODE_ENV=production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
