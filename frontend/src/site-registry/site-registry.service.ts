@@ -9,7 +9,10 @@ let port: number;
 
 @Injectable()
 export class SiteRegistryService {
-  constructor(private httpService: HttpService, private payService: PayService) {
+  constructor(
+    private httpService: HttpService,
+    private payService: PayService
+  ) {
     // docker hostname is the container name, use localhost for local development
     hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
     // local development backend port is 3001, docker backend port is 3000
@@ -17,40 +20,32 @@ export class SiteRegistryService {
   }
 
   async searchPid(pid: string, token: string, account_id: number, folioNumber: string): Promise<any> {
-    const paymentStatus = await this.payService.createParcelSearchInvoice(token, account_id, folioNumber);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchPid/${pid}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      const data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    // Parcel ID searches are now free - no payment required
+    const requestUrl = `${hostname}:${port}/srsites/searchPid/${pid}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
   }
 
   async searchCrownPin(pin: string, token: string, account_id: number, folioNumber: string): Promise<any> {
-    const paymentStatus = await this.payService.createPINSearchInvoice(token, account_id, folioNumber);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchCrownPin/${pin}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+    // Crown Lands PIN searches are now free - no payment required
+    const requestUrl = `${hostname}:${port}/srsites/searchCrownPin/${pin}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
 
-      const data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
   }
 
   async searchCrownFile(
@@ -59,41 +54,33 @@ export class SiteRegistryService {
     account_id: number,
     folioNumber: string
   ): Promise<any> {
-    const paymentStatus = await this.payService.createFileSearchInvoice(token, account_id, folioNumber);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+    // Crown Lands File # searches are now free - no payment required
+    const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
 
-      const data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
   }
 
   async searchSiteId(siteId: string, token: string, account_id: number, folioNumber: string): Promise<any> {
-    const paymentStatus = await this.payService.createSiteSearchInvoice(token, account_id, folioNumber);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchSiteId/${siteId}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+    // Site ID searches are now free - no payment required
+    const requestUrl = `${hostname}:${port}/srsites/searchSiteId/${siteId}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
 
-      const data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
   }
 
   async searchAddress(
@@ -103,16 +90,12 @@ export class SiteRegistryService {
     account_id: number,
     folioNumber: string
   ): Promise<any> {
-    const paymentStatus = await this.payService.createAddressSearchInvoice(token, account_id, folioNumber);
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
-      const data = await lastValueFrom(
-        this.httpService.post(requestUrl, { city: city, address: address }).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    // Address searches are now free - no payment required
+    const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
+    const data = await lastValueFrom(
+      this.httpService.post(requestUrl, { city: city, address: address }).pipe(map((response) => response.data))
+    );
+    return data;
   }
 
   async searchArea(
@@ -123,28 +106,21 @@ export class SiteRegistryService {
     account_id: number,
     folioNumber: string
   ): Promise<any> {
-    let paymentStatus: string;
-    if (size == 'Small') {
-      paymentStatus = await this.payService.createSmallAreaSearchInvoice(token, account_id, folioNumber);
-    } else if (size == 'Large') {
-      paymentStatus = await this.payService.createLargeAreaSearchInvoice(token, account_id, folioNumber);
-    } else {
+    // Area searches are now free - no payment required
+    if (size !== 'Small' && size !== 'Large') {
       return { error: 'Area Size Error' }; // should never reach here
     }
-    if (paymentStatus == 'APPROVED' || paymentStatus == 'PAID' || paymentStatus == 'COMPLETED') {
-      const requestUrl = `${hostname}:${port}/srsites/searchArea/${lat}/${lng}/${size}`;
-      const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
 
-      const data = await lastValueFrom(
-        this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
-      );
-      return data;
-    } else {
-      return { error: 'Status code = ' + paymentStatus + '.  Please ensure that you have a premium account selected.' };
-    }
+    const requestUrl = `${hostname}:${port}/srsites/searchArea/${lat}/${lng}/${size}`;
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const data = await lastValueFrom(
+      this.httpService.get(requestUrl, requestConfig).pipe(map((response) => response.data))
+    );
+    return data;
   }
 }
