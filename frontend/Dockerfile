@@ -37,7 +37,7 @@ RUN mkdir -p /root/.local/share/fonts \
 
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
-RUN npm ci --only=prod && \
+RUN npm ci && \
     npm list rimraf && \
     npm run build
 
