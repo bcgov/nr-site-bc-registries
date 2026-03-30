@@ -1,5 +1,8 @@
 FROM ubuntu:20.04 as builder
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
 RUN apt install -y curl
