@@ -321,6 +321,12 @@ jobs:
       ZONE: ${{ github.event.number }}
     steps:
       - uses: actions/checkout@v2
+      - name: Install OpenShift CLI
+        run: |
+          curl -L https://github.com/openshift/oc/releases/download/v4.13.0/openshift-client-linux-4.13.0.tar.gz -o oc.tar.gz
+          tar -xzf oc.tar.gz
+          sudo mv oc /usr/local/bin/
+          oc version
       - name: Deploy
         run: |
           # Login to OpenShift and select project
