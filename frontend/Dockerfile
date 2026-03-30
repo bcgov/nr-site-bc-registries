@@ -1,4 +1,7 @@
-FROM ubuntu:latest as builder
+FROM ubuntu:20.04 as builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
 
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
@@ -22,13 +25,7 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
-    wget libgbm-dev gnupg gnupg2 gnupg1
-
-# Install Chrome version 114
-ENV CHROME_VERSION="114.0.5735.133-1"
-RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-  && apt install -y /tmp/chrome.deb \
-  && rm /tmp/chrome.deb
+    chromium-browser libgbm-dev
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \

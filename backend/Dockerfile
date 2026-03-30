@@ -1,15 +1,16 @@
 # RedHat UBI 8 with nodejs 14
-FROM registry.access.redhat.com/ubi8/ubi as builder
+FROM redhat/ubi8 as builder
 RUN dnf module install -y nodejs:14
 
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN npm ci --only=prod && \
     npm run build
 
 # Deployment container
-FROM registry.access.redhat.com/ubi8/ubi-micro
+FROM redhat/ubi8-micro
 
 # Set node to production 
 ENV NODE_ENV production
