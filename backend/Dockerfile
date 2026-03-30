@@ -1,5 +1,5 @@
 # RedHat UBI 8 with nodejs 14
-FROM registry.redhat.io/ubi8/ubi as builder
+FROM quay.io/ubi8/ubi as builder
 RUN dnf module install -y nodejs:14
 
 # Install packages, build and keep only prod packages
@@ -9,7 +9,7 @@ RUN npm ci --only=prod && \
     npm run build
 
 # Deployment container
-FROM registry.redhat.io/ubi8/ubi-micro
+FROM quay.io/ubi8/ubi-micro
 
 # Set node to production 
 ENV NODE_ENV production
