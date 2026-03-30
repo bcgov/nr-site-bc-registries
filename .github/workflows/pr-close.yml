@@ -23,12 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Remove OpenShift artifacts
-        run: |
-          oc login --token=${{ secrets.OC_TOKEN }} --server=${{ secrets.OC_SERVER }}
-          oc project ${{ secrets.OC_NAMESPACE }}
-
-          # Remove old build runs, build pods and deployment pods
-          oc delete all,pvc,secret -l app=${{ env.NAME }}-${{ github.event.number }}
+        uses: bcgov/action-oc-runner@v0.3.0
+        with:
+          oc_namespace: ${{ secrets.oc_namespace }}
+          oc_token: ${{ secrets.oc_token }}
+          oc_server: ${{ vars.oc_server }}
+          commands: |
+            # Remove old build runs, build pods and deployment pods
+            oc delete all,pvc,secret -l app=${{ env.NAME }}-${{ github.event.number }}
 
   # Promote images when PR merged and branch = main
   promote-images:
