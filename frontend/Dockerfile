@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:20.04 as builder
 
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
@@ -24,8 +24,11 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
     wget libgbm-dev gnupg gnupg2 gnupg1
 
-# Install Chromium browser
-RUN apt-get install -y chromium-browser
+# Install Chrome version 114
+ENV CHROME_VERSION="114.0.5735.133-1"
+RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+  && apt install -y /tmp/chrome.deb \
+  && rm /tmp/chrome.deb
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
@@ -35,15 +38,14 @@ RUN mkdir -p /root/.local/share/fonts \
   && mkdir -p /.local \
   && chmod -R 777 /.local
 
-RUN npm config set user 0 && \
-    npm config set unsafe-perm true && \
-    npm install -g typescript @nestjs/cli && \
-    npm ci --only=prod && \
+RUN npm config set user 0
+RUN npm config set unsafe-perm true
+RUN npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
-# Set node to production
-ENV NODE_ENV=production
+# Set node to production 
+ENV NODE_ENV production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
