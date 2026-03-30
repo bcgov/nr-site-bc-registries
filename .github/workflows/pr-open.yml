@@ -321,49 +321,44 @@ jobs:
       ZONE: ${{ github.event.number }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install OpenShift CLI
-        run: |
-          curl -L https://github.com/openshift/oc/releases/download/v4.13.0/openshift-client-linux-4.13.0.tar.gz -o oc.tar.gz
-          tar -xzf oc.tar.gz
-          sudo mv oc /usr/local/bin/
-          oc version
       - name: Deploy
-        run: |
-          # Login to OpenShift and select project
-          oc login --token=${{ secrets.OC_TOKEN }} --server=${{ secrets.OC_SERVER }}
-          oc project ${{ secrets.OC_NAMESPACE }}
+        uses: bcgov/action-oc-runner@v0.3.0
+        with:
+          oc_namespace: ${{ secrets.oc_namespace }}
+          oc_token: ${{ secrets.oc_token }}
+          oc_server: ${{ vars.oc_server }}
+          commands: |
+            # Database uses a default build
+            oc process -f .github/openshift/deploy.database.yml -p ZONE=${{ env.ZONE }} | oc apply -f -
 
-          # Database uses a default build
-          oc process -f .github/openshift/deploy.database.yml -p ZONE=${{ env.ZONE }} | oc apply -f -
+            # Clean previous image, if rebuilding
+            if [ ${{ needs.build-backend.outputs.build == 'true' }} ]
+            then
+              # Clear stale images for import/replacement
+              oc delete is ${{ env.NAME }}-${{ env.ZONE }}-backend || \
+                echo "No previously imported images have been found"
+            fi
 
-          # Clean previous image, if rebuilding
-          if [ ${{ needs.build-backend.outputs.build == 'true' }} ]
-          then
-            # Clear stale images for import/replacement
-            oc delete is ${{ env.NAME }}-${{ env.ZONE }}-backend || \
-              echo "No previously imported images have been found"
-          fi
+            # Process and apply template
+            oc process -f .github/openshift/deploy.backend.yml -p ZONE=${{ env.ZONE }} \
+              -p PROMOTE=${{ github.repository }}:${{ env.ZONE }}-backend | oc apply -f -
 
-          # Process and apply template
-          oc process -f .github/openshift/deploy.backend.yml -p ZONE=${{ env.ZONE }} \
-            -p PROMOTE=${{ github.repository }}:${{ env.ZONE }}-backend | oc apply -f -
+            # Clean previous image, if rebuilding
+            if [ ${{ needs.build-frontend.outputs.build == 'true' }} ]
+            then
+              # Clear stale images for import/replacement
+              oc delete is ${{ env.NAME }}-${{ env.ZONE }}-frontend || \
+                echo "No previously imported images have been found"
+            fi
 
-          # Clean previous image, if rebuilding
-          if [ ${{ needs.build-frontend.outputs.build == 'true' }} ]
-          then
-            # Clear stale images for import/replacement
-            oc delete is ${{ env.NAME }}-${{ env.ZONE }}-frontend || \
-              echo "No previously imported images have been found"
-          fi
+            # Process and apply template
+            oc process -f .github/openshift/deploy.frontend.yml -p ZONE=${{ env.ZONE }} \
+              -p PROMOTE=${{ github.repository }}:${{ env.ZONE }}-frontend | oc apply -f -
 
-          # Process and apply template
-          oc process -f .github/openshift/deploy.frontend.yml -p ZONE=${{ env.ZONE }} \
-            -p PROMOTE=${{ github.repository }}:${{ env.ZONE }}-frontend | oc apply -f -
-
-          # Follow any active rollouts (see deploymentconfigs)
-          oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-database -w
-          oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-backend -w
-          oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-frontend -w
+            # Follow any active rollouts (see deploymentconfigs)
+            oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-database -w
+            oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-backend -w
+            oc rollout status dc/${{ env.NAME }}-${{ env.ZONE }}-frontend -w
 
       - name: DEV Deployment update
         uses: mshick/add-pr-comment@v1
