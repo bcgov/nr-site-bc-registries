@@ -34,7 +34,7 @@ export class SiteRegistryService {
   }
 
   async searchCrownPin(pin: string, token: string, account_id: number, folioNumber: string): Promise<any> {
-    // Crown Lands PIN searches are now free - no payment required
+    // Crown Lands PIN searches are now free - no payment required.
     const requestUrl = `${hostname}:${port}/srsites/searchCrownPin/${pin}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
