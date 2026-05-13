@@ -2,6 +2,11 @@
 FROM redhat/ubi8 as builder
 RUN dnf module install -y nodejs:14
 
+# Install Tini to handle zombie process cleanup
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
@@ -26,6 +31,9 @@ COPY --from=builder /usr/lib64/libstdc++.so.6 /usr/lib64/
 COPY --from=builder /usr/lib64/libgcc_s.so.1 /usr/lib64/
 COPY --from=builder /usr/lib64/libbrotlicommon.so.1 /usr/lib64/
 
+# Copy Tini init process
+COPY --from=builder /tini /tini
+
 # Copy over app
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
@@ -34,5 +42,6 @@ COPY --from=builder /app/dist ./dist
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
 
-# Start up command
-ENTRYPOINT ["node", "dist/src/main"]
+# Use Tini to properly reap zombie child processes
+ENTRYPOINT ["/tini", "--"]
+CMD ["node", "dist/src/main"]

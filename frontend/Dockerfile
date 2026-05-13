@@ -41,11 +41,17 @@ RUN npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
+# Install Tini to handle zombie process cleanup
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
 # Set node to production 
 ENV NODE_ENV production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
 
-# Start up command
-ENTRYPOINT  ["node", "dist/src/main"]
+# Use Tini to properly reap zombie child processes
+ENTRYPOINT ["/tini", "--"]
+CMD ["node", "dist/src/main"]
