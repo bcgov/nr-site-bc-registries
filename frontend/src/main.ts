@@ -7,6 +7,7 @@ import * as expressSession from 'express-session';
 import { AppService } from './app.service';
 const fileSession = require('session-file-store')(expressSession);
 
+// This is the entry point of the application. It sets up the NestJS application, configures static assets, view engine, and session management, and starts the server on port 3000. It also initializes the download date using the AppService.
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 
