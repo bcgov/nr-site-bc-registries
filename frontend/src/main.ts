@@ -6,7 +6,7 @@ import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
 import { AppService } from './app.service';
 const fileSession = require('session-file-store')(expressSession);
-
+// main bootstrap function to start the NestJS application
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 
