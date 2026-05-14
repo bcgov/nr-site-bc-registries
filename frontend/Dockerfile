@@ -1,7 +1,4 @@
-FROM ubuntu:20.04 as builder
-
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=UTC
+FROM ubuntu:22.04 AS builder
 
 RUN apt-get update
 ENV NODE_VERSION=16.14.0
@@ -25,7 +22,10 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
-    chromium-browser libgbm-dev
+    wget libgbm-dev gnupg gnupg2 gnupg1
+
+# Install Chromium browser
+RUN apt-get install -y chromium-browser
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
@@ -35,18 +35,18 @@ RUN mkdir -p /root/.local/share/fonts \
   && mkdir -p /.local \
   && chmod -R 777 /.local
 
-RUN npm config set user 0
-RUN npm config set unsafe-perm true
-RUN npm ci --only=prod && \
+RUN npm config set user 0 && \
+    npm config set unsafe-perm true && \
+    npm install -g typescript @nestjs/cli && \
+    npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
-# Set node to production 
-ENV NODE_ENV production
+# Set node to production
+ENV NODE_ENV=production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
 
-# Use Tini to properly reap zombie child processes
-ENTRYPOINT ["/tini", "--"]
-CMD ["node", "dist/src/main"]
+# Start up command
+ENTRYPOINT  ["node", "dist/src/main"]

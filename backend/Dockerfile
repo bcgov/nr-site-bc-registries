@@ -1,16 +1,15 @@
 # RedHat UBI 8 with nodejs 14
-FROM redhat/ubi8 as builder
+FROM registry.access.redhat.com/ubi8/ubi as builder
 RUN dnf module install -y nodejs:14
 
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN npm ci --only=prod && \
     npm run build
 
 # Deployment container
-FROM redhat/ubi8-micro
+FROM registry.access.redhat.com/ubi8/ubi-micro
 
 # Set node to production 
 ENV NODE_ENV production
@@ -26,9 +25,6 @@ COPY --from=builder /usr/lib64/libstdc++.so.6 /usr/lib64/
 COPY --from=builder /usr/lib64/libgcc_s.so.1 /usr/lib64/
 COPY --from=builder /usr/lib64/libbrotlicommon.so.1 /usr/lib64/
 
-# Copy Tini init process
-COPY --from=builder /tini /tini
-
 # Copy over app
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
@@ -37,6 +33,5 @@ COPY --from=builder /app/dist ./dist
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
 
-# Use Tini to properly reap zombie child processes
-ENTRYPOINT ["/tini", "--"]
-CMD ["node", "dist/src/main"]
+# Start up command
+ENTRYPOINT ["node", "dist/src/main"]
