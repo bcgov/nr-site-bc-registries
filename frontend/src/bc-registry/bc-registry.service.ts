@@ -70,12 +70,11 @@ export class BCRegistryService {
       const fs = require('fs');
       const possiblePaths = [
         process.env.PUPPETEER_EXECUTABLE_PATH,
-        '/snap/bin/chromium',
         '/usr/bin/chromium',
-        '/usr/bin/chromium-browser',
         '/usr/bin/google-chrome-stable',
         '/usr/bin/google-chrome',
-      ].filter(Boolean); // Remove undefined values
+        '/snap/bin/chromium',
+      ].filter(Boolean); // Remove undefined values, skip chromium-browser (snap wrapper)
 
       let executablePath = undefined;
       for (const path of possiblePaths) {

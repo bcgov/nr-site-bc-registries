@@ -26,8 +26,7 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
     chromium libgbm-dev && \
-    ln -s /usr/bin/chromium /usr/bin/google-chrome-stable && \
-    ln -s /usr/bin/chromium /usr/bin/chromium-browser
+    ln -s /usr/bin/chromium /usr/bin/google-chrome-stable
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
