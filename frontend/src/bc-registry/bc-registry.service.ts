@@ -65,57 +65,25 @@ export class BCRegistryService {
    * @returns
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
-    let browser;
-    let page;
     try {
-      // Find the chromium/chrome binary in common locations
-      const fs = require('fs');
-      const possiblePaths = [
-        '/snap/bin/chromium',
-        '/usr/bin/chromium',
-        '/usr/bin/chromium-browser',
-        '/usr/bin/google-chrome-stable',
-        '/usr/bin/google-chrome',
-      ];
-
-      let executablePath = undefined;
-      for (const path of possiblePaths) {
-        if (fs.existsSync(path)) {
-          executablePath = path;
-          break;
-        }
-      }
-
-      if (!executablePath) {
-        throw new Error(`No Chromium/Chrome browser executable found. Checked: ${possiblePaths.join(', ')}`);
-      }
-
-      browser = await puppeteer.launch({
+      const browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-        executablePath,
+        executablePath: '/usr/bin/google-chrome-stable',
         headless: 'new',
         env: {
           ELECTRON_DISABLE_SANDBOX: '1',
         },
       });
 
-      page = await browser.newPage();
-      await page.setContent(html);
+      const page = await browser.newPage();
+      await page.setContent(html); //
       const pdfBuffer = await page.pdf({ ...options, timeout: 300000 });
 
+      await browser.close();
       return pdfBuffer;
     } catch (err) {
-      console.log('ESRA_ERROR_500: Puppeteer failed to generate PDF.');
+      console.log('ESRA_ERROR_500: Puppeteer failed to launch the browser process.');
       console.log(err);
-      throw err;
-    } finally {
-      // Always cleanup resources, even if an error occurred
-      if (page) {
-        await page.close().catch((e) => console.error('Failed to close page:', e));
-      }
-      if (browser) {
-        await browser.close().catch((e) => console.error('Failed to close browser:', e));
-      }
     }
   }
 
@@ -498,8 +466,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -602,8 +570,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -708,8 +676,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',

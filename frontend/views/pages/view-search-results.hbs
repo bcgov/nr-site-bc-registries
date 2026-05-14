@@ -275,7 +275,7 @@
       var results = [];
       for (let obj of data) {
         myObj = {};
-        myObj['Report Type'] = obj.pending == 'PENDING' ? `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report</option></select>` : `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='synopsis'>Synopsis Report - $26</option><option value='details'>Details Report - $51</option></select>`;
+        myObj['Report Type'] = obj.pending == 'PENDING' ? `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option></select>` : `<select id="reportType${obj.siteId}" class='form-select form-select-sm'><option selected>Choose a Report Type</option><option value='details'>Details Report - $51</option></select>`;
         myObj['Site ID'] = parseInt(obj.siteId);
         myObj['Updated Date'] = obj.updatedDate;
         myObj['Address/City'] = obj.city;
