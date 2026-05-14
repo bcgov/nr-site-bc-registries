@@ -66,9 +66,33 @@ export class BCRegistryService {
    */
   async generatePdfFromHtml(html: string, options: any): Promise<Buffer> {
     try {
+      // Find the chromium/chrome binary in common locations
+      const fs = require('fs');
+      const possiblePaths = [
+        process.env.PUPPETEER_EXECUTABLE_PATH,
+        '/snap/bin/chromium',
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/google-chrome',
+      ].filter(Boolean); // Remove undefined values
+
+      let executablePath = undefined;
+      for (const path of possiblePaths) {
+        if (fs.existsSync(path)) {
+          executablePath = path;
+          console.log(`Found browser at: ${path}`);
+          break;
+        }
+      }
+
+      if (!executablePath) {
+        throw new Error(`No Chromium/Chrome browser executable found. Checked: ${possiblePaths.join(', ')}`);
+      }
+
       const browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-        executablePath: '/usr/bin/google-chrome-stable',
+        executablePath,
         headless: 'new',
         env: {
           ELECTRON_DISABLE_SANDBOX: '1',
@@ -466,8 +490,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-        : '';
+          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -570,8 +594,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-        : '';
+          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -676,8 +700,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-        ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
-        : '';
+          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
