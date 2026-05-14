@@ -5,7 +5,6 @@ RUN dnf module install -y nodejs:14
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN npm ci --only=prod && \
     npm run build
 
