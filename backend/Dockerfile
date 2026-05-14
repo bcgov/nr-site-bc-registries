@@ -2,11 +2,6 @@
 FROM redhat/ubi8 as builder
 RUN dnf module install -y nodejs:14
 
-# Install Tini to handle zombie process cleanup
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
