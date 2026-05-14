@@ -68,9 +68,31 @@ export class BCRegistryService {
     let browser;
     let page;
     try {
+      // Find the chromium/chrome binary in common locations
+      const fs = require('fs');
+      const possiblePaths = [
+        '/snap/bin/chromium',
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/google-chrome',
+      ];
+
+      let executablePath = undefined;
+      for (const path of possiblePaths) {
+        if (fs.existsSync(path)) {
+          executablePath = path;
+          break;
+        }
+      }
+
+      if (!executablePath) {
+        throw new Error(`No Chromium/Chrome browser executable found. Checked: ${possiblePaths.join(', ')}`);
+      }
+
       browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-        executablePath: '/usr/bin/chromium',
+        executablePath,
         headless: 'new',
         env: {
           ELECTRON_DISABLE_SANDBOX: '1',
