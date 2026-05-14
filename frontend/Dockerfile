@@ -25,7 +25,13 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
-    chromium-browser libgbm-dev
+    libgbm-dev
+
+# Enable Universe repository and install Chromium
+RUN apt-get install -y software-properties-common && \
+    add-apt-repository universe && \
+    apt-get update && \
+    apt-get install -y chromium-browser
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
@@ -43,6 +49,8 @@ RUN npm ci --only=prod && \
 
 # Set node to production 
 ENV NODE_ENV production
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
