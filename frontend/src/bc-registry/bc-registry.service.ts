@@ -70,7 +70,7 @@ export class BCRegistryService {
     try {
       browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-        executablePath: '/usr/bin/google-chrome-stable',
+        executablePath: '/usr/bin/chromium',
         headless: 'new',
         env: {
           ELECTRON_DISABLE_SANDBOX: '1',
