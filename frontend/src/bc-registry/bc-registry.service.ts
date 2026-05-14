@@ -119,7 +119,6 @@ export class BCRegistryService {
       }
     }
   }
-  }
 
   /**
    * Modifies the pdfBuffer to add headers and footers.
