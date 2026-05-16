@@ -24,10 +24,7 @@ import { BCRegistryService } from './bc-registry.service';
 @UseFilters(AuthenticationFilter)
 @UseGuards(AuthenticationGuard)
 export class BCRegistryController {
-  constructor(
-    private bcRegistryService: BCRegistryService,
-    private payService: PayService
-  ) {}
+  constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
   @Get('download-pdf/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')
@@ -55,9 +52,12 @@ export class BCRegistryController {
       response.status(200).send(fileBuffer);
       return null;
     } else {
-      // Only Site Details reports require payment - Synopsis reports are no longer available
       if (reportType == 'synopsis') {
-        return null; // synopsis reports removed from new fee structure
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id,
+          session.data.folio
+        );
       } else if (reportType == 'details') {
         paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
@@ -110,9 +110,12 @@ export class BCRegistryController {
       response.status(200).send(fileBuffer);
       return null;
     } else {
-      // Only Site Details reports require payment - Synopsis reports are no longer available
       if (reportType == 'synopsis') {
-        return null; // synopsis reports removed from new fee structure
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id,
+          session.data.folio
+        );
       } else if (reportType == 'details') {
         paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
@@ -166,10 +169,12 @@ export class BCRegistryController {
       response.status(200).send(emailSent);
       return null;
     } else {
-      // Only Site Details reports require payment - Synopsis reports are no longer available
       if (reportType == 'synopsis') {
-        response.status(200).send({ message: 'Synopsis reports are no longer available' });
-        return null;
+        paymentStatus = await this.payService.createSynopsisInvoice(
+          session.data.access_token,
+          session.data.activeAccount.id,
+          session.data.folio
+        );
       } else if (reportType == 'details') {
         paymentStatus = await this.payService.createDetailsInvoice(
           session.data.access_token,
