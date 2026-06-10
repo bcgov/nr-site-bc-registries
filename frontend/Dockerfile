@@ -25,12 +25,7 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 \
     libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
-    libgbm-dev wget gnupg2
-
-# Download and install Google Chrome (deb package, not snap)
-RUN wget -q -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y /tmp/google-chrome-stable_current_amd64.deb && \
-    rm /tmp/google-chrome-stable_current_amd64.deb
+    chromium-browser libgbm-dev
 
 # Set up directories and adjust permissions
 RUN mkdir -p /root/.local/share/fonts \
@@ -47,9 +42,7 @@ RUN npm ci --only=prod && \
     npm run build
 
 # Set node to production 
-ENV NODE_ENV=production
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+ENV NODE_ENV production
 
 # Expose port - mostly a convention, for readability
 EXPOSE 3000
