@@ -2,6 +2,11 @@
 FROM redhat/ubi8 as builder
 RUN dnf module install -y nodejs:14
 
+# Add tiny init process to reap zombie/defunct child processes.
+ENV TINI_VERSION=v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /tini
+RUN chmod +x /tini
+
 # Install packages, build and keep only prod packages
 WORKDIR /app
 COPY . ./
@@ -24,6 +29,7 @@ COPY --from=builder /usr/lib64/libssl.so.1.1 /usr/lib64/
 COPY --from=builder /usr/lib64/libstdc++.so.6 /usr/lib64/
 COPY --from=builder /usr/lib64/libgcc_s.so.1 /usr/lib64/
 COPY --from=builder /usr/lib64/libbrotlicommon.so.1 /usr/lib64/
+COPY --from=builder /tini /tini
 
 # Copy over app
 WORKDIR /app
@@ -34,4 +40,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT ["node", "dist/src/main"]
+ENTRYPOINT ["/tini", "--", "node", "dist/src/main"]
