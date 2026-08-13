@@ -46,6 +46,12 @@ RUN npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
+# Make node/npm/npx available outside /root for random OpenShift UIDs.
+RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/node /usr/local/bin/node && \
+    cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm /usr/local/bin/npm && \
+    cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/npx /usr/local/bin/npx && \
+    chmod 755 /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx
+
 # Add tiny init process to reap zombie/defunct child processes.
 ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /tini
@@ -60,4 +66,4 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT  ["/tini", "--", "node", "dist/src/main"]
+ENTRYPOINT  ["/tini", "--", "/usr/local/bin/node", "dist/src/main"]
