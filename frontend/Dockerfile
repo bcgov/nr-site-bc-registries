@@ -46,6 +46,11 @@ RUN npm ci --only=prod && \
     npm list rimraf && \
     npm run build
 
+# Add tiny init process to reap zombie/defunct child processes.
+ENV TINI_VERSION=v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /tini
+RUN chmod +x /tini
+
 # Set node to production 
 ENV NODE_ENV=production
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
@@ -55,4 +60,4 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 EXPOSE 3000
 
 # Start up command
-ENTRYPOINT  ["node", "dist/src/main"]
+ENTRYPOINT  ["/tini", "--", "node", "dist/src/main"]
