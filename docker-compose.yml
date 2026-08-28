@@ -9,10 +9,13 @@ services:
       POSTGRES_PASSWORD: default
       POSTGRES_DB: default
     hostname: database
-    image: postgres:12
+    image: postgis/postgis:17-3.4 # if using crunchy , make sure to align with crunchy version, currently it is at 16 and postgis 3.3
     restart: always
     volumes:
       - /pgdata
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "default"]
+    ports: ["5432:5432"]
 
   backend:
     container_name: backend
@@ -37,7 +40,7 @@ services:
       retries: 3
       start_period: 40s
     hostname: backend
-    image: node:14
+    image: node:22
     links:
       - database
     ports:
@@ -80,3 +83,30 @@ services:
       - ./frontend:/app:z
       - /app/node_modules
     working_dir: "/app"
+
+  schemaspy:
+    image: schemaspy/schemaspy:7.0.2
+    profiles: ["schemaspy"]
+    container_name: schemaspy
+    command: -t pgsql11 -db postgres -host database -port 5432 -u postgres -p default -schemas users
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    volumes: ["./output:/output"]
+
+  caddy:
+    container_name: caddy
+    profiles: ["caddy"]
+    build: ./frontend
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      BACKEND_URL: http://backend:3000
+      LOG_LEVEL: info
+    ports: ["3005:3000"]
+    volumes: ["./frontend/Caddyfile:/etc/caddy/Caddyfile"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+    depends_on:
+      backend:
+        condition: service_healthy
