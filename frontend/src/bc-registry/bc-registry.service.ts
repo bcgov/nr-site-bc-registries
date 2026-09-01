@@ -21,8 +21,7 @@ let detailsPartialTemplate: string;
 let nilTemplate: string;
 let nilTemplate2: string;
 let searchResultsTemplate: string;
-let hostname: string;
-let port: number;
+let backendUrl: string;
 
 @Injectable()
 export class BCRegistryService {
@@ -42,10 +41,9 @@ export class BCRegistryService {
       path.resolve(__dirname, '../../utils/templates/searchResultsPartialTemplate.html'),
       'utf8'
     );
-    // docker hostname is the container name, use localhost for local development
-    hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
-    // local development backend port is 3001, docker backend port is 3000
-    port = process.env.BACKEND_URL ? 3000 : 3001;
+    // BACKEND_URL is the full base URL (scheme, host, and port); falls back
+    // to the local dev backend for standalone (non-Docker) development.
+    backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
   }
 
   isReportSaved(siteId: string, reportType: string, savedReports: [string, string][]): boolean {
@@ -331,7 +329,7 @@ export class BCRegistryService {
   ) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate;
-    const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
+    const requestUrl = `${backendUrl}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -439,7 +437,7 @@ export class BCRegistryService {
   async requestNilSiteIdPdf(siteId: string, name: string, folio: string) {
     const authorizationToken = await this.getCdogsToken();
     const documentTemplate = nilTemplate2;
-    const requestUrl = `${hostname}:${port}/srsites/getNilReportData/1`;
+    const requestUrl = `${backendUrl}/srsites/getNilReportData/1`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -498,9 +496,9 @@ export class BCRegistryService {
 
     const requestUrl =
       reportType == 'synopsis'
-        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          ? `${backendUrl}/srsites/detailsReport/${siteId}`
           : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -602,9 +600,9 @@ export class BCRegistryService {
 
     const requestUrl =
       reportType == 'synopsis'
-        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          ? `${backendUrl}/srsites/detailsReport/${siteId}`
           : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -708,9 +706,9 @@ export class BCRegistryService {
 
     const requestUrl =
       reportType == 'synopsis'
-        ? `${hostname}:${port}/srsites/synopsisReport/${siteId}`
+        ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${hostname}:${port}/srsites/detailsReport/${siteId}`
+          ? `${backendUrl}/srsites/detailsReport/${siteId}`
           : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
@@ -876,7 +874,7 @@ export class BCRegistryService {
     const cdogsToken = await this.getCdogsToken();
     const chesToken = await this.getChesToken();
 
-    const requestUrl = `${hostname}:${port}/srsites/getSearchResultsData/1`;
+    const requestUrl = `${backendUrl}/srsites/getSearchResultsData/1`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',

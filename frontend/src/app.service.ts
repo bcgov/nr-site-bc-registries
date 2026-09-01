@@ -11,9 +11,8 @@ let requestConfig: AxiosRequestConfig;
 @Injectable()
 export class AppService {
   constructor(private httpService: HttpService) {
-    const hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
-    const port = process.env.BACKEND_URL ? 3000 : 3001;
-    requestUrl = `${hostname}:${port}/srdates/`;
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+    requestUrl = `${backendUrl}/srdates/`;
     requestConfig = {
       headers: {
         'Content-Type': 'application/json',

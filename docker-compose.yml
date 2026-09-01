@@ -61,10 +61,9 @@ services:
     entrypoint: sh -c "npm ci --ignore-scripts && npm run start:dev"
     environment:
       NODE_ENV: development
-      # No port here: frontend/src appends :3000 itself when BACKEND_URL is set
-      # (see app.service.ts/site-registry.service.ts/bc-registry.service.ts) --
-      # a value that already includes the port becomes a malformed :3000:3000 URL.
-      BACKEND_URL: http://backend
+      # Full base URL: frontend/src (app.service.ts/site-registry.service.ts/
+      # bc-registry.service.ts) uses BACKEND_URL as-is, no port appended.
+      BACKEND_URL: http://backend:3000
       PORT: 3000
       COOKIE_SECRET: ${COOKIE_SECRET}
       SESSION_SECRET: ${SESSION_SECRET}
