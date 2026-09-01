@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class SrprfanDto {
   siteId: string; // a10;
   questionId: string; // a10;

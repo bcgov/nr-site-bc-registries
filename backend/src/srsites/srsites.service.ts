@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Srsite } from './entities/srsite.entity';
 import { In, Not } from 'typeorm';
 import { CreateSrsiteDto } from './dto/create-srsite.dto';
@@ -102,12 +102,12 @@ export class SrsitesService {
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
           updatedDate:
-            site.modifiedDate != ''
+            site.modifiedDate !== ''
               ? site.modifiedDate
-              : site.registeredDate != ''
+              : site.registeredDate !== ''
               ? site.registeredDate
               : site.detailRemovedDate,
-          pending: site.status == 'PENDING' ? 'PENDING' : '',
+          pending: site.status === 'PENDING' ? 'PENDING' : '',
         });
       }
     } catch (err) {
@@ -137,12 +137,12 @@ export class SrsitesService {
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
           updatedDate:
-            site.modifiedDate != ''
+            site.modifiedDate !== ''
               ? site.modifiedDate
-              : site.registeredDate != ''
+              : site.registeredDate !== ''
               ? site.registeredDate
               : site.detailRemovedDate,
-          pending: site.status == 'PENDING' ? 'PENDING' : '',
+          pending: site.status === 'PENDING' ? 'PENDING' : '',
         });
       }
     } catch (err) {
@@ -167,12 +167,12 @@ export class SrsitesService {
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
           updatedDate:
-            site.modifiedDate != ''
+            site.modifiedDate !== ''
               ? site.modifiedDate
-              : site.registeredDate != ''
+              : site.registeredDate !== ''
               ? site.registeredDate
               : site.detailRemovedDate,
-          pending: site.status == 'PENDING' ? 'PENDING' : '',
+          pending: site.status === 'PENDING' ? 'PENDING' : '',
         });
       }
     } catch (err) {
@@ -197,12 +197,12 @@ export class SrsitesService {
         siteId: site.siteId,
         city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
         updatedDate:
-          site.modifiedDate != ''
+          site.modifiedDate !== ''
             ? site.modifiedDate
-            : site.registeredDate != ''
+            : site.registeredDate !== ''
             ? site.registeredDate
             : site.detailRemovedDate,
-        pending: site.status == 'PENDING' ? 'PENDING' : '',
+        pending: site.status === 'PENDING' ? 'PENDING' : '',
       },
     ];
   }
@@ -223,12 +223,12 @@ export class SrsitesService {
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
           updatedDate:
-            site.modifiedDate != ''
+            site.modifiedDate !== ''
               ? site.modifiedDate
-              : site.registeredDate != ''
+              : site.registeredDate !== ''
               ? site.registeredDate
               : site.detailRemovedDate,
-          pending: site.status == 'PENDING' ? 'PENDING' : '',
+          pending: site.status === 'PENDING' ? 'PENDING' : '',
         });
       }
     }
@@ -236,7 +236,7 @@ export class SrsitesService {
   }
 
   async searchArea(lat: string, lng: string, size: string): Promise<MinimalSiteData[]> {
-    const radius = size == 'Small' ? 500 : size == 'Large' ? 5000 : 0;
+    const radius = size === 'Small' ? 500 : size === 'Large' ? 5000 : 0;
     const userLat = parseFloat(lat);
     const userLng = parseFloat(lng);
     const userLatlng = { lat: userLat, lng: userLng };
@@ -251,12 +251,12 @@ export class SrsitesService {
           siteId: site.siteId,
           city: site.address_1 ? site.address_1 + ', ' + site.city : site.city,
           updatedDate:
-            site.modifiedDate != ''
+            site.modifiedDate !== ''
               ? site.modifiedDate
-              : site.registeredDate != ''
+              : site.registeredDate !== ''
               ? site.registeredDate
               : site.detailRemovedDate,
-          pending: site.status == 'PENDING' ? 'PENDING' : '',
+          pending: site.status === 'PENDING' ? 'PENDING' : '',
         });
     }
     return sites;
@@ -279,7 +279,7 @@ export class SrsitesService {
     let numParcelDescs = 0;
 
     for (let entry of srpinpids[0]) {
-      if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
+      if (entry.pid !== '' || entry.pin !== '' || entry.crownLandsFileNumber !== '') {
         numParcelDescs++;
       }
     }
@@ -297,7 +297,7 @@ export class SrsitesService {
       where: { pid: In(allPids), siteId: Not(siteId) },
     });
     for (let entry of sameParcelId) {
-      if (entry.pid != '') {
+      if (entry.pid !== '') {
         if (!addedAssocSites.includes(entry.siteId)) {
           numAssocs++;
           addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
@@ -309,12 +309,12 @@ export class SrsitesService {
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
       .toFixed(1)
       .toString();
-    if (latSec.length == 3) latSec = '0' + latSec;
+    if (latSec.length === 3) latSec = '0' + latSec;
     const lat = parseInt(srsite.latDeg) + 'd ' + parseInt(srsite.latMin) + 'm ' + latSec + 's';
     let lonSec = parseFloat(srsite.lonSec.slice(0, 2) + '.' + srsite.lonSec.slice(2))
       .toFixed(1)
       .toString();
-    if (lonSec.length == 3) lonSec = '0' + lonSec;
+    if (lonSec.length === 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
     // get land uses
@@ -407,7 +407,7 @@ export class SrsitesService {
     let numParcelDescs = 0;
 
     for (let entry of srpinpids) {
-      if (entry.pid != '' || entry.pin != '' || entry.crownLandsFileNumber != '') {
+      if (entry.pid !== '' || entry.pin !== '' || entry.crownLandsFileNumber !== '') {
         numParcelDescs++;
       }
     }
@@ -445,7 +445,7 @@ export class SrsitesService {
       where: { pid: In(allPids), siteId: Not(siteId) },
     });
     for (let entry of sameParcelId) {
-      if (entry.pid != '') {
+      if (entry.pid !== '') {
         if (!addedAssocSites.includes(entry.siteId)) {
           numAssocs++;
           addedAssocSites.push(entry.siteId); // don't add the associated site multiple times
@@ -483,12 +483,12 @@ export class SrsitesService {
     let latSec = parseFloat(srsite.latSec.slice(0, 2) + '.' + srsite.latSec.slice(2))
       .toFixed(1)
       .toString();
-    if (latSec.length == 3) latSec = '0' + latSec;
+    if (latSec.length === 3) latSec = '0' + latSec;
     const lat = parseInt(srsite.latDeg) + 'd ' + parseInt(srsite.latMin) + 'm ' + latSec + 's';
     let lonSec = parseFloat(srsite.lonSec.slice(0, 2) + '.' + srsite.lonSec.slice(2))
       .toFixed(1)
       .toString();
-    if (lonSec.length == 3) lonSec = '0' + lonSec;
+    if (lonSec.length === 3) lonSec = '0' + lonSec;
     const lon = parseInt(srsite.lonDeg) + 'd ' + parseInt(srsite.lonMin) + 'm ' + lonSec + 's';
 
     // get land uses

@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +17,5 @@ async function bootstrap() {
   // local development backend port is 3001, docker backend port is  3000.
   const port = process.env.POSTGRESQL_HOST.includes('database') ? 3000 : 3001;
   await app.listen(port);
-  const appService = app.get(AppService);
-  // await appService.initializeDb();
 }
 bootstrap();

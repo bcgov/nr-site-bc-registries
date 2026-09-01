@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class SreventDto {
   siteId: string; // // a10;
   eventId: string; // a10;
