@@ -52,9 +52,9 @@ jobs:
           DB_PASSWORD: ${{ secrets.db_password }}
         with:
           file: common/openshift.init.yml
-          oc_namespace: ${{ secrets.oc_namespace }}
+          oc_namespace: ${{ secrets.OC_NAMESPACE }}
           oc_server: ${{ vars.oc_server }}
-          oc_token: ${{ secrets.oc_token }}
+          oc_token: ${{ secrets.OC_TOKEN }}
           overwrite: true
           parameters: -p DB_PASSWORD="$DB_PASSWORD"
             -p ZONE="${{ inputs.target }}"
@@ -88,9 +88,9 @@ jobs:
         id: deploy
         with:
           file: ${{ matrix.file }}
-          oc_namespace: ${{ secrets.oc_namespace }}
+          oc_namespace: ${{ secrets.OC_NAMESPACE }}
           oc_server: ${{ vars.oc_server }}
-          oc_token: ${{ secrets.oc_token }}
+          oc_token: ${{ secrets.OC_TOKEN }}
           debug: true
           parameters: -p ZONE="${{ inputs.target }}"
             -p NAME="${{ github.event.repository.name }}"
