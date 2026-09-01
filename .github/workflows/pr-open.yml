@@ -42,7 +42,7 @@ jobs:
     secrets:
       db_password: ${{ secrets.db_password }}
       oc_namespace: ${{ secrets.OC_NAMESPACE }}
-      oc_token: ${{ secrets.oc_token }}
+      oc_token: ${{ secrets.OC_TOKEN }}
     with:
       target: ${{ github.event.number }}
       tag: ${{ github.event.pull_request.head.sha }}
