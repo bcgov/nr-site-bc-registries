@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   const config = new DocumentBuilder()
     .setTitle('Users example')
     .setDescription('The user API description')

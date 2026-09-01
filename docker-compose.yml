@@ -1,88 +1,24 @@
----
-version: "3.8"
+# Reusable vars
+x-var:
+  - &POSTGRES_USER default
+  - &POSTGRES_PASSWORD default
+  - &POSTGRES_DATABASE default
+  - &node-image node:22
 
 services:
   database:
+    image: postgis/postgis:17-3.4 # if using crunchy , make sure to align with crunchy version, currently it is at 16 and postgis 3.3
     container_name: database
     environment:
-      POSTGRES_USER: default
-      POSTGRES_PASSWORD: default
-      POSTGRES_DB: default
-    hostname: database
-    image: postgis/postgis:17-3.4 # if using crunchy , make sure to align with crunchy version, currently it is at 16 and postgis 3.3
-    restart: always
+      # Official postgres/postgis image vars (POSTGRES_DB, not POSTGRES_DATABASE)
+      POSTGRES_USER: *POSTGRES_USER
+      POSTGRES_PASSWORD: *POSTGRES_PASSWORD
+      POSTGRES_DB: *POSTGRES_DATABASE
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", *POSTGRES_USER]
+    ports: ["5432:5432"]
     volumes:
       - /pgdata
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "default"]
-    ports: ["5432:5432"]
-
-  backend:
-    container_name: backend
-    entrypoint:
-      - "sh"
-      - "-c"
-      - "npm i && npm run start"
-    environment:
-      NODE_ENV: development
-      POSTGRESQL_HOST: database
-      POSTGRESQL_USER: default
-      POSTGRESQL_PASSWORD: default
-      POSTGRESQL_DATABASE: default
-      object_store_bucket: epdsbx
-      object_store_host: nrs.objectstore.gov.bc.ca
-      object_store_secret: ${object_store_secret}
-      object_store_userid: ${object_store_userid}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    hostname: backend
-    image: node:22
-    links:
-      - database
-    ports:
-      - "3001:3000"
-    volumes:
-      - ./backend:/app:z
-      - /app/node_modules
-    working_dir: "/app"
-
-  frontend:
-    container_name: frontend
-    entrypoint:
-      - "sh"
-      - "-c"
-      - "npm i && npm run start"
-    environment:
-      NODE_ENV: development
-      BACKEND_URL: http://backend
-      COOKIE_SECRET: ${COOKIE_SECRET}
-      SESSION_SECRET: ${SESSION_SECRET}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    hostname: frontend
-    depends_on:
-        backend:
-          condition: service_healthy
-    image: esra-frontend/image:latest
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    links:
-      - backend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app:z
-      - /app/node_modules
-    working_dir: "/app"
 
   schemaspy:
     image: schemaspy/schemaspy:7.0.2
@@ -94,6 +30,54 @@ services:
         condition: service_completed_successfully
     volumes: ["./output:/output"]
 
+  backend:
+    container_name: backend
+    entrypoint: sh -c "npm i && npm run start:dev"
+    environment:
+      NODE_ENV: development
+      POSTGRESQL_HOST: database
+      POSTGRESQL_USER: *POSTGRES_USER
+      POSTGRESQL_PASSWORD: *POSTGRES_PASSWORD
+      POSTGRESQL_DATABASE: *POSTGRES_DATABASE
+      object_store_bucket: epdsbx
+      object_store_host: nrs.objectstore.gov.bc.ca
+      object_store_secret: ${object_store_secret}
+      object_store_userid: ${object_store_userid}
+      # Backend runs plain `npm i` (not `--ignore-scripts`), so puppeteer's
+      # install script would otherwise try (and fail) to download Chromium.
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+    image: *node-image
+    ports: ["3001:3000"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api"]
+    working_dir: "/app"
+    volumes: ["./backend:/app", "/app/node_modules"]
+
+  frontend:
+    container_name: frontend
+    # package.json has no "dev" script (only start:dev); --ignore-scripts skips
+    # puppeteer's Chromium download the same way PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+    # does for the backend above.
+    entrypoint: sh -c "npm ci --ignore-scripts && npm run start:dev"
+    environment:
+      NODE_ENV: development
+      # No port here: frontend/src appends :3000 itself when BACKEND_URL is set
+      # (see app.service.ts/site-registry.service.ts/bc-registry.service.ts) --
+      # a value that already includes the port becomes a malformed :3000:3000 URL.
+      BACKEND_URL: http://backend
+      PORT: 3000
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+    image: *node-image
+    ports: ["3000:3000"]
+    volumes: ["./frontend:/app", "/app/node_modules"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+    working_dir: "/app"
+    depends_on:
+      backend:
+        condition: service_healthy
+
   caddy:
     container_name: caddy
     profiles: ["caddy"]
@@ -103,6 +87,10 @@ services:
       PORT: 3000
       BACKEND_URL: http://backend:3000
       LOG_LEVEL: info
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      # Writable path for session-file-store; main.ts crashes on boot without it.
+      SESSION_PATH: /tmp/sessions
     ports: ["3005:3000"]
     volumes: ["./frontend/Caddyfile:/etc/caddy/Caddyfile"]
     healthcheck:
