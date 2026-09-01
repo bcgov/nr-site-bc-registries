@@ -498,8 +498,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${backendUrl}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${backendUrl}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -602,8 +602,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${backendUrl}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${backendUrl}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -708,8 +708,8 @@ export class BCRegistryService {
       reportType == 'synopsis'
         ? `${backendUrl}/srsites/synopsisReport/${siteId}`
         : reportType == 'details'
-          ? `${backendUrl}/srsites/detailsReport/${siteId}`
-          : '';
+        ? `${backendUrl}/srsites/detailsReport/${siteId}`
+        : '';
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',

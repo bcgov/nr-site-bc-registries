@@ -15,7 +15,7 @@ describe('SrprofilsService', () => {
     completorParticipantId: '123',
     dateLocalAuthority: '2020-01-01',
     dateRegistrar: '2020-01-01',
-    dateDecision: '2020-01-01'
+    dateDecision: '2020-01-01',
   });
   const twoSrprofil = new Srprofil({
     siteId: '321',
@@ -25,7 +25,7 @@ describe('SrprofilsService', () => {
     completorParticipantId: '321',
     dateLocalAuthority: '2020-01-02',
     dateRegistrar: '2020-01-02',
-    dateDecision: '2020-01-02'
+    dateDecision: '2020-01-02',
   });
   const threeSiteId = '987';
   const threeDateCompleted = '2020-01-03';
@@ -55,7 +55,7 @@ describe('SrprofilsService', () => {
     completorParticipantId: threeCompletorParticipantId,
     dateLocalAuthority: threeDateLocalAuthority,
     dateRegistrar: threeDateRegistrar,
-    dateDecision: threeDateDecision
+    dateDecision: threeDateDecision,
   });
   const srprofilArray = [oneSrprofil, twoSrprofil];
   beforeEach(async () => {

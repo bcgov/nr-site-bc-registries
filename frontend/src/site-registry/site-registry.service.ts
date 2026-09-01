@@ -8,10 +8,7 @@ let backendUrl: string;
 
 @Injectable()
 export class SiteRegistryService {
-  constructor(
-    private httpService: HttpService,
-    private payService: PayService
-  ) {
+  constructor(private httpService: HttpService, private payService: PayService) {
     // BACKEND_URL is the full base URL (scheme, host, and port); falls back
     // to the local dev backend for standalone (non-Docker) development.
     backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
