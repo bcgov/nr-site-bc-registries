@@ -4,7 +4,7 @@ parameters:
   - name: NAME
     description: Module name
     required: true
-    value: esra
+    value: nr-site-bc-registries
   - name: COMPONENT
     description: Component name
     value: backend
