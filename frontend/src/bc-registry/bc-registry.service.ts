@@ -67,7 +67,6 @@ export class BCRegistryService {
     let page;
     try {
       // Find the chromium/chrome binary in common locations
-      const fs = require('fs');
       const possiblePaths = [
         process.env.PUPPETEER_EXECUTABLE_PATH,
         '/usr/bin/google-chrome-stable',
