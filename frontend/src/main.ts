@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import path, { join, resolve } from 'path';
+import { join, resolve } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
 import { AppService } from './app.service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fileSession = require('session-file-store')(expressSession);
 
 async function bootstrap() {
@@ -17,8 +18,7 @@ async function bootstrap() {
   hbs.registerPartials(join(__dirname, '..', 'views/layout'));
   app.setViewEngine('hbs');
 
-  let sessionOptions: expressSession.SessionOptions;
-  sessionOptions = {
+  const sessionOptions: expressSession.SessionOptions = {
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,

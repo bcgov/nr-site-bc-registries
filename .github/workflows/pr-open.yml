@@ -44,6 +44,7 @@ jobs:
       oc_namespace: ${{ secrets.OC_NAMESPACE }}
       oc_token: ${{ secrets.OC_TOKEN }}
     with:
+      environment: dev
       target: ${{ github.event.number }}
       tag: ${{ github.event.pull_request.head.sha }}
       triggers: ('backend/', 'frontend/', 'common/', '.github/workflows/pr-open.yml')
