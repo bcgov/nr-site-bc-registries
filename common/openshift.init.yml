@@ -3,10 +3,10 @@ kind: Template
 parameters:
   - name: NAME
     description: Product name
-    value: nr-site-bc-registries
+    value: esra
   - name: PG_DATABASE
     description: Postgres database name
-    value: nr-site-bc-registries
+    value: esra
   - name: ZONE
     description: Deployment zone, e.g. pr-### or prod
     required: true
