@@ -74,12 +74,10 @@ objects:
               resources:
                 limits:
                   cpu: 500m
-                  memory: 1Gi
+                  memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: 250m
                   memory: 512Mi
-		limits:
-                  memory: ${MEMORY_LIMIT}
               # restricted-v2 SCC hardening. readOnlyRootFilesystem is intentionally
               # omitted: the postgres entrypoint writes to several root-fs paths
               # (config, locale, /tmp) beyond the PVC and socket-dir mounts.
