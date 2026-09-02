@@ -4,7 +4,7 @@ parameters:
   - name: NAME
     description: Product name
     required: true
-    value: nr-site-bc-registries
+    value: esra
   - name: COMPONENT
     description: Component name
     value: database

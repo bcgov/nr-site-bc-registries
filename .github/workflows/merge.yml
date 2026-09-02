@@ -82,7 +82,7 @@ jobs:
         with:
           sysdig_api_token: ${{ secrets.SYSDIG_API_TOKEN }}
           oc_namespace: ${{ secrets.OC_NAMESPACE }}
-          app: ${{ github.event.repository.name }}
+          app: esra
 
   promote:
     name: Promote Images

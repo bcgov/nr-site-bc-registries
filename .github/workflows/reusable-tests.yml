@@ -11,7 +11,7 @@ on:
 
 env:
   DOMAIN: apps.silver.devops.gov.bc.ca
-  PREFIX: ${{ github.event.repository.name }}-${{ inputs.target }}
+  PREFIX: esra-${{ inputs.target }}
 
 permissions: {}
 

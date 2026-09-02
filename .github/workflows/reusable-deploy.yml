@@ -58,7 +58,7 @@ jobs:
           overwrite: true
           parameters: -p DB_PASSWORD="$DB_PASSWORD"
             -p ZONE="${{ inputs.target }}"
-            -p NAME="${{ github.event.repository.name }}"
+            -p NAME="esra"
           triggers: ${{ inputs.triggers }}
           debug: true
 
@@ -93,6 +93,6 @@ jobs:
           oc_token: ${{ secrets.OC_TOKEN }}
           debug: true
           parameters: -p ZONE="${{ inputs.target }}"
-            -p NAME="${{ github.event.repository.name }}"
+            -p NAME="esra"
             ${{ matrix.parameters }}
           triggers: ${{ inputs.triggers }}
