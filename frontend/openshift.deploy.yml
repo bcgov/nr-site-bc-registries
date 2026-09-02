@@ -128,7 +128,7 @@ objects:
                   value: /tmp/caddy
                 - name: TMPDIR
                   value: /tmp/caddy
-                                - name: site_environment
+                - name: site_environment
                   value: TEST
                 - name: SESSION_PATH
                   value: "/mnt/sessions"
