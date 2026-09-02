@@ -4,7 +4,7 @@ parameters:
   - name: NAME
     description: Module name
     required: true
-    value: nr-site-bc-registries
+    value: esra
   - name: COMPONENT
     description: Component name
     value: backend
@@ -143,7 +143,7 @@ objects:
           #         mountPath: /tmp
           containers:
             - name: ${NAME}
-              image: ${REGISTRY}/${ORG_NAME}/${NAME}/${COMPONENT}:${IMAGE_TAG}
+              image: ${REGISTRY}/${ORG_NAME}/nr-site-bc-registries/${COMPONENT}:${IMAGE_TAG}
               imagePullPolicy: Always
               ports:
                 - name: http
