@@ -13,7 +13,7 @@ parameters:
     required: true
   - name: IMAGE_TAG
     description: Image tag to use
-    value: latest
+    required: true
   - name: REGISTRY
     description: Container registry to import from
     value: ghcr.io
@@ -29,7 +29,7 @@ parameters:
     description: The maximum amount of replicas for the horizontal pod autoscaler.
     value: "5"
   - name: CPU_REQUEST
-    value: "1"
+    value: "50m"
   - name: MEMORY_REQUEST
     value: 2Gi
   - name: CPU_LIMIT
@@ -39,8 +39,6 @@ parameters:
   - name: LOG_LEVEL
     description: Caddy log level (debug|info|warn|error)
     value: "info"
-  - name: PROMOTE
-    description: Image (namespace/name:tag) to promote/import
 objects:
   - apiVersion: apps/v1
     kind: Deployment
@@ -356,32 +354,3 @@ objects:
       selector:
         matchLabels:
           deployment: ${NAME}-${ZONE}-${COMPONENT}
-  - apiVersion: v1
-    kind: ImageStream
-    metadata:
-      labels:
-        app: ${NAME}-${ZONE}
-      name: ${NAME}-${ZONE}-${COMPONENT}
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - name: ${IMAGE_TAG}
-          from:
-            kind: DockerImage
-            name: ${REGISTRY}/${PROMOTE}
-          referencePolicy:
-            type: Local
-  - kind: PersistentVolumeClaim
-    apiVersion: v1
-    metadata:
-      name: esra-sessions
-      labels:
-        app: ${NAME}-${ZONE}
-    spec:
-      accessModes:
-        - ReadWriteMany
-      resources:
-        requests:
-          storage: "256Mi"
-      storageClassName: netapp-file-standard

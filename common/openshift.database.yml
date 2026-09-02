@@ -17,20 +17,6 @@ parameters:
   - name: MEMORY_LIMIT
     description: Memory limit for the database container (bounds the pod's working set).
     value: 4Gi
-  - name: IMAGE_TAG
-    description: Image tag to use
-    value: latest
-  - description: Password for the PostgreSQL connection user.
-    from: "[a-zA-Z0-9]{16}"
-    generate: expression
-    name: DB_PASSWORD
-  - description: Volume space available for data, e.g. 512Mi, 2Gi.
-    displayName: Database Volume Capacity
-    name: DB_PVC_SIZE
-    required: true
-    value: 1Gi
-  - name: REGISTRY
-    value: image-registry.openshift-image-registry.svc:5000
 objects:
   - apiVersion: apps/v1
     kind: StatefulSet
@@ -92,6 +78,8 @@ objects:
                 requests:
                   cpu: 250m
                   memory: 512Mi
+		limits:
+                  memory: ${MEMORY_LIMIT}
               # restricted-v2 SCC hardening. readOnlyRootFilesystem is intentionally
               # omitted: the postgres entrypoint writes to several root-fs paths
               # (config, locale, /tmp) beyond the PVC and socket-dir mounts.
@@ -166,32 +154,3 @@ objects:
           targetPort: 5432
       selector:
         deployment: ${NAME}-${ZONE}-${COMPONENT}
-  - kind: PersistentVolumeClaim
-    apiVersion: v1
-    metadata:
-      name: ${NAME}-${ZONE}-${COMPONENT}
-      labels:
-        app: ${NAME}-${ZONE}
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: "${DB_PVC_SIZE}"
-      storageClassName: netapp-file-standard
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}-${ZONE}-${COMPONENT}
-      labels:
-        app: ${NAME}-${ZONE}
-    spec:
-      lookupPolicy:
-        local: false
-      tags:
-        - name: ${IMAGE_TAG}
-          from:
-            kind: DockerImage
-            name: ${REGISTRY}/${PROMOTE}
-          referencePolicy:
-            type: Local
