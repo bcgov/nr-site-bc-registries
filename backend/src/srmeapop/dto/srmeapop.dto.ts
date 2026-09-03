@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class SrmeapopDto {
   siteId: string; // a10;
   docId: string; // a10;

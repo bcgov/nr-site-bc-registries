@@ -1,0 +1,305 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+parameters:
+  - name: NAME
+    description: Module name
+    required: true
+    value: esra
+  - name: COMPONENT
+    description: Component name
+    value: backend
+  - name: ZONE
+    description: Deployment zone, e.g. pr-### or prod
+    required: true
+  - name: IMAGE_TAG
+    description: Image tag to use
+    required: true
+  - name: REGISTRY
+    description: Container registry to import from
+    value: ghcr.io
+  - name: ORG_NAME
+    description: Organization name
+    value: bcgov
+  - name: DOMAIN
+    value: apps.silver.devops.gov.bc.ca
+  - name: MIN_REPLICAS
+    description: The minimum amount of replicas for the horizontal pod autoscaler.
+    value: "3"
+  - name: MAX_REPLICAS
+    description: The maximum amount of replicas for the horizontal pod autoscaler.
+    value: "5"
+  - name: CPU_REQUEST
+    value: "100m"
+  - name: MEMORY_REQUEST
+    value: 512Mi
+  - name: MEMORY_LIMIT
+    description: Memory limit for the container (bounds the pod's working set).
+    value: "4Gi"
+  - name: LOG_LEVEL
+    description: Application log level (debug|info|warn|error)
+    value: "info"
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      selector:
+        matchLabels:
+          deployment: ${NAME}-${ZONE}-${COMPONENT}
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+      template:
+        metadata:
+          labels:
+            app: ${NAME}-${ZONE}
+            deployment: ${NAME}-${ZONE}-${COMPONENT}
+        spec:
+          terminationGracePeriodSeconds: 30
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        deployment: ${NAME}-${ZONE}-${COMPONENT}
+                    topologyKey: kubernetes.io/hostname
+          # initContainers:
+          #   - name: wait-for-db
+          #     image: ${REGISTRY}/${ORG_NAME}/${NAME}/migrations:${IMAGE_TAG}
+          #     command:
+          #       - /bin/sh
+          #       - -c
+          #       - |
+          #         echo "Waiting for database to be reachable..."
+          #         max_retries=30
+          #         attempt=1
+          #         until nc -z -v -w3 ${NAME}-${ZONE}-database 5432; do
+          #           if [ "$attempt" -ge "$max_retries" ]; then
+          #             echo "ERROR: Database ${NAME}-${ZONE}-database:5432 is not reachable after ${max_retries} attempts." >&2
+          #             exit 1
+          #           fi
+          #           echo "Database not ready (attempt ${attempt}/${max_retries}), sleeping..."
+          #           attempt=$((attempt + 1))
+          #           sleep 2
+          #         done
+          #         echo "Database is UP!"
+          #     securityContext:
+          #       allowPrivilegeEscalation: false
+          #       runAsNonRoot: true
+          #       readOnlyRootFilesystem: true
+          #       capabilities:
+          #         drop: ["ALL"]
+          #       seccompProfile:
+          #         type: RuntimeDefault
+          #     volumeMounts:
+          #       - name: tmp
+          #         mountPath: /tmp
+          #   - name: migrations
+          #     image: ${REGISTRY}/${ORG_NAME}/${NAME}/migrations:${IMAGE_TAG}
+          #     imagePullPolicy: Always
+          #     env:
+          #       - name: POSTGRES_DATABASE
+          #         valueFrom:
+          #           secretKeyRef:
+          #             name: ${NAME}-${ZONE}-database
+          #             key: database-name
+          #       - name: FLYWAY_URL
+          #         value: jdbc:postgresql://${NAME}-${ZONE}-database:5432/$(POSTGRES_DATABASE)
+          #       - name: FLYWAY_USER
+          #         valueFrom:
+          #           secretKeyRef:
+          #             name: ${NAME}-${ZONE}-database
+          #             key: database-user
+          #       - name: FLYWAY_PASSWORD
+          #         valueFrom:
+          #           secretKeyRef:
+          #             name: ${NAME}-${ZONE}-database
+          #             key: database-password
+          #       - name: FLYWAY_DEFAULT_SCHEMA
+          #         value: "users"
+          #       - name: FLYWAY_BASELINE_ON_MIGRATE
+          #         value: "true"
+          #     resources:
+          #       requests:
+          #         cpu: 10m
+          #         memory: 50Mi
+          #     securityContext:
+          #       allowPrivilegeEscalation: false
+          #       runAsNonRoot: true
+          #       readOnlyRootFilesystem: true
+          #       capabilities:
+          #         drop: ["ALL"]
+          #       seccompProfile:
+          #         type: RuntimeDefault
+          #     volumeMounts:
+          #       - name: tmp
+          #         mountPath: /tmp
+          containers:
+            - name: ${NAME}
+              image: ${REGISTRY}/${ORG_NAME}/nr-site-bc-registries/${COMPONENT}:${IMAGE_TAG}
+              imagePullPolicy: Always
+              ports:
+                - name: http
+                  containerPort: 3000
+              env:
+                - name: NODE_TLS_REJECT_UNAUTHORIZED
+                  value: "0"
+                - name: LOG_LEVEL
+                  value: ${LOG_LEVEL}
+                - name: POSTGRES_HOST
+                  value: ${NAME}-${ZONE}-database
+                - name: POSTGRES_PORT
+                  value: "5432"
+                - name: POSTGRES_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-${ZONE}-database
+                      key: database-name
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-${ZONE}-database
+                      key: database-user
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}-${ZONE}-database
+                      key: database-password
+                # - name: POSTGRES_SCHEMA
+                #   value: "users"
+                - name: object_store_bucket
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_bucket
+                - name: object_store_env
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_env
+                - name: object_store_host
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_host
+                - name: object_store_secret
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_secret
+                - name: object_store_userid
+                  valueFrom:
+                    secretKeyRef:
+                      name: object-storage-secrets
+                      key: object_store_userid
+              resources:
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+                limits:
+                  memory: ${MEMORY_LIMIT}
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+                seccompProfile:
+                  type: RuntimeDefault
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+              startupProbe:
+                httpGet:
+                  path: /api/health
+                  port: http
+                periodSeconds: 5
+                failureThreshold: 30
+              readinessProbe:
+                httpGet:
+                  path: /api/health
+                  port: http
+                periodSeconds: 5
+                failureThreshold: 3
+              livenessProbe:
+                httpGet:
+                  path: /api
+                  port: http
+                periodSeconds: 10
+                failureThreshold: 3
+              lifecycle:
+                preStop:
+                  exec:
+                    # distroless/nodejs has no /bin/sleep; exec hooks skip image ENTRYPOINT
+                    command: ["/nodejs/bin/node", "-e", "setTimeout(() => {}, 10000)"]
+          volumes:
+            - name: tmp
+              emptyDir:
+                medium: Memory
+                sizeLimit: 256Mi
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      ports:
+        - name: http
+          port: 80
+          targetPort: 3000
+      selector:
+        deployment: ${NAME}-${ZONE}-${COMPONENT}
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: ${NAME}-${ZONE}-${COMPONENT}
+      minReplicas: ${{MIN_REPLICAS}}
+      maxReplicas: ${{MAX_REPLICAS}}
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 30
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+          selectPolicy: Max
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+            - type: Percent
+              value: 50
+              periodSeconds: 60
+          selectPolicy: Max
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      maxUnavailable: 1
+      selector:
+        matchLabels:
+          deployment: ${NAME}-${ZONE}-${COMPONENT}

@@ -1,14 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import path, { join, resolve } from 'path';
+import { join, resolve } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as expressSession from 'express-session';
 import { AppService } from './app.service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fileSession = require('session-file-store')(expressSession);
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+  app.enableShutdownHooks();
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views/pages'));
@@ -16,8 +18,7 @@ async function bootstrap() {
   hbs.registerPartials(join(__dirname, '..', 'views/layout'));
   app.setViewEngine('hbs');
 
-  let sessionOptions: expressSession.SessionOptions;
-  sessionOptions = {
+  const sessionOptions: expressSession.SessionOptions = {
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -27,7 +28,7 @@ async function bootstrap() {
 
   app.use(expressSession(sessionOptions));
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 
   const appService = app.get(AppService);
   await appService.initDownloadDate();

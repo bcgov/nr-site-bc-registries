@@ -6,7 +6,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CronService } from './cron/cron.service';
-import { CronModule } from './cron/cron.module';
 import { SitesModule } from './sites/sites.module';
 import { SrassocsModule } from './srassocs/srassocs.module';
 import { SrdatesModule } from './srdate/srdates.module';

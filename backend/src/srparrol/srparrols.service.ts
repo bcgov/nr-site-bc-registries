@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Srparrol } from './entities/srparrol.entity';
 
 import { CreateSrparrolDto } from './dto/create-srparrol.dto';
-import { UpdateSrparrolDto } from './dto/update-srparrol.dto';
 
 @Injectable()
 export class SrparrolsService {

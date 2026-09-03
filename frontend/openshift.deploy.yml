@@ -1,0 +1,356 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+parameters:
+  - name: NAME
+    description: Module name
+    required: true
+    value: esra
+  - name: COMPONENT
+    description: Component name
+    value: frontend
+  - name: ZONE
+    description: Deployment zone, e.g. pr-### or prod
+    required: true
+  - name: IMAGE_TAG
+    description: Image tag to use
+    required: true
+  - name: REGISTRY
+    description: Container registry to import from
+    value: ghcr.io
+  - name: ORG_NAME
+    description: Organization name
+    value: bcgov
+  - name: DOMAIN
+    value: apps.silver.devops.gov.bc.ca
+  - name: MIN_REPLICAS
+    description: The minimum amount of replicas for the horizontal pod autoscaler.
+    value: "3"
+  - name: MAX_REPLICAS
+    description: The maximum amount of replicas for the horizontal pod autoscaler.
+    value: "5"
+  - name: CPU_REQUEST
+    value: "50m"
+  - name: MEMORY_REQUEST
+    value: 2Gi
+  - name: CPU_LIMIT
+    value: "2"
+  - name: MEMORY_LIMIT
+    value: 4Gi
+  - name: LOG_LEVEL
+    description: Caddy log level (debug|info|warn|error)
+    value: "info"
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      selector:
+        matchLabels:
+          deployment: ${NAME}-${ZONE}-${COMPONENT}
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+      template:
+        metadata:
+          labels:
+            app: ${NAME}-${ZONE}
+            deployment: ${NAME}-${ZONE}-${COMPONENT}
+        spec:
+          terminationGracePeriodSeconds: 30
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        deployment: ${NAME}-${ZONE}-${COMPONENT}
+                    topologyKey: kubernetes.io/hostname
+          # initContainers:
+          #   - name: wait-for-backend
+          #     image: ${REGISTRY}/${ORG_NAME}/${NAME}/${COMPONENT}:${IMAGE_TAG}
+          #     command:
+          #       - /bin/sh
+          #       - -c
+          #       - |
+          #         echo "Waiting for backend to be healthy..."
+          #         max_retries=30
+          #         attempt=1
+          #         until wget -q --spider http://${NAME}-${ZONE}-backend/api/health; do
+          #           if [ "$attempt" -ge "$max_retries" ]; then
+          #             echo "ERROR: Backend ${NAME}-${ZONE}-backend is not reachable/healthy after ${max_retries} attempts." >&2
+          #             exit 1
+          #           fi
+          #           echo "Backend not ready (attempt ${attempt}/${max_retries}), sleeping..."
+          #           attempt=$((attempt + 1))
+          #           sleep 2
+          #         done
+          #         echo "Backend is UP and healthy!"
+          #     securityContext:
+          #       allowPrivilegeEscalation: false
+          #       runAsNonRoot: true
+          #       readOnlyRootFilesystem: true
+          #       capabilities:
+          #         drop: ["ALL"]
+          #       seccompProfile:
+          #         type: RuntimeDefault
+          #     volumeMounts:
+          #       - name: caddy-data
+          #         mountPath: /tmp/caddy
+          containers:
+            - name: ${NAME}
+              image: ${REGISTRY}/${ORG_NAME}/nr-site-bc-registries/${COMPONENT}:${IMAGE_TAG}
+              imagePullPolicy: Always
+              ports:
+                - name: http
+                  containerPort: 3000
+                - name: health
+                  containerPort: 3001
+              env:
+                - name: LOG_LEVEL
+                  value: ${LOG_LEVEL}
+                - name: BACKEND_URL
+                  value: http://${NAME}-${ZONE}-backend
+                # readOnlyRootFilesystem: true → redirect every writable path
+                # onto an emptyDir. Caddy stores config/data under the XDG dirs
+                # (mounted at /tmp/caddy); Coraza writes SecTmpDir/SecDataDir
+                # under /tmp/coraza; generic temp files go to TMPDIR.
+                - name: XDG_CONFIG_HOME
+                  value: /tmp/caddy
+                - name: XDG_DATA_HOME
+                  value: /tmp/caddy
+                - name: TMPDIR
+                  value: /tmp/caddy
+                - name: site_environment
+                  value: TEST
+                - name: SESSION_PATH
+                  value: "/mnt/sessions"
+                - name: COOKIE_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: esra-sessions
+                      key: COOKIE_SECRET
+                - name: BC_REGISTRY_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: bc-registry-config
+                      key: BC_REGISTRY_BASE_URL
+                - name: baseUrl
+                  valueFrom:
+                    secretKeyRef:
+                      name: bc-registry-config
+                      key: baseUrl
+                - name: API_KEY_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: bc-registry-config
+                      key: API_KEY_HOST
+                - name: SESSION_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: esra-sessions
+                      key: SESSION_SECRET
+                - name: KEYCLOAK_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak
+                      key: KEYCLOAK_BASE_URL
+                - name: KEYCLOAK_REALM
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak
+                      key: KEYCLOAK_REALM
+                - name: KEYCLOAK_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak
+                      key: KEYCLOAK_CLIENT_ID
+                - name: KEYCLOAK_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak
+                      key: KEYCLOAK_SECRET
+                - name: KEYCLOAK_XAPIKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak
+                      key: KEYCLOAK_XAPIKEY
+                - name: common_service_keycloak_base_url
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: common_service_keycloak_base_url
+                - name: cdogs_url
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: cdogs_url
+                - name: ches_url
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: ches_url
+                - name: service_realm
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: service_realm
+                - name: cdogs_service_client_id
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: cdogs_service_client_id
+                - name: cdogs_service_client_secret
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: cdogs_service_client_secret
+                - name: ches_service_client_id
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: ches_service_client_id
+                - name: ches_service_client_secret
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: ches_service_client_secret
+                - name: bc_registry_dashboard_url
+                  valueFrom:
+                    secretKeyRef:
+                      name: common-services
+                      key: bc_registry_dashboard_url
+              resources:
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+                limits:
+                  memory: ${MEMORY_LIMIT}
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+                seccompProfile:
+                  type: RuntimeDefault
+              volumeMounts:
+                - name: caddy-data
+                  mountPath: /tmp/caddy
+                - name: coraza-tmp
+                  mountPath: /tmp/coraza
+                - mountPath: /mnt/sessions
+                  name: esra-sessions
+              startupProbe:
+                httpGet:
+                  path: /
+                  port: http
+                periodSeconds: 5
+                failureThreshold: 30
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: http
+                periodSeconds: 5
+                failureThreshold: 3
+              livenessProbe:
+                httpGet:
+                  path: /health
+                  port: health
+                periodSeconds: 10
+                failureThreshold: 3
+              lifecycle:
+                preStop:
+                  exec:
+                    command: ["/bin/sleep", "10"]
+          volumes:
+            - name: caddy-data
+              emptyDir:
+                medium: Memory
+                sizeLimit: 256Mi
+            - name: coraza-tmp
+              emptyDir:
+                medium: Memory
+                sizeLimit: 256Mi
+            - name: esra-sessions
+              persistentVolumeClaim:
+                claimName: esra-sessions
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      ports:
+        - name: http
+          port: 80
+          targetPort: 3000
+      selector:
+        deployment: ${NAME}-${ZONE}-${COMPONENT}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      host: ${NAME}-${ZONE}-${COMPONENT}.${DOMAIN}
+      to:
+        kind: Service
+        name: ${NAME}-${ZONE}-${COMPONENT}
+        weight: 100
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: ${NAME}-${ZONE}-${COMPONENT}
+      minReplicas: ${{MIN_REPLICAS}}
+      maxReplicas: ${{MAX_REPLICAS}}
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 30
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+          selectPolicy: Max
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+            - type: Percent
+              value: 50
+              periodSeconds: 60
+          selectPolicy: Max
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      maxUnavailable: 1
+      selector:
+        matchLabels:
+          deployment: ${NAME}-${ZONE}-${COMPONENT}
