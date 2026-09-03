@@ -45,7 +45,7 @@ objects:
           # Give Postgres time to flush and shut down cleanly on SIGTERM during a node drain.
           terminationGracePeriodSeconds: 60
           containers:
-            - name: ${NAME}-${ZONE}
+            - name: ${NAME}
               image: postgres:${PG_VERSION}
               imagePullPolicy: Always
               ports:
