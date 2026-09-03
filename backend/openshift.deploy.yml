@@ -172,8 +172,8 @@ objects:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
                       key: database-password
-                - name: POSTGRES_SCHEMA
-                  value: "users"
+                # - name: POSTGRES_SCHEMA
+                #   value: "users"
                 - name: object_store_bucket
                   valueFrom:
                     secretKeyRef:

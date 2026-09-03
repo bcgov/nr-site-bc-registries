@@ -300,7 +300,7 @@ objects:
         app: ${NAME}-${ZONE}
       name: ${NAME}-${ZONE}-${COMPONENT}
     spec:
-      host: ${NAME}-${ZONE}.${DOMAIN}
+      host: ${NAME}-${ZONE}-${COMPONENT}.${DOMAIN}
       to:
         kind: Service
         name: ${NAME}-${ZONE}-${COMPONENT}
