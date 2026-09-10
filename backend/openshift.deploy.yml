@@ -153,21 +153,21 @@ objects:
                   value: "0"
                 - name: LOG_LEVEL
                   value: ${LOG_LEVEL}
-                - name: POSTGRES_HOST
+                - name: POSTGRESQL_HOST
                   value: ${NAME}-${ZONE}-database
                 - name: POSTGRES_PORT
                   value: "5432"
-                - name: POSTGRES_DATABASE
+                - name: POSTGRESQL_DATABASE
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
                       key: database-name
-                - name: POSTGRES_USER
+                - name: POSTGRESQL_USER
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
                       key: database-user
-                - name: POSTGRES_PASSWORD
+                - name: POSTGRESQL_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: ${NAME}-${ZONE}-database
