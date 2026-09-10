@@ -219,7 +219,7 @@ objects:
               startupProbe:
                 httpGet:
                   path: /api/health
-                  port: http
+                  port: 3000
                 periodSeconds: 5
                 failureThreshold: 30
               readinessProbe:

@@ -249,7 +249,7 @@ objects:
               startupProbe:
                 httpGet:
                   path: /
-                  port: http
+                  port: 3000
                 periodSeconds: 5
                 failureThreshold: 30
               readinessProbe:
