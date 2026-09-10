@@ -255,13 +255,13 @@ objects:
               readinessProbe:
                 httpGet:
                   path: /
-                  port: http
+                  port: 3000
                 periodSeconds: 5
                 failureThreshold: 3
               livenessProbe:
                 httpGet:
                   path: /health
-                  port: health
+                  port: 3000
                 periodSeconds: 10
                 failureThreshold: 3
               lifecycle:

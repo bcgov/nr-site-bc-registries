@@ -225,13 +225,13 @@ objects:
               readinessProbe:
                 httpGet:
                   path: /api/health
-                  port: http
+                  port: 3000
                 periodSeconds: 5
                 failureThreshold: 3
               livenessProbe:
                 httpGet:
                   path: /api
-                  port: http
+                  port: 3000
                 periodSeconds: 10
                 failureThreshold: 3
               lifecycle:
