@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HealthController } from './health/health.controller';
 import { CronService } from './cron/cron.service';
 import { SitesModule } from './sites/sites.module';
 import { SrassocsModule } from './srassocs/srassocs.module';
@@ -68,7 +69,7 @@ if (process.env.POSTGRESQL_PASSWORD != null) {
     SrsitesModule,
     ActionsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService, CronService],
 })
 export class AppModule {}
