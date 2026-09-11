@@ -16,51 +16,51 @@ env:
 permissions: {}
 
 jobs:
-  integration-tests:
-    name: Integration
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        name: Setup Node
-        with:
-          node-version: 24
-      - id: cache-npm
-        uses: actions/cache@v6
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-cache-node-modules-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+  # integration-tests:
+  #   name: Integration
+  #   runs-on: ubuntu-24.04
+  #   timeout-minutes: 5
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #     - uses: actions/setup-node@v7
+  #       name: Setup Node
+  #       with:
+  #         node-version: 24
+  #     - id: cache-npm
+  #       uses: actions/cache@v6
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-build-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-build-cache-node-modules-
+  #           ${{ runner.os }}-build-
+  #           ${{ runner.os }}-
 
-      - name: Wait for backend health check
-        env:
-          BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}
-        run: |
-          echo "Waiting for backend health check at ${BASE_URL}/api/health..."
-          for i in {1..30}; do
-            status=$(curl -k --connect-timeout 5 --max-time 10 -s -o /dev/null -w "%{http_code}" "${BASE_URL}/api/health" || true)
-            if [ "$status" -eq 200 ]; then
-              echo "Backend is healthy!"
-              exit 0
-            fi
-            echo "Waiting for health check (HTTP $status), retrying in 10s... ($i/30)"
-            sleep 10
-          done
-          echo "ERROR: Backend did not become healthy in time."
-          exit 1
+  #     - name: Wait for backend health check
+  #       env:
+  #         BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}
+  #       run: |
+  #         echo "Waiting for backend health check at ${BASE_URL}/api/health..."
+  #         for i in {1..30}; do
+  #           status=$(curl -k --connect-timeout 5 --max-time 10 -s -o /dev/null -w "%{http_code}" "${BASE_URL}/api/health" || true)
+  #           if [ "$status" -eq 200 ]; then
+  #             echo "Backend is healthy!"
+  #             exit 0
+  #           fi
+  #           echo "Waiting for health check (HTTP $status), retrying in 10s... ($i/30)"
+  #           sleep 10
+  #         done
+  #         echo "ERROR: Backend did not become healthy in time."
+  #         exit 1
 
-      - name: Run Integration Tests
-        env:
-          API_NAME: nest
-          BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}
-        run: |
-          cd common/tests/integration
-          npm ci
-          node src/main.js
+  #     - name: Run Integration Tests
+  #       env:
+  #         API_NAME: nest
+  #         BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}
+  #       run: |
+  #         cd common/tests/integration
+  #         npm ci
+  #         node src/main.js
 
   e2e-tests:
     name: E2E

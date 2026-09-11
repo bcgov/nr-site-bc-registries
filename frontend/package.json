@@ -79,6 +79,7 @@
   },
   "devDependencies": {
     "@bcgov/bootstrap-theme": "https://github.com/bcgov/bootstrap-theme/releases/download/v1.1.1/bcgov-bootstrap-theme-1.1.1.tgz",
+    "@playwright/test": "^1.63.0",
     "@types/base-64": "^1.0.0",
     "@types/express": "^4.17.17",
     "@types/express-session": "^1.17.7",
