@@ -219,19 +219,19 @@ objects:
               startupProbe:
                 httpGet:
                   path: /api/health
-                  port: 3000
+                  port: 3001
                 periodSeconds: 5
                 failureThreshold: 30
               readinessProbe:
                 httpGet:
                   path: /api/health
-                  port: 3000
+                  port: 3001
                 periodSeconds: 5
                 failureThreshold: 3
               livenessProbe:
                 httpGet:
                   path: /api
-                  port: 3000
+                  port: 3001
                 periodSeconds: 10
                 failureThreshold: 3
               lifecycle:

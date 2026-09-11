@@ -249,19 +249,19 @@ objects:
               startupProbe:
                 httpGet:
                   path: /
-                  port: 3000
+                  port: 3001
                 periodSeconds: 5
                 failureThreshold: 30
               readinessProbe:
                 httpGet:
                   path: /
-                  port: 3000
+                  port: 3001
                 periodSeconds: 5
                 failureThreshold: 3
               livenessProbe:
                 httpGet:
                   path: /
-                  port: 3000
+                  port: 3001
                 periodSeconds: 10
                 failureThreshold: 3
               lifecycle:
