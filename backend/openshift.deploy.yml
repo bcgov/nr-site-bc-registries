@@ -218,19 +218,19 @@ objects:
                   mountPath: /tmp
               startupProbe:
                 httpGet:
-                  path: /api/health
+                  path: /
                   port: 3000
                 periodSeconds: 5
                 failureThreshold: 30
               readinessProbe:
                 httpGet:
-                  path: /api/health
+                  path: /
                   port: 3000
                 periodSeconds: 5
                 failureThreshold: 3
               livenessProbe:
                 httpGet:
-                  path: /api
+                  path: /
                   port: 3000
                 periodSeconds: 10
                 failureThreshold: 3
