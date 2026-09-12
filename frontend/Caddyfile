@@ -21,21 +21,22 @@
 
 	root * /srv
 	encode zstd gzip
-	file_server
-	@spa_router {
-		not path /api*
-		file {
-			try_files {path} /index.html
+
+	route {
+		# Proxy requests to the backend API
+		reverse_proxy /api* {$BACKEND_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
 		}
+		# Static assets (css/js/images/fonts) served directly from /srv
+		file_server {
+			pass_thru
+		}
+		# Everything else - server-rendered pages (/, /address-search, ...)
+		# and report/PDF generation (/bc-registry*) - is handled by the
+		# local Nest BFF (puppeteer/chromium).
+		reverse_proxy localhost:3002
 	}
-	rewrite @spa_router {http.matchers.file.relative}
-	# Proxy requests to API service
-	reverse_proxy /api* {$BACKEND_URL} {
-		header_up Host {http.reverse_proxy.upstream.hostport}
-		header_up X-Real-IP {remote_host}
-	}
-	# Proxy report/PDF generation requests to the local Nest BFF (puppeteer/chromium)
-	reverse_proxy /bc-registry* localhost:3002
 	header {
 		-Server
 		X-Frame-Options "SAMEORIGIN"
