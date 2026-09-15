@@ -1,43 +1,31 @@
-# RedHat UBI 8 with nodejs 14
-FROM redhat/ubi8 as builder
-RUN dnf module install -y nodejs:14
+# Build
+FROM node:24.19.0-slim AS build
 
-# Add tiny init process to reap zombie/defunct child processes.
-ENV TINI_VERSION=v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /tini
-RUN chmod +x /tini
-
-# Install packages, build and keep only prod packages
+# Copy, build static files; see .dockerignore for exclusions
 WORKDIR /app
 COPY . ./
-RUN npm ci --only=prod && \
-    npm run build
+RUN npm ci --ignore-scripts && npm run build
 
-# Deployment container
-FROM redhat/ubi8-micro
+# Dependencies
+FROM node:24.19.0-slim AS dependencies
 
-# Set node to production 
-ENV NODE_ENV production
-
-# Node packages and dependencies
-COPY --from=builder /usr/bin/node /usr/bin/
-COPY --from=builder /usr/lib64/libz.so.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libbrotlidec.so.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libbrotlienc.so.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libcrypto.so.1.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libssl.so.1.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libstdc++.so.6 /usr/lib64/
-COPY --from=builder /usr/lib64/libgcc_s.so.1 /usr/lib64/
-COPY --from=builder /usr/lib64/libbrotlicommon.so.1 /usr/lib64/
-COPY --from=builder /tini /tini
-
-# Copy over app
+# Copy, build static files; see .dockerignore for exclusions
 WORKDIR /app
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm ci --ignore-scripts --omit=dev
 
-# Expose port - mostly a convention, for readability
+# Deploy using minimal Distroless image
+FROM gcr.io/distroless/nodejs24-debian12:nonroot
+ENV NODE_ENV=production
+
+# Copy app and dependencies
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+
+# Boilerplate, not used in OpenShift/Kubernetes
 EXPOSE 3000
 
-# Start up command
-ENTRYPOINT ["/tini", "--", "node", "dist/src/main"]
+# Nonroot user; Node 24 automatically respects cgroup memory limits
+USER nonroot
+CMD ["/app/dist/src/main"]

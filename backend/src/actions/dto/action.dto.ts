@@ -1,4 +1,4 @@
 export class ActionDto {
-    updating: boolean;
-    hasData: boolean;
-  }
+  updating: boolean;
+  hasData: boolean;
+}

@@ -24,10 +24,7 @@ import { BCRegistryService } from './bc-registry.service';
 @UseFilters(AuthenticationFilter)
 @UseGuards(AuthenticationGuard)
 export class BCRegistryController {
-  constructor(
-    private bcRegistryService: BCRegistryService,
-    private payService: PayService
-  ) {}
+  constructor(private bcRegistryService: BCRegistryService, private payService: PayService) {}
 
   @Get('download-pdf/:reportType/:siteId')
   @Header('Content-Type', 'application/pdf')

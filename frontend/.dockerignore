@@ -1,0 +1,9 @@
+node_modules
+dist
+.git
+*.md
+Dockerfile*
+.dockerignore
+test
+e2e
+coverage
