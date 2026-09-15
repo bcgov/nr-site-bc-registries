@@ -84,7 +84,7 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Run Tests
-        env:
+        env: 
           E2E_BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}/
           CI: "true"
         run: |
