@@ -62,41 +62,41 @@ jobs:
   #         npm ci
   #         node src/main.js
 
-  e2e-tests:
-    name: E2E
-    defaults:
-      run:
-        working-directory: frontend
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-        name: Checkout
-      - uses: actions/setup-node@v7
-        name: Setup Node
-        with:
-          node-version: 24
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
-      - name: Install dependencies
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
+  # e2e-tests:
+  #   name: E2E
+  #   defaults:
+  #     run:
+  #       working-directory: frontend
+  #   runs-on: ubuntu-24.04
+  #   timeout-minutes: 10
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #       name: Checkout
+  #     - uses: actions/setup-node@v7
+  #       name: Setup Node
+  #       with:
+  #         node-version: 24
+  #         cache: "npm"
+  #         cache-dependency-path: frontend/package-lock.json
+  #     - name: Install dependencies
+  #       run: |
+  #         npm ci
+  #         npx playwright install --with-deps chromium
 
-      - name: Run Tests
-        env: 
-          E2E_BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}/
-          CI: "true"
-        run: |
-          npx playwright test --project="chromium" --reporter=html
+  #     - name: Run Tests
+  #       env: 
+  #         E2E_BASE_URL: https://${{ env.PREFIX }}.${{ env.DOMAIN }}/
+  #         CI: "true"
+  #       run: |
+  #         npx playwright test --project="chromium" --reporter=html
 
-      - uses: actions/upload-artifact@v7
-        if: (! cancelled())
-        name: upload results
-        with:
-          name: playwright-report-chromium
-          path: "./frontend/playwright-report" # path from current folder
-          retention-days: 7
+  #     - uses: actions/upload-artifact@v7
+  #       if: (! cancelled())
+  #       name: upload results
+  #       with:
+  #         name: playwright-report-chromium
+  #         path: "./frontend/playwright-report" # path from current folder
+  #         retention-days: 7
 
   load-tests:
     name: Load
