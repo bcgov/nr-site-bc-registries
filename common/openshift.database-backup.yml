@@ -1,0 +1,163 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+parameters:
+  - name: NAME
+    description: Product name
+    required: true
+    value: esra
+  - name: COMPONENT
+    description: Component name
+    value: backup
+  - name: ZONE
+    description: Deployment zone, e.g. pr-### or prod
+    required: true
+  - name: SCHEDULE
+    description: Cron schedule for the backup job (cluster system TZ)
+    value: "0 8 * * *"
+  - name: IMAGE_TAG
+    description: Tag of the ghcr.io/bcgov/backup-container image to run
+    value: "latest"
+  - name: BACKUP_PVC_SIZE
+    description: Volume space available for backup files
+    value: 1Gi
+  - name: DAILY_BACKUPS
+    description: Number of daily backups to retain (rolling strategy)
+    value: "7"
+  - name: WEEKLY_BACKUPS
+    description: Number of weekly backups to retain (rolling strategy)
+    value: "4"
+  - name: MONTHLY_BACKUPS
+    description: Number of monthly backups to retain (rolling strategy)
+    value: "1"
+  - name: SUCCESS_JOBS_HISTORY_LIMIT
+    value: "5"
+  - name: FAILED_JOBS_HISTORY_LIMIT
+    value: "2"
+objects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: netapp-block-standard
+      resources:
+        requests:
+          storage: ${BACKUP_PVC_SIZE}
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}-config
+    data:
+      BACKUP_STRATEGY: rolling
+      RETENTION.DAILY_BACKUPS: ${DAILY_BACKUPS}
+      RETENTION.WEEKLY_BACKUPS: ${WEEKLY_BACKUPS}
+      RETENTION.MONTHLY_BACKUPS: ${MONTHLY_BACKUPS}
+  - apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}
+    spec:
+      schedule: ${SCHEDULE}
+      concurrencyPolicy: Forbid
+      successfulJobsHistoryLimit: ${{SUCCESS_JOBS_HISTORY_LIMIT}}
+      failedJobsHistoryLimit: ${{FAILED_JOBS_HISTORY_LIMIT}}
+      jobTemplate:
+        spec:
+          backoffLimit: 0
+          activeDeadlineSeconds: 1600
+          template:
+            metadata:
+              labels:
+                app: ${NAME}-${ZONE}
+                deployment: ${NAME}-${ZONE}-${COMPONENT}
+            spec:
+              restartPolicy: Never
+              terminationGracePeriodSeconds: 30
+              containers:
+                - name: ${COMPONENT}
+                  image: ghcr.io/bcgov/backup-container:${IMAGE_TAG}
+                  imagePullPolicy: Always
+                  command:
+                    - /bin/bash
+                    - "-c"
+                    - /backup.sh -1
+                  volumeMounts:
+                    - name: backup
+                      mountPath: /backups
+                  env:
+                    - name: BACKUP_DIR
+                      value: /backups
+                    - name: BACKUP_STRATEGY
+                      valueFrom:
+                        configMapKeyRef:
+                          name: ${NAME}-${ZONE}-${COMPONENT}-config
+                          key: BACKUP_STRATEGY
+                    - name: DAILY_BACKUPS
+                      valueFrom:
+                        configMapKeyRef:
+                          name: ${NAME}-${ZONE}-${COMPONENT}-config
+                          key: RETENTION.DAILY_BACKUPS
+                    - name: WEEKLY_BACKUPS
+                      valueFrom:
+                        configMapKeyRef:
+                          name: ${NAME}-${ZONE}-${COMPONENT}-config
+                          key: RETENTION.WEEKLY_BACKUPS
+                    - name: MONTHLY_BACKUPS
+                      valueFrom:
+                        configMapKeyRef:
+                          name: ${NAME}-${ZONE}-${COMPONENT}-config
+                          key: RETENTION.MONTHLY_BACKUPS
+                    # Points at the Service/Secret created by openshift.database.yml /
+                    # openshift.init.yml for this NAME+ZONE - no separate backup credentials needed.
+                    - name: DATABASE_SERVICE_NAME
+                      value: ${NAME}-${ZONE}-database
+                    - name: DEFAULT_PORT
+                      value: "5432"
+                    - name: POSTGRESQL_DATABASE
+                      valueFrom:
+                        secretKeyRef:
+                          name: ${NAME}-${ZONE}-database
+                          key: database-name
+                    - name: DATABASE_USER
+                      valueFrom:
+                        secretKeyRef:
+                          name: ${NAME}-${ZONE}-database
+                          key: database-user
+                    - name: DATABASE_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: ${NAME}-${ZONE}-database
+                          key: database-password
+              volumes:
+                - name: backup
+                  persistentVolumeClaim:
+                    claimName: ${NAME}-${ZONE}-${COMPONENT}
+  # Allows the backup CronJob's pod to reach the database pod; the NetworkPolicy in
+  # openshift.init.yml only opens database ingress to the backend, and NetworkPolicies
+  # for the same pod selector are additive, so this is a second, independent allow-rule.
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app: ${NAME}-${ZONE}
+      name: ${NAME}-${ZONE}-${COMPONENT}-database-ingress
+    spec:
+      podSelector:
+        matchLabels:
+          deployment: ${NAME}-${ZONE}-database
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app: ${NAME}-${ZONE}
+                  deployment: ${NAME}-${ZONE}-${COMPONENT}
+      policyTypes:
+        - Ingress

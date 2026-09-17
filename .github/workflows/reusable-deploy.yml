@@ -70,11 +70,14 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        name: [database, backend, frontend]
+        name: [database, database-backup, backend, frontend]
         include:
           - name: database
             file: common/openshift.database.yml
             parameters: -p DB_PVC_SIZE="1Gi"
+          - name: database-backup
+            file: common/openshift.database-backup.yml
+            parameters: ""
           - name: backend
             file: backend/openshift.deploy.yml
             parameters: -p IMAGE_TAG="${{ inputs.tag }}"
