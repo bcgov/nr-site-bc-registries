@@ -13,7 +13,7 @@ parameters:
     required: true
   - name: SCHEDULE
     description: Cron schedule for the backup job (cluster system TZ)
-    value: "0 8 * * *"
+    value: "0 1 * * *"
   - name: IMAGE_TAG
     description: Tag of the ghcr.io/bcgov/backup-container image to run
     value: "latest"
