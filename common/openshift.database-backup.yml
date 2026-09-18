@@ -91,10 +91,10 @@ objects:
                     - /backup.sh -1
                   volumeMounts:
                     - name: backup
-                      mountPath: /backups
+                      mountPath: /backups/
                   env:
                     - name: BACKUP_DIR
-                      value: /backups
+                      value: /backups/
                     - name: BACKUP_STRATEGY
                       valueFrom:
                         configMapKeyRef:
