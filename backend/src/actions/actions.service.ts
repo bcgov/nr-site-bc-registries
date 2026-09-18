@@ -33,6 +33,9 @@ export class ActionsService {
 
   async update(updateActionDto: UpdateActionDto): Promise<Action> {
     const actions = await this.actionsRepository.find();
+    if (actions.length === 0) {
+      return this.create({ updating: false, hasData: false, ...updateActionDto });
+    }
     await this.actionsRepository.update(actions[0].id, updateActionDto);
     return this.findOne(actions[0].id);
   }
