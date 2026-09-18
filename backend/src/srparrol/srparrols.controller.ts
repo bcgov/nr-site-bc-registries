@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SrparrolsService } from './srparrols.service';
 import { CreateSrparrolDto } from './dto/create-srparrol.dto';
-import { UpdateSrparrolDto } from './dto/update-srparrol.dto';
 
 @ApiTags('srparrols')
 @Controller('srparrols')

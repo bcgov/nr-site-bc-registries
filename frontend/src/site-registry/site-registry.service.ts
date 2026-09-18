@@ -4,24 +4,19 @@ import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { PayService } from 'src/pay/pay.service';
 
-let hostname: string;
-let port: number;
+let backendUrl: string;
 
 @Injectable()
 export class SiteRegistryService {
-  constructor(
-    private httpService: HttpService,
-    private payService: PayService
-  ) {
-    // docker hostname is the container name, use localhost for local development
-    hostname = process.env.BACKEND_URL ? process.env.BACKEND_URL : `http://localhost`;
-    // local development backend port is 3001, docker backend port is 3000
-    port = process.env.BACKEND_URL ? 3000 : 3001;
+  constructor(private httpService: HttpService, private payService: PayService) {
+    // BACKEND_URL is the full base URL (scheme, host, and port); falls back
+    // to the local dev backend for standalone (non-Docker) development.
+    backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
   }
 
   async searchPid(pid: string, token: string, account_id: number, folioNumber: string): Promise<any> {
     // Parcel ID searches are now free - no payment required
-    const requestUrl = `${hostname}:${port}/srsites/searchPid/${pid}`;
+    const requestUrl = `${backendUrl}/srsites/searchPid/${pid}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +30,7 @@ export class SiteRegistryService {
 
   async searchCrownPin(pin: string, token: string, account_id: number, folioNumber: string): Promise<any> {
     // Crown Lands PIN searches are now free - no payment required.
-    const requestUrl = `${hostname}:${port}/srsites/searchCrownPin/${pin}`;
+    const requestUrl = `${backendUrl}/srsites/searchCrownPin/${pin}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -55,7 +50,7 @@ export class SiteRegistryService {
     folioNumber: string
   ): Promise<any> {
     // Crown Lands File # searches are now free - no payment required
-    const requestUrl = `${hostname}:${port}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
+    const requestUrl = `${backendUrl}/srsites/searchCrownFile/${encodeURIComponent(crownLandsFileNumber)}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +65,7 @@ export class SiteRegistryService {
 
   async searchSiteId(siteId: string, token: string, account_id: number, folioNumber: string): Promise<any> {
     // Site ID searches are now free - no payment required
-    const requestUrl = `${hostname}:${port}/srsites/searchSiteId/${siteId}`;
+    const requestUrl = `${backendUrl}/srsites/searchSiteId/${siteId}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +86,7 @@ export class SiteRegistryService {
     folioNumber: string
   ): Promise<any> {
     // Address searches are now free - no payment required
-    const requestUrl = `${hostname}:${port}/srsites/searchAddress`;
+    const requestUrl = `${backendUrl}/srsites/searchAddress`;
     const data = await lastValueFrom(
       this.httpService.post(requestUrl, { city: city, address: address }).pipe(map((response) => response.data))
     );
@@ -111,7 +106,7 @@ export class SiteRegistryService {
       return { error: 'Area Size Error' }; // should never reach here
     }
 
-    const requestUrl = `${hostname}:${port}/srsites/searchArea/${lat}/${lng}/${size}`;
+    const requestUrl = `${backendUrl}/srsites/searchArea/${lat}/${lng}/${size}`;
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   const config = new DocumentBuilder()
     .setTitle('Users example')
     .setDescription('The user API description')
@@ -18,6 +19,6 @@ async function bootstrap() {
   const port = process.env.POSTGRESQL_HOST.includes('database') ? 3000 : 3001;
   await app.listen(port);
   const appService = app.get(AppService);
-  // await appService.initializeDb();
+  await appService.initializeDb();
 }
 bootstrap();

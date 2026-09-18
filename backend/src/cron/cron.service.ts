@@ -74,14 +74,14 @@ export class CronService {
       await this.actionsService.update({ updating: false });
     }
     const action = await this.actionsService.findFirst();
-    if (!action.hasData || srdate.length == 0) {
+    if (!action.hasData || srdate.length === 0) {
       console.log('Database is empty, grabbing data');
       await this.updateTables();
     } else if (action.hasData) {
       // if the download date has changed, grab the data again
       const previousDate = srdate[0].downloaddate;
       const newDate = await this.getCsv('srdate.csv');
-      if (newDate != previousDate) {
+      if (newDate !== previousDate) {
         console.log('Download date has changed, updating tables');
         await this.updateTables();
       }
@@ -460,16 +460,16 @@ export class CronService {
       `/${fileName}`;
 
     console.log(url);
-    let object_store_userid = process.env.object_store_userid;
-    let object_store_secret = process.env.object_store_secret;
+    const objectStoreUserid = process.env.object_store_userid;
+    const objectStoreSecret = process.env.object_store_secret;
     const interceptor = aws4Interceptor(
       {
         region: 'us-east-1',
         service: 'execute-api',
       },
       {
-        accessKeyId: object_store_userid,
-        secretAccessKey: object_store_secret,
+        accessKeyId: objectStoreUserid,
+        secretAccessKey: objectStoreSecret,
       }
     );
     client.interceptors.request.use(interceptor);
