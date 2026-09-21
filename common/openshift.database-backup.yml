@@ -12,7 +12,7 @@ parameters:
     description: Deployment zone, e.g. pr-### or prod
     required: true
   - name: SCHEDULE
-    description: Cron schedule for the backup job (cluster system TZ)
+    description: Cron schedule for the backup job (America/Vancouver TZ)
     value: "0 1 * * *"
   - name: IMAGE_TAG
     description: Tag of the ghcr.io/bcgov/backup-container image to run
@@ -30,7 +30,7 @@ parameters:
     description: Number of monthly backups to retain (rolling strategy)
     value: "1"
   - name: SUCCESS_JOBS_HISTORY_LIMIT
-    value: "5"
+    value: "2"
   - name: FAILED_JOBS_HISTORY_LIMIT
     value: "2"
 objects:
@@ -66,6 +66,7 @@ objects:
       name: ${NAME}-${ZONE}-${COMPONENT}
     spec:
       schedule: ${SCHEDULE}
+      timeZone: "America/Vancouver"
       concurrencyPolicy: Forbid
       successfulJobsHistoryLimit: ${{SUCCESS_JOBS_HISTORY_LIMIT}}
       failedJobsHistoryLimit: ${{FAILED_JOBS_HISTORY_LIMIT}}
