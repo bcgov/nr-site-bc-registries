@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
+            <button class="round previous" style="height: 35px; width: 35px" id="goToIndexButton">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -61,36 +61,13 @@
         <div class="row">
           <div class="col-sm-2"></div>
           <div class="col-sm-4">
-            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-            <button onclick="searchCLP()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
+            <button id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+            <button id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
           </div>
         </div>
       </div>
       <input type="hidden" id="breadcrumbSearch" value="Crown Lands PIN Search" />
     </main>
-    <script>
-      // only allow numbers in the pin input
-      const ele = document.getElementById('crownLandsPin');
-      const state = {
-          value: ele.value,
-      };
-
-      ele.addEventListener('keydown', function (e) {
-          const target = e.target;
-          state.selectionStart = target.selectionStart;
-          state.selectionEnd = target.selectionEnd;
-      });
-
-      ele.addEventListener('input', function (e) {
-          const target = e.target;
-
-          if (/^[0-9]*$/.test(target.value)) {
-              state.value = target.value;
-          } else {
-              target.value = state.value;
-              target.setSelectionRange(state.selectionStart, state.selectionEnd);
-          }
-      });
-    </script>
+    <script src="/js/pages/crown-lands-pin.js"></script>
   {{/inline}}
 {{/template}}

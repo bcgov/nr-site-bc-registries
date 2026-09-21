@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
+            <button class="round previous" style="height: 35px; width: 35px" id="goToIndexButton">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -65,8 +65,8 @@
         <div class="row">
           <div class="col-sm-2"></div>
           <div class="col-sm-4">
-            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-            <button onclick="searchAddress()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
+            <button id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+            <button id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
           </div>
         </div>
         <div class="row">
@@ -103,7 +103,7 @@
               </ul>
             </div>
             <div class="modal-footer text-left">
-              <button onclick="$('#moreinfo1').modal('hide')" class="btn btn-secondary">Close</button>
+              <button id="moreinfo1CloseButton" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@
               a site.
             </div>
             <div class="modal-footer text-left">
-              <button onclick="$('#moreinfo2').modal('hide')" class="btn btn-secondary">Close</button>
+              <button id="moreinfo2CloseButton" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
@@ -135,10 +135,6 @@
       <!-- End Modal -->
       <input type="hidden" id="breadcrumbSearch" value="Address Search" />
     </main>
-    <script>
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      });
-    </script>
+    <script src="/js/pages/address-search.js"></script>
   {{/inline}}
 {{/template}}
