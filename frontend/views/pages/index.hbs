@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" id="goToDashboardButton">
+            <button class="round previous" style="height: 35px; width: 35px" onclick="goToDashboard()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -124,13 +124,39 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class='btn btn-primary' id="setAccountButton"><span id="setAccountSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="setAccountBtnTxt">Set Account</span></button>
+                <button type="button" class='btn btn-primary' onclick="setAccount()" id="setAccountButton"><span id="setAccountSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="setAccountBtnTxt">Set Account</span></button>
               </div>
             </form>
           </div>
         </div>
       </div>
     </main>
-    <script src="/js/pages/index.js"></script>
+    <script>
+      $(window).on('load', function() {
+        const setAccountLink = $('#setAccountLink');
+        if (setAccountLink.text() == '-') {
+          setAccountLink.text('Select an account');
+          $('#setAccountModal').modal('show');
+        }
+        if ($('#accountSelect').val() == null) {
+          setAccountLink.text('No eligible accounts found');
+          setAccountLink.removeAttr('data-toggle');
+          setAccountLink.removeAttr('data-target');
+          setAccountLink.css('cursor','default');
+          $('#accountError').removeClass('d-none');
+        }
+        if ($('#accountSelect').val() !== null) {
+          if ($('#accountSelect option').length == 1) {
+            setAccountLink.removeAttr('data-toggle');
+            setAccountLink.removeAttr('data-target');
+            setAccountLink.css('cursor','default');
+          }
+        }
+        localStorage.setItem('lastSearchType', '');
+        localStorage.setItem('lastSearchCriteria', '');
+        localStorage.setItem('lastSearchCriteria2', '');
+        localStorage.setItem('lastSearchCriteria3', '');
+    });
+    </script>
   {{/inline}}
 {{/template}}

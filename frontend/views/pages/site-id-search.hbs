@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" id="goToIndexButton">
+            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -65,12 +65,12 @@
           <div class="col-sm">
             <table class="my-table site-id-table">
               <tr>
-                <td><button class='btn btn-primary m-2 btn-block' id="searchButton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">Site ID Selection List</span></button></td>
+                <td><button class='btn btn-primary m-2 btn-block' onclick="searchSiteId()" id="searchButton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">Site ID Selection List</span></button></td>
                 <td><label class="my-label">-</label></td>
                 <td><label class="my-label"></label></td>
               </tr>
               <tr>
-                <td><button class='btn btn-primary m-2 btn-block' id="downloadDetailReport" style="width:100%">
+                <td><button class='btn btn-primary m-2 btn-block' id="downloadDetailReport" onclick="getPdfDetails()" style="width:100%">
                   <span id="downloadSpinnerDetails" class="spinner-border spinner-border-sm d-none"></span>
                   <span id="detailsBtnText">Download Details Report</span>
                 </button></td>
@@ -83,12 +83,35 @@
         <div class="row">
           <div class="col-sm-4"></div>
           <div class="col-sm-4">
-            <button id="backButton" class="btn btn-secondary">Back</button>
+            <button onclick="back()" id="backButton" class="btn btn-secondary">Back</button>
           </div>
         </div>
       </div>
       <input type="hidden" id="breadcrumbSearch" value="Site ID Search" />
     </main>
-    <script src="/js/pages/site-id-search.js"></script>
+    <script>
+      // only allow numbers in the siteId input
+      const ele = document.getElementById('siteId');
+      const state = {
+          value: ele.value,
+      };
+
+      ele.addEventListener('keydown', function (e) {
+          const target = e.target;
+          state.selectionStart = target.selectionStart;
+          state.selectionEnd = target.selectionEnd;
+      });
+
+      ele.addEventListener('input', function (e) {
+          const target = e.target;
+
+          if (/^[0-9]*$/.test(target.value)) {
+              state.value = target.value;
+          } else {
+              target.value = state.value;
+              target.setSelectionRange(state.selectionStart, state.selectionEnd);
+          }
+      });
+    </script>
   {{/inline}}
 {{/template}}

@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-$(function () {
-  $('[data-toggle="popover"]').popover();
-});
-
 // utility functions
 function back() {
   const urlPath = window.location.pathname;
@@ -834,12 +830,6 @@ function setFolio(folioInput) {
 
 var folioInput = document.getElementById('folioInput');
 folioInput.addEventListener('input', setFolio(folioInput));
-
-// Shared nav/action button wiring (present on some, not all, pages)
-document.getElementById('backButton')?.addEventListener('click', back);
-document.getElementById('goToIndexButton')?.addEventListener('click', goToIndex);
-document.getElementById('goToDashboardButton')?.addEventListener('click', goToDashboard);
-document.getElementById('goToPrevPageButton')?.addEventListener('click', goToPrevPage);
 
 window.onload = function () {
   const folioValue = localStorage.getItem('folio');

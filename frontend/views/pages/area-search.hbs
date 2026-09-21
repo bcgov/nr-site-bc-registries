@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" id="goToIndexButton">
+            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -79,7 +79,7 @@
                                 <label style="width:150px;text-align:left;float:left;" for="colFormLabel">Postal Code:</label>
                             </div>
                             <div class="col-xs-4">
-                                <input type="text" class="form-control" id="postalCodeInput" value="" maxlength="7" />
+                                <input type="text" class="form-control" id="postalCodeInput" oninput="autoDraw()" value="" maxlength="7" />
                             </div>
                         </div>
                         <div class="row">
@@ -95,19 +95,19 @@
                                     <label for="degInput">Degrees:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="latDegInput" maxlength="2" pattern="\\d*" style="width:45px" />
+                                    <input type="text" id="latDegInput" maxlength="2" pattern="\\d*" oninput="checkLatDeg(this.value)" style="width:45px" />
                                 </div>
                                 <div class="col-xs-2 m-1">
                                     <label for="minInput">Minutes:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="latMinInput" maxlength="2" pattern="\\d*" style="width:45px" />
+                                    <input type="text" id="latMinInput" maxlength="2" pattern="\\d*" oninput="checkLatMin(this.value)" style="width:45px" />
                                 </div>
                                 <div class="col-xs-2 m-1">
                                     <label for="secInput">Seconds:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="latSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" style="width:45px" />
+                                    <input type="text" id="latSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLatSec(this.value)" style="width:45px" />
                                 </div>
                             </div>
                             <div class="row mt-2 ml-4">
@@ -118,19 +118,19 @@
                                     <label for="degInput">Degrees:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="lonDegInput" maxlength="3" pattern="\\d*" style="width:45px" />
+                                    <input type="text" id="lonDegInput" maxlength="3" pattern="\\d*" oninput="checkLonDeg(this.value)" style="width:45px" />
                                 </div>
                                 <div class="col-xs-2 m-1">
                                     <label for="minInput">Minutes:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="lonMinInput" maxlength="2" pattern="\\d*" style="width:45px" />
+                                    <input type="text" id="lonMinInput" maxlength="2" pattern="\\d*" oninput="checkLonMin(this.value)" style="width:45px" />
                                 </div>
                                 <div class="col-xs-2 m-1">
                                     <label for="secInput">Seconds:</label>
                                 </div>
                                 <div class="col-xs-1 m-1">
-                                    <input type="text" id="lonSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" style="width:45px" />
+                                    <input type="text" id="lonSecInput" maxlength="4" pattern="/^\d+([.]\d+)?$/" oninput="checkLonSec(this.value)" style="width:45px" />
                                 </div>
                             </div>
                         </div>
@@ -138,13 +138,13 @@
 
                     <div class="row">
                         <div class="col-sm-6 pt-2">
-                            <input type="radio" id="sizeSmall" name="circle" value="small" checked />
+                            <input type="radio" id="sizeSmall" name="circle" value="small" onchange="autoDraw()" checked />
                             <label for="sizeSmall">Small (0.5km Radius)</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6 pb-2">
-                            <input type="radio" id="sizeLarge" name="circle" value="large" />
+                            <input type="radio" id="sizeLarge" name="circle" value="large" onchange="autoDraw()" />
                             <label for="sizeLarge">Large (5.0km Radius)</label>
                         </div>
                     </div>
@@ -152,8 +152,8 @@
                     <div class="row">
                         <div class="col-sm-1"></div>
                         <div class="col-sm">
-                            <button id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-                            <button id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
+                            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+                            <button onclick="searchArea()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
                         </div>
                     </div>
                 </div>
@@ -171,10 +171,162 @@
     </div>
     <input type="hidden" id="breadcrumbSearch" value="Area Search" />
     </main>
-    <script src="/js/pages/area-search.js"></script>
+    <script>
+        function checkLatDeg(value) {
+            value = Math.min(Math.max(parseInt(value), 0), 90);
+            document.getElementById('latDegInput').value = isNaN(value) ? '' : value;
+            var latMin = document.getElementById('latMinInput');
+            if (value.toString() !== 'NaN' && value.toString().length === parseInt(document.getElementById('latDegInput').attributes["maxlength"].value)) {
+                latMin.focus();
+            }
+            autoDraw();
+        }
+        function checkLatMin(value) {
+            value = Math.min(Math.max(parseInt(value), 0), 59);
+            document.getElementById('latMinInput').value = isNaN(value) ? '' : value;
+            var latSec = document.getElementById('latSecInput');
+            if (value.toString() !== 'NaN' && value.toString().length === parseInt(document.getElementById('latMinInput').attributes["maxlength"].value)) {
+                latSec.focus();
+            }
+            autoDraw();
+        }
+        function checkLatSec(value) {
+            if (!(value.charAt(value.length-1) == '.')) {
+                if (value.split('.')[1]) {
+                    if (value.split('.')[1].length > 1) {
+                        document.getElementById('latSecInput').value = parseFloat(Math.floor(value*10))/10;    
+                    }
+                }
+                value = Math.min(Math.max(parseFloat(value), 0), 59.9);
+                document.getElementById('latSecInput').value = isNaN(value) ? '' : value;
+            } else if (value.includes('..') || (value.includes('...'))) {
+                value = value.replace('...', '..');
+                value = value.replace('..', '.');
+                document.getElementById('latSecInput').value = value
+            }
+            var lonDeg = document.getElementById('lonDegInput');
+            if (value.toString() !== 'NaN' && value.toString().length === parseInt(document.getElementById('latSecInput').attributes["maxlength"].value)) {
+                lonDeg.focus();
+            }
+            autoDraw();
+        }
+        function checkLonDeg(value) {
+            value = Math.min(Math.max(parseInt(value), 0), 180);
+            document.getElementById('lonDegInput').value = isNaN(value) ? '' : value;
+            var lonMin = document.getElementById('lonMinInput');
+            if (value.toString() !== 'NaN' && value.toString().length === parseInt(document.getElementById('lonDegInput').attributes["maxlength"].value)) {
+                lonMin.focus();
+            }
+            autoDraw();
+        }
+        function checkLonMin(value) {
+            value = Math.min(Math.max(parseInt(value), 0), 59);
+            document.getElementById('lonMinInput').value = isNaN(value) ? '' : value;
+            var lonSec = document.getElementById('lonSecInput');
+            if (value.toString() !== 'NaN' && value.toString().length === parseInt(document.getElementById('lonMinInput').attributes["maxlength"].value)) {
+                lonSec.focus();
+            }
+            autoDraw();
+        }
+        function checkLonSec(value) {
+            if (!(value.charAt(value.length-1) == '.')) {
+                if (value.split('.')[1]) {
+                    if (value.split('.')[1].length > 1) {
+                        document.getElementById('lonSecInput').value = parseFloat(Math.floor(value*10))/10;    
+                    }
+                }
+                value = Math.min(Math.max(parseFloat(value), 0), 59.9);
+                document.getElementById('lonSecInput').value = isNaN(value) ? '' : value;
+            } else if (value.includes('..') || (value.includes('...'))) {
+                value = value.replace('...', '..');
+                value = value.replace('..', '.');
+                document.getElementById('lonSecInput').value = value
+            }
+            autoDraw();
+        }
 
-    <script src="/js/leaflet.js"></script>
-    <script src="/js/leaflet.draw.js"></script>
+        function autoDraw() {
+            const postalCodeTab = document.getElementById('pills-postalcode-tab');
+            const coordinatesTab = document.getElementById('pills-coordinates-tab');
+            if (postalCodeTab.classList.contains('active')) {
+                var postalCodeInput = document.getElementById('postalCodeInput').value;
+                if (postalCodeInput.length == 7) {
+                    postalCodeCircle();
+                } else if (postalCodeInput.replace(' ','').replace('-','').length == 6) {
+                    document.getElementById('postalCodeError').innerHTML = 'Please input a BC Postal Code in the format: A1A 1A1';
+                }
+            } else if (coordinatesTab.classList.contains('active')) {
+                var lonDeg = document.getElementById('lonDegInput').value;
+                var lonMin = document.getElementById('lonMinInput').value;
+                var lonSec = document.getElementById('lonSecInput').value;
+                var latDeg = document.getElementById('latDegInput').value;
+                var latMin = document.getElementById('latMinInput').value;
+                var latSec = document.getElementById('latSecInput').value;
+                var latLonArray = [lonDeg, lonMin, lonSec, latDeg, latMin, latSec];
+                var draw = true;
+
+                for (let value of latLonArray) {
+                    if(value == 'NaN' || value == '' || (value.charAt(value.length-1) == '.')) {
+                        draw = false;
+                    }
+                }
+                if (draw) {
+                    coordinateCircle();
+                }
+            }
+        }
+    </script>
+    <script>
+        var lonDeg = document.getElementById('lonDegInput');
+        var lonMin = document.getElementById('lonMinInput');
+        var lonSec = document.getElementById('lonSecInput');
+        var latDeg = document.getElementById('latDegInput');
+        var latMin = document.getElementById('latMinInput');
+        var latSec = document.getElementById('latSecInput');
+
+        latMin.addEventListener('keydown', ({key}) => {
+            if (key === 'Backspace' && (latMin.value.toString().length == 'NaN' || latMin.value.toString().length === 0)) {
+                latDeg.focus();
+                event.preventDefault();
+            }
+        });
+        latSec.addEventListener('keydown', ({key}) => {
+            if (key === 'Backspace' && (latSec.value.toString().length == 'NaN' || latSec.value.toString().length === 0)) {
+                latMin.focus();
+                event.preventDefault();
+            }
+        });
+        lonDeg.addEventListener('keydown', ({key}) => {
+            if (key === 'Backspace' && (lonDeg.value.toString().length == 'NaN' || lonDeg.value.toString().length === 0)) {
+                latSec.focus();
+                event.preventDefault();
+            }
+        });
+        lonMin.addEventListener('keydown', ({key}) => {
+            if (key === 'Backspace' && (lonMin.value.toString().length == 'NaN' || lonMin.value.toString().length === 0)) {
+                lonDeg.focus();
+                event.preventDefault();
+            }
+        });
+        lonSec.addEventListener('keydown', ({key}) => {
+            if (key === 'Backspace' && (lonSec.value.toString().length == 'NaN' || lonSec.value.toString().length === 0)) {
+                lonMin.focus();
+                event.preventDefault();
+            }
+        });
+    </script>
+
+    <script
+        src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+        integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+        crossorigin=""
+    ></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.js"
+        integrity="sha512-czICF/Crp0B7QB13iQZG9bYUpd/P1Ona1NeZN52gYsoVFXIpakDmdOUepMCHCMBIBd9Ei5Mlg8Quy4e504IT5A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
     <script src="/js/leaflet-src.js"></script>
   {{/inline}}
 {{/template}}

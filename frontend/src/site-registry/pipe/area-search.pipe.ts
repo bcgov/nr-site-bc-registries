@@ -3,9 +3,9 @@ import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from
 @Injectable()
 export class AreaSearchPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    const lat = value.lat;
-    const lng = value.lng;
-    const size = value.size;
+    let lat = value.lat;
+    let lng = value.lng;
+    let size = value.size;
 
     if (Number.isNaN(parseFloat(lat))) {
       throw new BadRequestException('Latitude is not a number');
