@@ -52,7 +52,7 @@
 			frame-ancestors 'self';
 			form-action 'self';
 			block-all-mixed-content;
-			connect-src 'self' https://*.gov.bc.ca wss://*.gov.bc.ca;"
+			connect-src 'self' https://*.gov.bc.ca wss://*.gov.bc.ca https://cdnjs.cloudflare.com https://stackpath.bootstrapcdn.com;"
 		Referrer-Policy "same-origin"
 		Permissions-Policy "fullscreen=(self), camera=(), microphone=()"
 		Cross-Origin-Resource-Policy "same-origin"
