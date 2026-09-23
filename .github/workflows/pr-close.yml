@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 permissions: {}
-
+env:
+  NAME: esra
 jobs:
   cleanup:
     name: Cleanup and Image Promotion
@@ -20,6 +21,9 @@ jobs:
     secrets:
       oc_namespace: ${{ secrets.OC_NAMESPACE }}
       oc_token: ${{ secrets.OC_TOKEN }}
+      commands: |
+            # Remove old build runs, build pods and deployment pods
+            oc delete all,pvc,secret -l app=${{ env.NAME }}-${{ github.event.number }}
     with:
       cleanup: label
       packages: backend frontend 
