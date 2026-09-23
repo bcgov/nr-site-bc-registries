@@ -5,7 +5,7 @@ import { CronService } from './cron/cron.service';
 export class AppService {
   constructor(private cronService: CronService) {}
   getHello(): string {
-    return 'Hello Backend! ';
+    return 'Hello Backend!';
   }
 
   // runs on app startup: if there is no sites data in the database this will get new data, otherwise it will do nothing
