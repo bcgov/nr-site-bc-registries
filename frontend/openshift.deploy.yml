@@ -234,7 +234,7 @@ objects:
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
-                readOnlyRootFilesystem: true
+                # readOnlyRootFilesystem: true
                 capabilities:
                   drop: ["ALL"]
                 seccompProfile:
