@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class SrmeasurDto {
   populationId: string; // a10;
   media: string; // a40;

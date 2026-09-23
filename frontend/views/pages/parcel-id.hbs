@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-3 pl-4 pr-3">
-            <button class="round previous" style="height: 35px; width: 35px" onclick="goToIndex()">
+            <button id="goToIndexButton" class="round previous" style="height: 35px; width: 35px">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -59,8 +59,8 @@
         <div class="row">
           <div class="col-sm-2"></div>
           <div class="col-sm-4">
-            <button onclick="back()" id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
-            <button onclick="searchPid()" id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
+            <button id="backButton" class="btn btn-secondary m-2 text-right">Back</button>
+            <button id="searchButton" class="btn btn-primary m-2 vrbutton"><span id="searchSpinner" class="spinner-border spinner-border-sm d-none"></span><span id="searchBtnTxt">View Search Results</span></button>
           </div>
         </div>
       </div>
@@ -89,6 +89,12 @@
               target.setSelectionRange(state.selectionStart, state.selectionEnd);
           }
       });
+
+      // back/searchPid/goToIndex are defined in util.js, loaded after this
+      // script, so they're wrapped here to defer lookup until click time.
+      document.getElementById('goToIndexButton').addEventListener('click', function () { goToIndex(); });
+      document.getElementById('backButton').addEventListener('click', function () { back(); });
+      document.getElementById('searchButton').addEventListener('click', function () { searchPid(); });
     </script>
   {{/inline}}
 {{/template}}

@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class SrpinpidDto {
   siteId: string; // a10;
   pin: string; // a9;
