@@ -22,5 +22,5 @@ jobs:
       oc_token: ${{ secrets.OC_TOKEN }}
     with:
       cleanup: label
-      cleanup_name: esra
+      cleanup_name: esra-${{ github.event.number }}
       packages: backend frontend
