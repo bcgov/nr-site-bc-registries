@@ -20,9 +20,9 @@ jobs:
     secrets:
       oc_namespace: ${{ secrets.OC_NAMESPACE }}
       oc_token: ${{ secrets.OC_TOKEN }}
-      commands: |
-            # Remove old build runs, build pods and deployment pods
-            oc delete all,pvc,secret -l app=esra-${{ github.event.number }}
     with:
       cleanup: label
       packages: backend frontend 
+      commands: |
+                  # Remove old build runs, build pods and deployment pods
+                  oc delete all,pvc,secret -l app=esra-${{ github.event.number }}
