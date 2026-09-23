@@ -75,7 +75,7 @@ jobs:
       - name: Evaluate Overall Status
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "❌ Critical Check Failure: At least one required job has failed or was cancelled. "
+          echo "❌ Critical Check Failure: At least one required job has failed or was cancelled."
           exit 1
 
       - name: Success Message
