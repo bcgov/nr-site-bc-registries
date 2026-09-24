@@ -74,7 +74,7 @@ jobs:
         include:
           - name: database
             file: common/openshift.database.yml
-            parameters: -p DB_PVC_SIZE="1Gi"
+            parameters: -p DB_PVC_SIZE="2Gi"
           - name: database-backup
             file: common/openshift.database-backup.yml
             parameters: ""

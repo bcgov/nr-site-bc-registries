@@ -16,7 +16,7 @@ parameters:
     value: "17"
   - name: DB_PVC_SIZE
     description: Volume space available for data
-    value: 1Gi
+    value: 2Gi
   - name: MEMORY_LIMIT
     description: Memory limit for the database container (bounds the pod's working set).
     value: 4Gi
